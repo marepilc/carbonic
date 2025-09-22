@@ -63,3 +63,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+*.ipynb
+.ruff_cache/

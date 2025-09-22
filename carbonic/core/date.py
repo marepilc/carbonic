@@ -220,7 +220,7 @@ class Date:
 
     def __repr__(self) -> str:
         """Return detailed string representation."""
-        return f"Date.create({self.year}, {self.month}, {self.day})"
+        return f"Date({self.year}, {self.month}, {self.day})"
 
     def __format__(self, format_spec: str) -> str:
         """Support for Python's format() function and f-strings."""
@@ -392,17 +392,9 @@ class Date:
             return {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
 
     # Common format methods
-    def to_date_string(self) -> str:
-        """Return ISO date string (YYYY-MM-DD)."""
-        return self._date.isoformat()
-
     def to_iso_string(self) -> str:
         """Return ISO date string (YYYY-MM-DD)."""
         return self._date.isoformat()
-
-    def to_formatted_date_string(self) -> str:
-        """Return formatted date string (MMM DD, YYYY)."""
-        return self.strftime("%b %d, %Y")
 
     def to_date_time_string(self) -> str:
         """Return date with default time (YYYY-MM-DD 00:00:00)."""

@@ -424,7 +424,7 @@ def test_date_repr():
     assert "25" in repr_str
 
     # Should be eval-able (ideally)
-    assert "Date.create(" in repr_str
+    assert "Date(" in repr_str
 
 
 def test_date_str():
@@ -563,12 +563,7 @@ def test_date_common_formats():
     """Test common date format methods."""
     date = Date.create(2023, 12, 25)
 
-    # ISO formats
-    assert date.to_date_string() == "2023-12-25"
     assert date.to_iso_string() == "2023-12-25"
-
-    # Formatted strings
-    assert date.to_formatted_date_string() == "Dec 25, 2023"
     assert date.to_date_time_string() == "2023-12-25 00:00:00"  # With default time
 
 
