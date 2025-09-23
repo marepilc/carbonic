@@ -5,11 +5,14 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True, slots=True)
 class Duration:
+    # Core storage - aligned with datetime.timedelta
     _days: int
     _seconds: int
     _microseconds: int
-    _months: int = 0
-    _years: int = 0
+
+    # Calendar components stored separately for display/parsing only
+    _calendar_months: int = 0
+    _calendar_years: int = 0
 
     def __init__(
         self,
@@ -19,20 +22,45 @@ class Duration:
         minutes=0,
         seconds=0,
         microseconds=0,
+        milliseconds=0,
         weeks=0,
         months=0,
         years=0,
     ):
         """Create a Duration from individual time components."""
-        # Convert all components to basic units
+        # Convert time components to basic units (timedelta-compatible)
+        # Keep calendar components (months/years) separate for now
         total_days = days + (weeks * 7)
         total_seconds = seconds + (minutes * 60) + (hours * 3600)
+        total_microseconds = microseconds + (milliseconds * 1000)
+
+        # Normalize microseconds and seconds overflow like timedelta does
+        if total_microseconds >= 1_000_000:
+            extra_seconds = total_microseconds // 1_000_000
+            total_seconds += extra_seconds
+            total_microseconds = total_microseconds % 1_000_000
+        elif total_microseconds < 0:
+            # Handle negative microseconds
+            borrowed_seconds = (-total_microseconds - 1) // 1_000_000 + 1
+            total_seconds -= borrowed_seconds
+            total_microseconds += borrowed_seconds * 1_000_000
+
+        # Normalize seconds overflow like timedelta does
+        if total_seconds >= 86400:
+            extra_days = total_seconds // 86400
+            total_days += extra_days
+            total_seconds = total_seconds % 86400
+        elif total_seconds < 0:
+            # Handle negative seconds
+            borrowed_days = (-total_seconds - 1) // 86400 + 1
+            total_days -= borrowed_days
+            total_seconds += borrowed_days * 86400
 
         object.__setattr__(self, "_days", total_days)
         object.__setattr__(self, "_seconds", total_seconds)
-        object.__setattr__(self, "_microseconds", microseconds)
-        object.__setattr__(self, "_months", months)
-        object.__setattr__(self, "_years", years)
+        object.__setattr__(self, "_microseconds", total_microseconds)
+        object.__setattr__(self, "_calendar_months", months)
+        object.__setattr__(self, "_calendar_years", years)
 
     # Properties
     @property
@@ -48,16 +76,35 @@ class Duration:
         return self._microseconds
 
     @property
+    def milliseconds(self) -> int:
+        """Get milliseconds component."""
+        return self._microseconds // 1000
+
+    @property
+    def hours(self) -> int:
+        """Get total hours for this duration (excluding calendar components)."""
+        return int(self.total_seconds() // 3600)
+
+    @property
+    def weeks(self) -> int:
+        """Get total weeks for this duration."""
+        return self._days // 7
+
+    @property
     def months(self) -> int:
-        return self._months
+        """Get calendar months component (for display purposes only)."""
+        return self._calendar_months
 
     @property
     def years(self) -> int:
-        return self._years
+        """Get calendar years component (for display purposes only)."""
+        return self._calendar_years
 
     # Constructors
     @classmethod
-    def parse(cls, s: str) -> Duration: ...  # ISO 8601 / token forms
+    def parse(cls, s: str) -> Duration:
+        """Parse ISO 8601 duration string or custom format."""
+        raise NotImplementedError("Duration parsing not yet implemented")
 
     # Properties and operations
     def total_seconds(self) -> float:
@@ -65,14 +112,53 @@ class Duration:
         total = self.days * 86400 + self.seconds + (self.microseconds / 1_000_000)
         return total
 
+    # Intuitive alias properties for total duration conversion
+    @property
+    def in_seconds(self) -> float:
+        """Get total duration expressed as seconds (alias for total_seconds)."""
+        return self.total_seconds()
+
+    @property
+    def in_minutes(self) -> float:
+        """Get total duration expressed as minutes."""
+        return self.total_seconds() / 60
+
+    @property
+    def in_hours(self) -> float:
+        """Get total duration expressed as hours."""
+        return self.total_seconds() / 3600
+
+    @property
+    def in_days(self) -> float:
+        """Get total duration expressed as days."""
+        return self.total_seconds() / 86400
+
+    @property
+    def in_weeks(self) -> float:
+        """Get total duration expressed as weeks."""
+        return self.in_days / 7
+
+    @property
+    def in_milliseconds(self) -> float:
+        """Get total duration expressed as milliseconds."""
+        return self.total_seconds() * 1000
+
+    @property
+    def in_microseconds(self) -> float:
+        """Get total duration expressed as microseconds."""
+        return self.total_seconds() * 1_000_000
+
     def __str__(self) -> str:
         """Return human-readable string representation."""
         parts = []
 
-        if self.years:
-            parts.append(f"{self.years} year{'s' if self.years != 1 else ''}")
-        if self.months:
-            parts.append(f"{self.months} month{'s' if self.months != 1 else ''}")
+        # Show calendar components if they were provided in constructor
+        if self._calendar_years:
+            parts.append(f"{self._calendar_years} year{'s' if self._calendar_years != 1 else ''}")
+        if self._calendar_months:
+            parts.append(f"{self._calendar_months} month{'s' if self._calendar_months != 1 else ''}")
+
+        # Show actual time-based components
         if self.days:
             parts.append(f"{self.days} day{'s' if self.days != 1 else ''}")
 
@@ -110,7 +196,8 @@ class Duration:
     def _normalize_for_comparison(self) -> tuple[float, int, int]:
         """Normalize duration for comparison purposes."""
         # Return (total_seconds, total_months, total_years) for comparison
-        total_months = self.months + (self.years * 12)
+        # Note: Calendar components are already converted to approximate days in storage
+        total_months = self._calendar_months + (self._calendar_years * 12)
         return (self.total_seconds(), total_months, 0)
 
     def __eq__(self, other: object) -> bool:
@@ -155,43 +242,46 @@ class Duration:
         if not isinstance(other, Duration):
             return NotImplemented
 
-        # Add all components
+        # Add calendar components separately
+        total_calendar_months = self._calendar_months + other._calendar_months
+        total_calendar_years = self._calendar_years + other._calendar_years
+
+        # Handle month overflow in calendar components
+        if total_calendar_months >= 12:
+            extra_years = total_calendar_months // 12
+            total_calendar_years += extra_years
+            total_calendar_months = total_calendar_months % 12
+
+        # Add time-based components (already normalized like timedelta)
         total_days = self.days + other.days
         total_seconds = self.seconds + other.seconds
         total_microseconds = self.microseconds + other.microseconds
-        total_months = self.months + other.months
-        total_years = self.years + other.years
 
-        # Handle month overflow
-        if total_months >= 12:
-            extra_years = total_months // 12
-            total_years += extra_years
-            total_months = total_months % 12
-
-        # Handle second/day overflow
-        if total_seconds >= 86400:
-            extra_days = total_seconds // 86400
-            total_days += extra_days
-            total_seconds = total_seconds % 86400
-
-        # Handle microsecond overflow
+        # Handle overflow like timedelta does
         if total_microseconds >= 1_000_000:
             extra_seconds = total_microseconds // 1_000_000
             total_seconds += extra_seconds
             total_microseconds = total_microseconds % 1_000_000
+        elif total_microseconds < 0:
+            borrowed_seconds = (-total_microseconds - 1) // 1_000_000 + 1
+            total_seconds -= borrowed_seconds
+            total_microseconds += borrowed_seconds * 1_000_000
 
-            # Check again for second overflow after microsecond adjustment
-            if total_seconds >= 86400:
-                extra_days = total_seconds // 86400
-                total_days += extra_days
-                total_seconds = total_seconds % 86400
+        if total_seconds >= 86400:
+            extra_days = total_seconds // 86400
+            total_days += extra_days
+            total_seconds = total_seconds % 86400
+        elif total_seconds < 0:
+            borrowed_days = (-total_seconds - 1) // 86400 + 1
+            total_days -= borrowed_days
+            total_seconds += borrowed_days * 86400
 
         return Duration(
             days=total_days,
             seconds=total_seconds,
             microseconds=total_microseconds,
-            months=total_months,
-            years=total_years,
+            months=total_calendar_months,
+            years=total_calendar_years,
         )
 
     def __sub__(self, other: Duration) -> Duration:
@@ -204,47 +294,46 @@ class Duration:
 
     def __neg__(self) -> Duration:
         """Return the negation of this Duration."""
-        return Duration(
-            days=-self.days,
-            seconds=-self.seconds,
-            microseconds=-self.microseconds,
-            months=-self.months,
-            years=-self.years,
-        )
+        # Create Duration directly without going through constructor normalization
+        # to avoid negative seconds affecting days count
+        new_duration = object.__new__(Duration)
+        object.__setattr__(new_duration, "_days", -self._days)
+        object.__setattr__(new_duration, "_seconds", -self._seconds)
+        object.__setattr__(new_duration, "_microseconds", -self._microseconds)
+        object.__setattr__(new_duration, "_calendar_months", -self._calendar_months)
+        object.__setattr__(new_duration, "_calendar_years", -self._calendar_years)
+        return new_duration
 
     def __mul__(self, k: int | float) -> Duration:
         """Multiply Duration by a number."""
         if not isinstance(k, (int, float)):
             return NotImplemented
 
-        # Multiply all components
+        # Multiply time-based components (timedelta-compatible)
         total_days: int | float = self.days * k
         total_seconds: int | float = self.seconds * k
         total_microseconds: int | float = self.microseconds * k
-        total_months: int | float = self.months * k
-        total_years: int | float = self.years * k
 
-        # Convert fractional parts to appropriate units
+        # Multiply calendar components separately
+        total_calendar_months: int | float = self._calendar_months * k
+        total_calendar_years: int | float = self._calendar_years * k
+
+        # Handle fractional parts for float multiplication
         if isinstance(k, float):
-            # Handle fractional months -> days (approximate: 1 month ≈ 30 days)
-            if total_months != int(total_months):
-                fractional_months = total_months - int(total_months)
-                total_days += fractional_months * 30  # Approximate
-                total_months = int(total_months)
+            # Handle fractional calendar years -> months
+            if total_calendar_years != int(total_calendar_years):
+                fractional_years = total_calendar_years - int(total_calendar_years)
+                total_calendar_months += fractional_years * 12
+                total_calendar_years = int(total_calendar_years)
 
-            # Handle fractional years -> months
-            if total_years != int(total_years):
-                fractional_years = total_years - int(total_years)
-                total_months += fractional_years * 12
-                total_years = int(total_years)
+            # Handle fractional calendar months (keep as months, don't convert to days automatically)
+            total_calendar_months = int(total_calendar_months)
 
-            # Handle month overflow after fractional conversions
-            if total_months >= 12:
-                extra_years = int(total_months // 12)
-                total_years += extra_years
-                total_months = int(total_months % 12)
-            elif total_months != int(total_months):
-                total_months = int(total_months)
+            # Handle month overflow in calendar components
+            if total_calendar_months >= 12:
+                extra_years = int(total_calendar_months // 12)
+                total_calendar_years += extra_years
+                total_calendar_months = int(total_calendar_months % 12)
 
             # Handle fractional days -> seconds
             if total_days != int(total_days):
@@ -258,7 +347,7 @@ class Duration:
                 total_microseconds += fractional_seconds * 1_000_000
                 total_seconds = int(total_seconds)
 
-            # Handle microsecond overflow
+            # Normalize overflow like timedelta
             if total_microseconds >= 1_000_000:
                 extra_seconds = int(total_microseconds // 1_000_000)
                 total_seconds += extra_seconds
@@ -266,38 +355,31 @@ class Duration:
             else:
                 total_microseconds = int(total_microseconds)
 
-            # Handle second/day overflow after all conversions
             if total_seconds >= 86400:
                 extra_days = int(total_seconds // 86400)
                 total_days += extra_days
                 total_seconds = int(total_seconds % 86400)
 
-            # Ensure final conversion to int
+            # Ensure all are integers
             total_days = int(total_days)
             total_seconds = int(total_seconds)
-            total_years = int(total_years)
+            total_calendar_years = int(total_calendar_years)
+            total_calendar_months = int(total_calendar_months)
 
         else:
-            # For integers, everything stays as integers
+            # For integers, straightforward multiplication
             total_days = int(total_days)
             total_seconds = int(total_seconds)
             total_microseconds = int(total_microseconds)
-            total_months = int(total_months)
-            total_years = int(total_years)
-
-        # Ensure all values are integers for the constructor
-        final_days: int = int(total_days)
-        final_seconds: int = int(total_seconds)
-        final_microseconds: int = int(total_microseconds)
-        final_months: int = int(total_months)
-        final_years: int = int(total_years)
+            total_calendar_months = int(total_calendar_months)
+            total_calendar_years = int(total_calendar_years)
 
         return Duration(
-            days=final_days,
-            seconds=final_seconds,
-            microseconds=final_microseconds,
-            months=final_months,
-            years=final_years,
+            days=total_days,
+            seconds=total_seconds,
+            microseconds=total_microseconds,
+            months=total_calendar_months,
+            years=total_calendar_years,
         )
 
     def __rmul__(self, k: int | float) -> Duration:
@@ -306,12 +388,27 @@ class Duration:
 
     def __abs__(self) -> Duration:
         """Return the absolute value of this Duration."""
-        return Duration(
-            days=abs(self.days),
-            seconds=abs(self.seconds),
-            microseconds=abs(self.microseconds),
-            months=abs(self.months),
-            years=abs(self.years),
-        )
+        # Check if already positive
+        total_seconds = self.total_seconds()
+        if (total_seconds >= 0 and self._calendar_months >= 0 and self._calendar_years >= 0):
+            return self
 
-    def humanize(self, *, max_units=2, locale: str | None = None) -> str: ...
+        # For negative durations, create positive version
+        # Convert to absolute total seconds, then reconstruct
+        abs_total_seconds = abs(total_seconds)
+        abs_days = int(abs_total_seconds // 86400)
+        abs_seconds = int(abs_total_seconds % 86400)
+        abs_microseconds = abs(self._microseconds)
+
+        # Create new duration directly to avoid normalization issues
+        new_duration = object.__new__(Duration)
+        object.__setattr__(new_duration, "_days", abs_days)
+        object.__setattr__(new_duration, "_seconds", abs_seconds)
+        object.__setattr__(new_duration, "_microseconds", abs_microseconds)
+        object.__setattr__(new_duration, "_calendar_months", abs(self._calendar_months))
+        object.__setattr__(new_duration, "_calendar_years", abs(self._calendar_years))
+        return new_duration
+
+    def humanize(self, *, max_units=2, locale: str | None = None) -> str:
+        """Return human-readable duration string."""
+        raise NotImplementedError("Duration humanization not yet implemented")
