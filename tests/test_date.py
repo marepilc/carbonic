@@ -1,5 +1,3 @@
-"""Tests for Date class."""
-
 import datetime
 from zoneinfo import ZoneInfo
 
