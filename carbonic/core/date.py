@@ -15,16 +15,15 @@ from carbonic.core.exceptions import ParseError
 class Date:
     _date: datetime.date
 
+    def __init__(self, year: int, month: int, day: int):
+        object.__setattr__(self, "_date", datetime.date(year, month, day))
+
     # Constructors
     @classmethod
     def today(cls, tz: str | None = None) -> Date:
         """Create a Date instance for today."""
-        return cls(datetime.date.today())
-
-    @classmethod
-    def create(cls, year: int, month: int, day: int) -> Date:
-        """Create a Date instance from year, month, day."""
-        return cls(datetime.date(year, month, day))
+        today_date = datetime.date.today()
+        return cls(today_date.year, today_date.month, today_date.day)
 
     @classmethod
     def parse(cls, s: str, fmt: str | None = None) -> Date:
@@ -60,7 +59,7 @@ class Date:
         if match:
             try:
                 year, month, day = map(int, match.groups())
-                return cls(datetime.date(year, month, day))
+                return cls(year, month, day)
             except ValueError as e:
                 raise ParseError(f"Invalid date: {s}") from e
 
@@ -87,7 +86,7 @@ class Date:
                 raise ParseError(f"Ambiguous date format: {s}")
 
             try:
-                return cls(datetime.date(year, month, day))
+                return cls(year, month, day)
             except ValueError as e:
                 raise ParseError(f"Invalid date: {s}") from e
 
@@ -97,7 +96,7 @@ class Date:
         if match:
             try:
                 day, month, year = map(int, match.groups())
-                return cls(datetime.date(year, month, day))
+                return cls(year, month, day)
             except ValueError as e:
                 raise ParseError(f"Invalid date: {s}") from e
 
@@ -120,7 +119,8 @@ class Date:
 
             # Parse using strftime
             parsed = datetime.datetime.strptime(s, strftime_fmt)
-            return cls(parsed.date())
+            parsed_date = parsed.date()
+            return cls(parsed_date.year, parsed_date.month, parsed_date.day)
 
         except ValueError as e:
             raise ParseError(f"Failed to parse '{s}' with format '{fmt}': {e}") from e
@@ -154,7 +154,7 @@ class Date:
     @classmethod
     def from_date(cls, d: datetime.date) -> Date:
         """Create a Date instance from datetime.date."""
-        return cls(d)
+        return cls(d.year, d.month, d.day)
 
     # Properties
     @property
@@ -250,7 +250,7 @@ class Date:
 
             new_date = datetime.date(new_year, new_month, new_day)
 
-        return Date(new_date)
+        return Date(new_date.year, new_date.month, new_date.day)
 
     def subtract(self, *, years=0, months=0, days=0) -> Date:
         """Subtract years, months, and/or days from this date."""
@@ -280,13 +280,13 @@ class Date:
             days_to_subtract = self.weekday
             return self.subtract(days=days_to_subtract)
         elif unit == "month":
-            return Date.create(self.year, self.month, 1)
+            return Date(self.year, self.month, 1)
         elif unit == "quarter":
             # Calculate quarter start month
             quarter_start_month = ((self.month - 1) // 3) * 3 + 1
-            return Date.create(self.year, quarter_start_month, 1)
+            return Date(self.year, quarter_start_month, 1)
         elif unit == "year":
-            return Date.create(self.year, 1, 1)
+            return Date(self.year, 1, 1)
         else:
             raise ValueError(f"Unknown unit: {unit}")
 
@@ -301,15 +301,15 @@ class Date:
         elif unit == "month":
             # Get last day of current month
             last_day = self._last_day_of_month(self.year, self.month)
-            return Date.create(self.year, self.month, last_day)
+            return Date(self.year, self.month, last_day)
         elif unit == "quarter":
             # Calculate quarter end month
             quarter_start_month = ((self.month - 1) // 3) * 3 + 1
             quarter_end_month = quarter_start_month + 2
             last_day = self._last_day_of_month(self.year, quarter_end_month)
-            return Date.create(self.year, quarter_end_month, last_day)
+            return Date(self.year, quarter_end_month, last_day)
         elif unit == "year":
-            return Date.create(self.year, 12, 31)
+            return Date(self.year, 12, 31)
         else:
             raise ValueError(f"Unknown unit: {unit}")
 
@@ -396,6 +396,6 @@ class Date:
         """Return ISO date string (YYYY-MM-DD)."""
         return self._date.isoformat()
 
-    def to_date_time_string(self) -> str:
+    def to_datetime_string(self) -> str:
         """Return date with default time (YYYY-MM-DD 00:00:00)."""
         return f"{self._date.isoformat()} 00:00:00"

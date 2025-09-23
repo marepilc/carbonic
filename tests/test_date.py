@@ -11,7 +11,7 @@ from carbonic.core.exceptions import ParseError
 
 def test_date_create_basic():
     """Test basic Date creation."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     assert date.year == 2023
     assert date.month == 12
     assert date.day == 25
@@ -37,7 +37,7 @@ def test_date_today():
 
 def test_date_add_days():
     """Test adding days to a date."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     new_date = date.add(days=5)
     assert new_date.year == 2023
     assert new_date.month == 12
@@ -46,7 +46,7 @@ def test_date_add_days():
 
 def test_date_add_days_cross_month():
     """Test adding days that cross month boundary."""
-    date = Date.create(2023, 12, 28)
+    date = Date(2023, 12, 28)
     new_date = date.add(days=5)
     assert new_date.year == 2024
     assert new_date.month == 1
@@ -55,7 +55,7 @@ def test_date_add_days_cross_month():
 
 def test_date_add_months():
     """Test adding months to a date."""
-    date = Date.create(2023, 10, 15)
+    date = Date(2023, 10, 15)
     new_date = date.add(months=2)
     assert new_date.year == 2023
     assert new_date.month == 12
@@ -64,7 +64,7 @@ def test_date_add_months():
 
 def test_date_add_months_cross_year():
     """Test adding months that cross year boundary."""
-    date = Date.create(2023, 11, 15)
+    date = Date(2023, 11, 15)
     new_date = date.add(months=3)
     assert new_date.year == 2024
     assert new_date.month == 2
@@ -73,7 +73,7 @@ def test_date_add_months_cross_year():
 
 def test_date_add_years():
     """Test adding years to a date."""
-    date = Date.create(2020, 2, 29)  # leap year
+    date = Date(2020, 2, 29)  # leap year
     new_date = date.add(years=1)
     assert new_date.year == 2021
     assert new_date.month == 2
@@ -82,7 +82,7 @@ def test_date_add_years():
 
 def test_date_add_combined():
     """Test adding years, months, and days together."""
-    date = Date.create(2023, 1, 1)
+    date = Date(2023, 1, 1)
     new_date = date.add(years=1, months=2, days=10)
     assert new_date.year == 2024
     assert new_date.month == 3
@@ -91,7 +91,7 @@ def test_date_add_combined():
 
 def test_date_subtract_days():
     """Test subtracting days from a date."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     new_date = date.subtract(days=5)
     assert new_date.year == 2023
     assert new_date.month == 12
@@ -100,7 +100,7 @@ def test_date_subtract_days():
 
 def test_date_subtract_days_cross_month():
     """Test subtracting days that cross month boundary."""
-    date = Date.create(2024, 1, 3)
+    date = Date(2024, 1, 3)
     new_date = date.subtract(days=5)
     assert new_date.year == 2023
     assert new_date.month == 12
@@ -109,7 +109,7 @@ def test_date_subtract_days_cross_month():
 
 def test_date_subtract_months():
     """Test subtracting months from a date."""
-    date = Date.create(2023, 12, 15)
+    date = Date(2023, 12, 15)
     new_date = date.subtract(months=2)
     assert new_date.year == 2023
     assert new_date.month == 10
@@ -118,7 +118,7 @@ def test_date_subtract_months():
 
 def test_date_subtract_months_cross_year():
     """Test subtracting months that cross year boundary."""
-    date = Date.create(2024, 2, 15)
+    date = Date(2024, 2, 15)
     new_date = date.subtract(months=3)
     assert new_date.year == 2023
     assert new_date.month == 11
@@ -127,7 +127,7 @@ def test_date_subtract_months_cross_year():
 
 def test_date_subtract_years():
     """Test subtracting years from a date."""
-    date = Date.create(2021, 2, 28)
+    date = Date(2021, 2, 28)
     new_date = date.subtract(years=1)
     assert new_date.year == 2020
     assert new_date.month == 2
@@ -136,7 +136,7 @@ def test_date_subtract_years():
 
 def test_date_subtract_combined():
     """Test subtracting years, months, and days together."""
-    date = Date.create(2024, 3, 11)
+    date = Date(2024, 3, 11)
     new_date = date.subtract(years=1, months=2, days=10)
     assert new_date.year == 2023
     assert new_date.month == 1
@@ -277,9 +277,9 @@ def test_date_parse_invalid_format_string():
 
 def test_date_equality():
     """Test Date equality comparison."""
-    date1 = Date.create(2023, 12, 25)
-    date2 = Date.create(2023, 12, 25)
-    date3 = Date.create(2023, 12, 26)
+    date1 = Date(2023, 12, 25)
+    date2 = Date(2023, 12, 25)
+    date3 = Date(2023, 12, 26)
 
     # Same dates should be equal
     assert date1 == date2
@@ -296,7 +296,7 @@ def test_date_equality():
 
 def test_date_equality_with_other_types():
     """Test Date equality with other types."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Should not be equal to other types
     assert date != "2023-12-25"
@@ -311,10 +311,10 @@ def test_date_equality_with_other_types():
 
 def test_date_ordering():
     """Test Date ordering comparisons."""
-    date1 = Date.create(2023, 12, 24)  # Christmas Eve
-    date2 = Date.create(2023, 12, 25)  # Christmas
-    date3 = Date.create(2023, 12, 26)  # Boxing Day
-    date4 = Date.create(2023, 12, 25)  # Same as date2
+    date1 = Date(2023, 12, 24)  # Christmas Eve
+    date2 = Date(2023, 12, 25)  # Christmas
+    date3 = Date(2023, 12, 26)  # Boxing Day
+    date4 = Date(2023, 12, 25)  # Same as date2
 
     # Less than
     assert date1 < date2
@@ -343,8 +343,8 @@ def test_date_ordering():
 
 def test_date_ordering_cross_years():
     """Test Date ordering across different years."""
-    date_2022 = Date.create(2022, 12, 31)
-    date_2023 = Date.create(2023, 1, 1)
+    date_2022 = Date(2022, 12, 31)
+    date_2023 = Date(2023, 1, 1)
 
     assert date_2022 < date_2023
     assert date_2023 > date_2022
@@ -354,7 +354,7 @@ def test_date_ordering_cross_years():
 
 def test_date_ordering_with_other_types():
     """Test Date ordering with other types should raise TypeError."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Should raise TypeError for comparisons with incompatible types
     with pytest.raises(TypeError):
@@ -373,19 +373,19 @@ def test_date_ordering_with_other_types():
 def test_date_sorting():
     """Test that Date objects can be sorted."""
     dates = [
-        Date.create(2023, 12, 25),
-        Date.create(2023, 1, 1),
-        Date.create(2023, 6, 15),
-        Date.create(2022, 12, 31),
+        Date(2023, 12, 25),
+        Date(2023, 1, 1),
+        Date(2023, 6, 15),
+        Date(2022, 12, 31),
     ]
 
     sorted_dates = sorted(dates)
 
     expected = [
-        Date.create(2022, 12, 31),
-        Date.create(2023, 1, 1),
-        Date.create(2023, 6, 15),
-        Date.create(2023, 12, 25),
+        Date(2022, 12, 31),
+        Date(2023, 1, 1),
+        Date(2023, 6, 15),
+        Date(2023, 12, 25),
     ]
 
     assert sorted_dates == expected
@@ -393,9 +393,9 @@ def test_date_sorting():
 
 def test_date_hash():
     """Test Date hashing for use in sets and dicts."""
-    date1 = Date.create(2023, 12, 25)
-    date2 = Date.create(2023, 12, 25)  # Same date
-    date3 = Date.create(2023, 12, 26)  # Different date
+    date1 = Date(2023, 12, 25)
+    date2 = Date(2023, 12, 25)  # Same date
+    date3 = Date(2023, 12, 26)  # Different date
 
     # Equal dates should have equal hashes
     assert hash(date1) == hash(date2)
@@ -414,7 +414,7 @@ def test_date_hash():
 
 def test_date_repr():
     """Test Date string representation."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Should have a useful repr
     repr_str = repr(date)
@@ -429,7 +429,7 @@ def test_date_repr():
 
 def test_date_str():
     """Test Date string conversion."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Should have a clean string representation
     str_repr = str(date)
@@ -438,7 +438,7 @@ def test_date_str():
 
 def test_date_strftime():
     """Test Date strftime formatting."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Basic strftime formats
     assert date.strftime("%Y-%m-%d") == "2023-12-25"
@@ -465,22 +465,22 @@ def test_date_strftime():
 def test_date_strftime_edge_cases():
     """Test strftime with edge cases."""
     # Single digit month/day
-    date1 = Date.create(2023, 1, 5)
+    date1 = Date(2023, 1, 5)
     assert date1.strftime("%Y-%m-%d") == "2023-01-05"
     assert date1.strftime("%Y-%-m-%-d") == "2023-1-5"  # No leading zeros on Unix
 
     # Leap year
-    date2 = Date.create(2024, 2, 29)
+    date2 = Date(2024, 2, 29)
     assert date2.strftime("%Y-%m-%d") == "2024-02-29"
 
     # Different weekday
-    date3 = Date.create(2023, 12, 31)  # Sunday
+    date3 = Date(2023, 12, 31)  # Sunday
     assert date3.strftime("%A") == "Sunday"
 
 
 def test_date_carbon_format():
     """Test Carbon-style formatting."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Basic Carbon formats
     assert date.format("Y-m-d") == "2023-12-25"
@@ -509,12 +509,12 @@ def test_date_carbon_format():
 def test_date_carbon_format_edge_cases():
     """Test Carbon formatting with edge cases."""
     # Single digit month/day
-    date1 = Date.create(2023, 1, 5)
+    date1 = Date(2023, 1, 5)
     assert date1.format("Y-m-d") == "2023-01-05"
     assert date1.format("Y-n-j") == "2023-1-5"  # No leading zeros
 
     # Test different combinations
-    date2 = Date.create(2023, 6, 15)
+    date2 = Date(2023, 6, 15)
     assert date2.format("D, M j, Y") == "Thu, Jun 15, 2023"
     assert date2.format("l \\t\\h\\e jS \\o\\f F") == "Thursday the 15th of June"
 
@@ -522,28 +522,28 @@ def test_date_carbon_format_edge_cases():
 def test_date_carbon_format_ordinals():
     """Test Carbon formatting with ordinal suffixes."""
     # Test ordinal suffixes (1st, 2nd, 3rd, 4th, etc.)
-    date1 = Date.create(2023, 12, 1)
+    date1 = Date(2023, 12, 1)
     assert date1.format("jS") == "1st"
 
-    date2 = Date.create(2023, 12, 2)
+    date2 = Date(2023, 12, 2)
     assert date2.format("jS") == "2nd"
 
-    date3 = Date.create(2023, 12, 3)
+    date3 = Date(2023, 12, 3)
     assert date3.format("jS") == "3rd"
 
-    date4 = Date.create(2023, 12, 4)
+    date4 = Date(2023, 12, 4)
     assert date4.format("jS") == "4th"
 
-    date21 = Date.create(2023, 12, 21)
+    date21 = Date(2023, 12, 21)
     assert date21.format("jS") == "21st"
 
-    date22 = Date.create(2023, 12, 22)
+    date22 = Date(2023, 12, 22)
     assert date22.format("jS") == "22nd"
 
 
 def test_date_python_format():
     """Test Python's built-in format() method."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Default format (should be ISO)
     assert f"{date}" == "2023-12-25"
@@ -561,15 +561,15 @@ def test_date_python_format():
 
 def test_date_common_formats():
     """Test common date format methods."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     assert date.to_iso_string() == "2023-12-25"
-    assert date.to_date_time_string() == "2023-12-25 00:00:00"  # With default time
+    assert date.to_datetime_string() == "2023-12-25 00:00:00"  # With default time
 
 
 def test_date_start_of_day():
     """Test start_of('day') - should return same date."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     result = date.start_of("day")
 
     assert result == date
@@ -581,7 +581,7 @@ def test_date_start_of_day():
 def test_date_start_of_month():
     """Test start_of('month')."""
     # Mid-month date
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     result = date.start_of("month")
 
     assert result.year == 2023
@@ -589,7 +589,7 @@ def test_date_start_of_month():
     assert result.day == 1
 
     # Already at start of month
-    date_start = Date.create(2023, 12, 1)
+    date_start = Date(2023, 12, 1)
     result_start = date_start.start_of("month")
     assert result_start == date_start
 
@@ -597,7 +597,7 @@ def test_date_start_of_month():
 def test_date_start_of_year():
     """Test start_of('year')."""
     # Mid-year date
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     result = date.start_of("year")
 
     assert result.year == 2023
@@ -605,7 +605,7 @@ def test_date_start_of_year():
     assert result.day == 1
 
     # Already at start of year
-    date_start = Date.create(2023, 1, 1)
+    date_start = Date(2023, 1, 1)
     result_start = date_start.start_of("year")
     assert result_start == date_start
 
@@ -613,12 +613,12 @@ def test_date_start_of_year():
 def test_date_start_of_week():
     """Test start_of('week') - Monday=0."""
     # Monday (already start of week)
-    monday = Date.create(2023, 12, 25)  # This is a Monday
+    monday = Date(2023, 12, 25)  # This is a Monday
     result = monday.start_of("week")
     assert result == monday
 
     # Wednesday (mid-week)
-    wednesday = Date.create(2023, 12, 27)  # Wednesday
+    wednesday = Date(2023, 12, 27)  # Wednesday
     result = wednesday.start_of("week")
 
     # Should go back to Monday (2023-12-25)
@@ -628,7 +628,7 @@ def test_date_start_of_week():
     assert result.weekday == 0  # Monday
 
     # Sunday (end of week)
-    sunday = Date.create(2023, 12, 31)  # Sunday
+    sunday = Date(2023, 12, 31)  # Sunday
     result = sunday.start_of("week")
 
     # Should go back to Monday (2023-12-25)
@@ -639,7 +639,7 @@ def test_date_start_of_week():
 
 def test_date_end_of_day():
     """Test end_of('day') - should return same date."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     result = date.end_of("day")
 
     assert result == date
@@ -651,7 +651,7 @@ def test_date_end_of_day():
 def test_date_end_of_month():
     """Test end_of('month')."""
     # Mid-month date
-    date = Date.create(2023, 12, 15)
+    date = Date(2023, 12, 15)
     result = date.end_of("month")
 
     assert result.year == 2023
@@ -659,7 +659,7 @@ def test_date_end_of_month():
     assert result.day == 31  # December has 31 days
 
     # February in non-leap year
-    date_feb = Date.create(2023, 2, 15)
+    date_feb = Date(2023, 2, 15)
     result_feb = date_feb.end_of("month")
 
     assert result_feb.year == 2023
@@ -667,7 +667,7 @@ def test_date_end_of_month():
     assert result_feb.day == 28  # February 2023 has 28 days
 
     # February in leap year
-    date_leap = Date.create(2024, 2, 15)
+    date_leap = Date(2024, 2, 15)
     result_leap = date_leap.end_of("month")
 
     assert result_leap.year == 2024
@@ -675,7 +675,7 @@ def test_date_end_of_month():
     assert result_leap.day == 29  # February 2024 has 29 days
 
     # Already at end of month
-    date_end = Date.create(2023, 12, 31)
+    date_end = Date(2023, 12, 31)
     result_end = date_end.end_of("month")
     assert result_end == date_end
 
@@ -683,7 +683,7 @@ def test_date_end_of_month():
 def test_date_end_of_year():
     """Test end_of('year')."""
     # Mid-year date
-    date = Date.create(2023, 6, 15)
+    date = Date(2023, 6, 15)
     result = date.end_of("year")
 
     assert result.year == 2023
@@ -691,7 +691,7 @@ def test_date_end_of_year():
     assert result.day == 31
 
     # Already at end of year
-    date_end = Date.create(2023, 12, 31)
+    date_end = Date(2023, 12, 31)
     result_end = date_end.end_of("year")
     assert result_end == date_end
 
@@ -699,7 +699,7 @@ def test_date_end_of_year():
 def test_date_end_of_week():
     """Test end_of('week') - Sunday=6."""
     # Monday (start of week)
-    monday = Date.create(2023, 12, 25)  # This is a Monday
+    monday = Date(2023, 12, 25)  # This is a Monday
     result = monday.end_of("week")
 
     # Should go to Sunday (2023-12-31)
@@ -709,7 +709,7 @@ def test_date_end_of_week():
     assert result.weekday == 6  # Sunday
 
     # Wednesday (mid-week)
-    wednesday = Date.create(2023, 12, 27)  # Wednesday
+    wednesday = Date(2023, 12, 27)  # Wednesday
     result = wednesday.end_of("week")
 
     # Should go to Sunday (2023-12-31)
@@ -718,7 +718,7 @@ def test_date_end_of_week():
     assert result.day == 31
 
     # Sunday (already end of week)
-    sunday = Date.create(2023, 12, 31)  # Sunday
+    sunday = Date(2023, 12, 31)  # Sunday
     result = sunday.end_of("week")
     assert result == sunday
 
@@ -726,28 +726,28 @@ def test_date_end_of_week():
 def test_date_start_of_quarter():
     """Test start_of('quarter')."""
     # Q1 (Jan-Mar)
-    date_q1 = Date.create(2023, 2, 15)
+    date_q1 = Date(2023, 2, 15)
     result_q1 = date_q1.start_of("quarter")
     assert result_q1.year == 2023
     assert result_q1.month == 1
     assert result_q1.day == 1
 
     # Q2 (Apr-Jun)
-    date_q2 = Date.create(2023, 5, 15)
+    date_q2 = Date(2023, 5, 15)
     result_q2 = date_q2.start_of("quarter")
     assert result_q2.year == 2023
     assert result_q2.month == 4
     assert result_q2.day == 1
 
     # Q3 (Jul-Sep)
-    date_q3 = Date.create(2023, 8, 15)
+    date_q3 = Date(2023, 8, 15)
     result_q3 = date_q3.start_of("quarter")
     assert result_q3.year == 2023
     assert result_q3.month == 7
     assert result_q3.day == 1
 
     # Q4 (Oct-Dec)
-    date_q4 = Date.create(2023, 11, 15)
+    date_q4 = Date(2023, 11, 15)
     result_q4 = date_q4.start_of("quarter")
     assert result_q4.year == 2023
     assert result_q4.month == 10
@@ -757,28 +757,28 @@ def test_date_start_of_quarter():
 def test_date_end_of_quarter():
     """Test end_of('quarter')."""
     # Q1 (Jan-Mar)
-    date_q1 = Date.create(2023, 2, 15)
+    date_q1 = Date(2023, 2, 15)
     result_q1 = date_q1.end_of("quarter")
     assert result_q1.year == 2023
     assert result_q1.month == 3
     assert result_q1.day == 31
 
     # Q2 (Apr-Jun)
-    date_q2 = Date.create(2023, 5, 15)
+    date_q2 = Date(2023, 5, 15)
     result_q2 = date_q2.end_of("quarter")
     assert result_q2.year == 2023
     assert result_q2.month == 6
     assert result_q2.day == 30
 
     # Q3 (Jul-Sep)
-    date_q3 = Date.create(2023, 8, 15)
+    date_q3 = Date(2023, 8, 15)
     result_q3 = date_q3.end_of("quarter")
     assert result_q3.year == 2023
     assert result_q3.month == 9
     assert result_q3.day == 30
 
     # Q4 (Oct-Dec)
-    date_q4 = Date.create(2023, 11, 15)
+    date_q4 = Date(2023, 11, 15)
     result_q4 = date_q4.end_of("quarter")
     assert result_q4.year == 2023
     assert result_q4.month == 12
@@ -788,7 +788,7 @@ def test_date_end_of_quarter():
 def test_date_anchoring_edge_cases():
     """Test anchoring edge cases."""
     # Week crossing month boundary
-    date = Date.create(2023, 1, 1)  # Sunday, Jan 1st
+    date = Date(2023, 1, 1)  # Sunday, Jan 1st
     start_week = date.start_of("week")
 
     # Should go back to previous Monday (Dec 26, 2022)
@@ -801,7 +801,7 @@ def test_date_anchoring_edge_cases():
     assert end_week == date
 
     # Week crossing year boundary
-    date_nye = Date.create(2023, 12, 31)  # Sunday, New Year's Eve
+    date_nye = Date(2023, 12, 31)  # Sunday, New Year's Eve
     start_week_nye = date_nye.start_of("week")
 
     # Should go back to Monday (Dec 25, 2023)
@@ -810,14 +810,14 @@ def test_date_anchoring_edge_cases():
     assert start_week_nye.day == 25
 
     # Leap year February
-    leap_date = Date.create(2024, 2, 15)
+    leap_date = Date(2024, 2, 15)
     end_month = leap_date.end_of("month")
     assert end_month.day == 29  # 2024 is a leap year
 
 
 def test_date_anchoring_invalid_unit():
     """Test anchoring with invalid units raises ValueError."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     with pytest.raises(ValueError):
         date.start_of("hour")  # type: ignore
@@ -828,7 +828,7 @@ def test_date_anchoring_invalid_unit():
 
 def test_date_to_date():
     """Test converting Date to datetime.date."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     dt_date = date.to_date()
 
     # Should return a datetime.date object
@@ -841,7 +841,7 @@ def test_date_to_date():
     assert dt_date == date._date
 
     # Should work for edge cases
-    leap_date = Date.create(2024, 2, 29)
+    leap_date = Date(2024, 2, 29)
     leap_dt_date = leap_date.to_date()
     assert leap_dt_date.year == 2024
     assert leap_dt_date.month == 2
@@ -850,7 +850,7 @@ def test_date_to_date():
 
 def test_date_to_date_immutability():
     """Test that to_date() returns a copy, not the original."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     dt_date1 = date.to_date()
     dt_date2 = date.to_date()
 
@@ -867,7 +867,7 @@ def test_date_to_date_immutability():
 
 def test_date_to_datetime_default_utc():
     """Test converting Date to datetime.datetime with default UTC."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     dt = date.to_datetime()
 
     # Should return a datetime.datetime object
@@ -888,7 +888,7 @@ def test_date_to_datetime_default_utc():
 
 def test_date_to_datetime_explicit_utc():
     """Test converting Date to datetime.datetime with explicit UTC."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     dt = date.to_datetime(tz="UTC")
 
     assert dt.year == 2023
@@ -899,7 +899,7 @@ def test_date_to_datetime_explicit_utc():
 
 def test_date_to_datetime_custom_timezone():
     """Test converting Date to datetime.datetime with custom timezones."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Test various timezones
     dt_ny = date.to_datetime(tz="America/New_York")
@@ -923,7 +923,7 @@ def test_date_to_datetime_custom_timezone():
 
 def test_date_to_datetime_naive():
     """Test converting Date to naive datetime.datetime."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
     dt = date.to_datetime(tz=None)
 
     assert dt.year == 2023
@@ -940,7 +940,7 @@ def test_date_to_datetime_naive():
 
 def test_date_to_datetime_custom_time():
     """Test converting Date to datetime.datetime with custom time components."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Test with specific hour/minute/second (if we add this feature)
     dt = date.to_datetime(tz="UTC")
@@ -953,7 +953,7 @@ def test_date_to_datetime_custom_time():
 
 def test_date_to_datetime_invalid_timezone():
     """Test converting Date to datetime.datetime with invalid timezone."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Invalid timezone should raise an exception
     with pytest.raises(Exception):  # ZoneInfoNotFoundError or similar
@@ -967,19 +967,19 @@ def test_date_to_datetime_invalid_timezone():
 def test_date_interop_edge_cases():
     """Test interop methods with edge cases."""
     # Leap year
-    leap_date = Date.create(2024, 2, 29)
+    leap_date = Date(2024, 2, 29)
     dt_leap = leap_date.to_datetime()
     assert dt_leap.month == 2
     assert dt_leap.day == 29
 
     # Year boundaries
-    new_year = Date.create(2023, 1, 1)
+    new_year = Date(2023, 1, 1)
     dt_new_year = new_year.to_datetime(tz="America/New_York")
     assert dt_new_year.year == 2023
     assert dt_new_year.month == 1
     assert dt_new_year.day == 1
 
-    nye = Date.create(2023, 12, 31)
+    nye = Date(2023, 12, 31)
     dt_nye = nye.to_datetime(tz="Asia/Tokyo")
     assert dt_nye.year == 2023
     assert dt_nye.month == 12
@@ -988,7 +988,7 @@ def test_date_interop_edge_cases():
 
 def test_date_interop_roundtrip():
     """Test roundtrip conversions."""
-    original_date = Date.create(2023, 12, 25)
+    original_date = Date(2023, 12, 25)
 
     # Date -> datetime.date -> Date
     dt_date = original_date.to_date()
@@ -997,13 +997,13 @@ def test_date_interop_roundtrip():
 
     # Date -> datetime.datetime -> back to date part
     dt_datetime = original_date.to_datetime()
-    back_to_date = Date.create(dt_datetime.year, dt_datetime.month, dt_datetime.day)
+    back_to_date = Date(dt_datetime.year, dt_datetime.month, dt_datetime.day)
     assert back_to_date == original_date
 
 
 def test_date_interop_timezone_awareness():
     """Test that timezone doesn't affect the date part."""
-    date = Date.create(2023, 12, 25)
+    date = Date(2023, 12, 25)
 
     # Same date in different timezones should have same date part
     dt_utc = date.to_datetime(tz="UTC")
