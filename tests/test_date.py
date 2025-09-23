@@ -1012,3 +1012,184 @@ def test_date_interop_timezone_awareness():
     # Note: These are datetime.datetime objects, so we can call .date()
     assert dt_utc.date() == dt_ny.date() == dt_tokyo.date()
     assert dt_utc.date() == date.to_date()
+
+
+# Duration integration tests
+def test_date_diff_basic():
+    """Test basic date difference calculation."""
+    from carbonic.core.duration import Duration
+
+    date1 = Date(2023, 12, 25)
+    date2 = Date(2023, 12, 30)
+
+    diff = date2.diff(date1)
+    assert isinstance(diff, Duration)
+    assert diff.days == 5
+    assert diff.seconds == 0
+    assert diff.microseconds == 0
+
+
+def test_date_diff_negative():
+    """Test date difference with negative result."""
+    from carbonic.core.duration import Duration
+
+    date1 = Date(2023, 12, 30)
+    date2 = Date(2023, 12, 25)
+
+    diff = date2.diff(date1)
+    assert isinstance(diff, Duration)
+    assert diff.days == -5
+
+
+def test_date_diff_absolute():
+    """Test date difference with absolute flag."""
+    from carbonic.core.duration import Duration
+
+    date1 = Date(2023, 12, 30)
+    date2 = Date(2023, 12, 25)
+
+    diff = date2.diff(date1, absolute=True)
+    assert isinstance(diff, Duration)
+    assert diff.days == 5
+
+
+def test_date_diff_same_date():
+    """Test difference between same dates."""
+    from carbonic.core.duration import Duration
+
+    date = Date(2023, 12, 25)
+    diff = date.diff(date)
+
+    assert isinstance(diff, Duration)
+    assert diff.days == 0
+    assert diff.seconds == 0
+
+
+def test_date_diff_cross_year():
+    """Test date difference crossing year boundary."""
+    from carbonic.core.duration import Duration
+
+    date1 = Date(2023, 12, 25)
+    date2 = Date(2024, 1, 5)
+
+    diff = date2.diff(date1)
+    assert isinstance(diff, Duration)
+    assert diff.days == 11  # 6 days in Dec + 5 days in Jan
+
+
+def test_date_diff_type_error():
+    """Test date diff with invalid type."""
+    date = Date(2023, 12, 25)
+
+    with pytest.raises(TypeError, match="Can only diff with another Date"):
+        date.diff("not a date")
+
+
+def test_date_add_duration_basic():
+    """Test adding Duration to Date."""
+    from carbonic.core.duration import Duration
+
+    date = Date(2023, 12, 25)
+    duration = Duration(days=5)
+
+    result = date + duration
+    assert isinstance(result, Date)
+    assert result.year == 2023
+    assert result.month == 12
+    assert result.day == 30
+
+
+def test_date_add_duration_with_time_components():
+    """Test that adding Duration with time components only affects days."""
+    from carbonic.core.duration import Duration
+
+    date = Date(2023, 12, 25)
+    # Duration with hours should convert to days (24h = 1 day)
+    duration = Duration(days=2, hours=24, minutes=30)
+
+    result = date + duration
+    assert isinstance(result, Date)
+    assert result.year == 2023
+    assert result.month == 12
+    assert result.day == 28  # 2 days + 1 day from 24 hours = 3 days total
+
+
+def test_date_add_duration_with_calendar_components():
+    """Test adding Duration with calendar components (months/years)."""
+    from carbonic.core.duration import Duration
+
+    date = Date(2023, 12, 25)
+    duration = Duration(years=1, months=2, days=5)
+
+    result = date + duration
+    assert isinstance(result, Date)
+    assert result.year == 2025  # 2023 + 1 year + 2 months = 2025
+    assert result.month == 2
+    assert result.day == 28  # 25 + 5 days = 30, but Feb has only 28 days in 2025 (not leap year)
+
+
+def test_date_subtract_duration():
+    """Test subtracting Duration from Date."""
+    from carbonic.core.duration import Duration
+
+    date = Date(2023, 12, 25)
+    duration = Duration(days=5)
+
+    result = date - duration
+    assert isinstance(result, Date)
+    assert result.year == 2023
+    assert result.month == 12
+    assert result.day == 20
+
+
+def test_date_subtract_duration_cross_month():
+    """Test subtracting Duration that crosses month boundary."""
+    from carbonic.core.duration import Duration
+
+    date = Date(2024, 1, 5)
+    duration = Duration(days=10)
+
+    result = date - duration
+    assert isinstance(result, Date)
+    assert result.year == 2023
+    assert result.month == 12
+    assert result.day == 26  # Jan 5 - 10 days = Dec 26
+
+
+def test_date_add_duration_method():
+    """Test explicit add_duration method."""
+    from carbonic.core.duration import Duration
+
+    date = Date(2023, 12, 25)
+    duration = Duration(days=3, hours=12)
+
+    result = date.add_duration(duration)
+    assert isinstance(result, Date)
+    assert result.year == 2023
+    assert result.month == 12
+    assert result.day == 28  # 3 days + 0.5 days from 12 hours
+
+
+def test_date_subtract_duration_method():
+    """Test explicit subtract_duration method."""
+    from carbonic.core.duration import Duration
+
+    date = Date(2023, 12, 25)
+    duration = Duration(days=3)
+
+    result = date.subtract_duration(duration)
+    assert isinstance(result, Date)
+    assert result.year == 2023
+    assert result.month == 12
+    assert result.day == 22
+
+
+def test_date_duration_arithmetic_type_error():
+    """Test Duration arithmetic with invalid types."""
+    date = Date(2023, 12, 25)
+
+    with pytest.raises(TypeError):
+        date + "not a duration"
+
+    with pytest.raises(TypeError):
+        date - 123

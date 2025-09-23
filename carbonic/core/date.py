@@ -266,7 +266,83 @@ class Date:
         last_day = next_month - datetime.timedelta(days=1)
         return last_day.day
 
-    def diff(self, other: Date, *, absolute=False) -> Duration: ...
+    def diff(self, other: Date, *, absolute=False) -> Duration:
+        """Calculate difference between this date and another date.
+
+        Args:
+            other: The other date to compare with
+            absolute: If True, return absolute difference (always positive)
+
+        Returns:
+            Duration representing the difference
+        """
+        from carbonic.core.duration import Duration
+
+        if not isinstance(other, Date):
+            raise TypeError("Can only diff with another Date")
+
+        # Calculate difference in days
+        delta = self._date - other._date
+        days_diff = delta.days
+
+        if absolute:
+            days_diff = abs(days_diff)
+
+        return Duration(days=days_diff)
+
+    def add_duration(self, duration: Duration) -> Date:
+        """Add a Duration to this Date.
+
+        Args:
+            duration: The Duration to add
+
+        Returns:
+            New Date with the duration added
+        """
+        from carbonic.core.duration import Duration
+
+        if not isinstance(duration, Duration):
+            raise TypeError("Can only add Duration objects")
+
+        # Calculate total days from time components (seconds become fractional days)
+        time_days = (duration.seconds + duration.microseconds / 1_000_000) / 86400
+
+        # Add all components
+        total_days = duration.days + int(time_days)
+        return self.add(
+            years=duration.years,
+            months=duration.months,
+            days=total_days,
+        )
+
+    def subtract_duration(self, duration: Duration) -> Date:
+        """Subtract a Duration from this Date.
+
+        Args:
+            duration: The Duration to subtract
+
+        Returns:
+            New Date with the duration subtracted
+        """
+        from carbonic.core.duration import Duration
+
+        if not isinstance(duration, Duration):
+            raise TypeError("Can only subtract Duration objects")
+
+        # Use negation and add
+        return self.add_duration(-duration)
+
+    def __add__(self, other: Duration) -> Date:
+        """Add a Duration to this Date using + operator."""
+        if hasattr(other, 'days'):  # Duck typing for Duration-like objects
+            return self.add_duration(other)
+        return NotImplemented
+
+    def __sub__(self, other: Duration) -> Date:
+        """Subtract a Duration from this Date using - operator."""
+        if hasattr(other, 'days'):  # Duck typing for Duration-like objects
+            return self.subtract_duration(other)
+        return NotImplemented
 
     # Anchors
     def start_of(

@@ -512,7 +512,111 @@ class DateTime:
         last_day = next_month - datetime.timedelta(days=1)
         return last_day.day
 
-    def diff(self, other: DateTime, *, absolute=False) -> Duration: ...
+    def diff(self, other: DateTime, *, absolute=False) -> Duration:
+        """Calculate difference between this datetime and another datetime.
+
+        Args:
+            other: The other datetime to compare with
+            absolute: If True, return absolute difference (always positive)
+
+        Returns:
+            Duration representing the difference
+        """
+        from carbonic.core.duration import Duration
+
+        if not isinstance(other, DateTime):
+            raise TypeError("Can only diff with another DateTime")
+
+        # Convert both to datetime objects for calculation
+        dt1 = self.to_datetime()
+        dt2 = other.to_datetime()
+
+        # Calculate difference using standard datetime
+        delta = dt1 - dt2
+
+        if absolute:
+            delta = abs(delta)
+
+        # Extract components from timedelta
+        days = delta.days
+        seconds = delta.seconds
+        microseconds = delta.microseconds
+
+        return Duration(days=days, seconds=seconds, microseconds=microseconds)
+
+    def add_duration(self, duration: Duration) -> DateTime:
+        """Add a Duration to this DateTime.
+
+        Args:
+            duration: The Duration to add
+
+        Returns:
+            New DateTime with the duration added
+        """
+        from carbonic.core.duration import Duration
+
+        if not isinstance(duration, Duration):
+            raise TypeError("Can only add Duration objects")
+
+        # Convert this datetime to stdlib datetime for calculation
+        dt = self.to_datetime()
+
+        # Create a timedelta from the Duration's time components
+        delta = datetime.timedelta(
+            days=duration.days,
+            seconds=duration.seconds,
+            microseconds=duration.microseconds
+        )
+
+        # Add the timedelta
+        result_dt = dt + delta
+
+        # Handle calendar components (months/years) if present
+        if duration.months or duration.years:
+            # Extract date part for calendar arithmetic
+            result_date = result_dt.date()
+
+            # Calculate new year and month
+            total_months = result_date.month + duration.months + (duration.years * 12)
+            new_year = result_date.year + (total_months - 1) // 12
+            new_month = ((total_months - 1) % 12) + 1
+
+            # Handle day overflow (e.g., Jan 31 + 1 month -> Feb 28/29)
+            new_day = min(result_date.day, self._last_day_of_month(new_year, new_month))
+
+            # Create new datetime with adjusted date but same time
+            result_dt = result_dt.replace(year=new_year, month=new_month, day=new_day)
+
+        return DateTime.from_datetime(result_dt)
+
+    def subtract_duration(self, duration: Duration) -> DateTime:
+        """Subtract a Duration from this DateTime.
+
+        Args:
+            duration: The Duration to subtract
+
+        Returns:
+            New DateTime with the duration subtracted
+        """
+        from carbonic.core.duration import Duration
+
+        if not isinstance(duration, Duration):
+            raise TypeError("Can only subtract Duration objects")
+
+        # Use negation and add
+        return self.add_duration(-duration)
+
+    def __add__(self, other: Duration) -> DateTime:
+        """Add a Duration to this DateTime using + operator."""
+        if hasattr(other, 'days'):  # Duck typing for Duration-like objects
+            return self.add_duration(other)
+        return NotImplemented
+
+    def __sub__(self, other: Duration) -> DateTime:
+        """Subtract a Duration from this DateTime using - operator."""
+        if hasattr(other, 'days'):  # Duck typing for Duration-like objects
+            return self.subtract_duration(other)
+        return NotImplemented
 
     # Anchors
     def start_of(
