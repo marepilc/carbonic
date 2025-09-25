@@ -1,19 +1,32 @@
-Completed
+✅ Completed
 
   - Core Classes: Date, DateTime, Duration (fully implemented with TDD)
   - Duration Integration: Complete diff() and arithmetic operations
+  - Enhanced Duration API:
+    - Renamed storage property: `seconds` → `storage_seconds` for clarity
+    - Converted `in_*` properties to methods with `whole: bool` parameter
+    - Precise type overloads for `int | float` returns based on `whole` parameter
+  - Enhanced Subtraction Operators:
+    - Date - Date → Duration (automatic type inference)
+    - DateTime - DateTime → Duration (with timezone awareness)
+    - Maintains backward compatibility with Duration subtraction
+  - Period Class: Named period constants with semantic operations
+    - Constants: MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR
+    - Methods: add_to(), subtract_from(), start_of(), end_of()
+    - Smart validation: Prevents invalid operations (minutes on Date)
+    - Clean type safety with ClassVar declarations (35 comprehensive tests)
   - Parsing & Formatting: ISO strict/relaxed, Carbon-style tokens, auto-detection
   - Timezone Handling: Full ZoneInfo support with proper UTC defaults
   - Comparison & Arithmetic: Comprehensive operators for all core classes
   - Anchor Methods: start_of/end_of for various time periods
+  - Type Safety: Precise overloads for better IDE support and type checking
 
   🔄 Remaining Major Features
 
-  1. Period/Interval Classes
+  1. Interval Class
 
-  - Period Class: Named periods (Day, Week, Month, Quarter, Year) for semantic operations
   - Interval Class: Time intervals with start/end points and operations like overlap, contains, union
-  - These would enable operations like Period.MONTH.add_to(date) or interval1.overlaps(interval2)
+  - These would enable operations like interval1.overlaps(interval2), interval.contains(date)
 
   2. Enhanced Duration Features
 
@@ -50,17 +63,20 @@ Completed
 
   Based on the Carbon PHP inspiration and typical datetime library usage, I'd suggest this order:
 
-  1. Period Class - High-impact semantic operations that users expect
+  1. Interval Class - Time range operations (overlaps, contains, union, intersection)
   2. Duration.parse() - Complete the Duration API with ISO 8601 support
   3. Basic Localization - Polish/English humanization for Duration
-  4. Interval Class - Advanced time range operations
-  5. Data Library Integrations - Expand ecosystem compatibility
+  4. Data Library Integrations - Expand ecosystem compatibility
 
-  The Period Class would be particularly valuable as it provides intuitive operations like:
+  The Interval Class would provide valuable operations like:
 
-  # Instead of manual date arithmetic
-  next_month = date.add(months=1)
+  ```python
+  # Time range operations
+  meeting = Interval(start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 10, 30))
+  lunch = Interval(start=DateTime(2024, 1, 15, 12, 0), end=DateTime(2024, 1, 15, 13, 0))
 
-  # Semantic operations
-  next_month = Period.MONTH.add_to(date)
-  quarter_start = Period.QUARTER.start_of(date)
+  meeting.overlaps(lunch)           # False
+  meeting.contains(DateTime(2024, 1, 15, 9, 30))  # True
+  meeting.union(lunch)              # Combined interval or list
+  meeting.duration()                # Duration of the interval
+  ```

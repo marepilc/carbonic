@@ -8,6 +8,7 @@ from carbonic.core.datetime import DateTime
 from carbonic.core.date import Date
 from carbonic.core.duration import Duration
 from carbonic.core.period import Period
+from carbonic.core.interval import Interval
 
 __version__ = "0.1.0"
 
@@ -16,6 +17,7 @@ __all__ = [
     "Date",
     "Duration",
     "Period",
+    "Interval",
     "now",
     "today",
 ]
