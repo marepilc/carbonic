@@ -7,7 +7,7 @@ class TestDurationConstructor:
         duration = Duration(days=5, hours=2, minutes=30, seconds=45)
 
         assert duration.days == 5
-        assert duration.seconds == 2 * 3600 + 30 * 60 + 45  # 9045 seconds
+        assert duration.storage_seconds == 2 * 3600 + 30 * 60 + 45  # 9045 seconds
         assert duration.microseconds == 0
         assert duration.months == 0
         assert duration.years == 0
@@ -17,7 +17,7 @@ class TestDurationConstructor:
         duration = Duration(weeks=2, days=3)
 
         assert duration.days == 17  # 2*7 + 3
-        assert duration.seconds == 0
+        assert duration.storage_seconds == 0
         assert duration.months == 0
         assert duration.years == 0
 
@@ -26,7 +26,7 @@ class TestDurationConstructor:
         duration = Duration(seconds=1, microseconds=500000)
 
         assert duration.days == 0
-        assert duration.seconds == 1
+        assert duration.storage_seconds == 1
         assert duration.microseconds == 500000
 
     def test_calendar_components(self):
@@ -36,7 +36,7 @@ class TestDurationConstructor:
         assert duration.years == 2
         assert duration.months == 6
         assert duration.days == 15
-        assert duration.seconds == 0
+        assert duration.storage_seconds == 0
         assert duration.microseconds == 0
 
     def test_all_components(self):
@@ -55,7 +55,7 @@ class TestDurationConstructor:
         assert duration.years == 1
         assert duration.months == 2
         assert duration.days == 25  # 3*7 + 4
-        assert duration.seconds == 5 * 3600 + 6 * 60 + 7  # 18367
+        assert duration.storage_seconds == 5 * 3600 + 6 * 60 + 7  # 18367
         assert duration.microseconds == 123456
 
 
@@ -88,83 +88,83 @@ class TestDurationConversionProperties:
         duration = Duration(hours=1, minutes=30, seconds=45)
 
         expected = 1 * 3600 + 30 * 60 + 45  # 5445
-        assert duration.in_seconds == expected
-        assert duration.in_seconds == duration.total_seconds()
+        assert duration.in_seconds() == expected
+        assert duration.in_seconds() == duration.total_seconds()
 
     def test_in_minutes(self):
-        """Test in_minutes property."""
+        """Test in_minutes method."""
         duration = Duration(hours=2, minutes=30)
 
         expected = (2 * 60) + 30  # 150 minutes
-        assert duration.in_minutes == expected
+        assert duration.in_minutes() == expected
 
     def test_in_hours(self):
-        """Test in_hours property."""
+        """Test in_hours method."""
         duration = Duration(days=1, hours=6, minutes=30)
 
         expected = 24 + 6 + 0.5  # 30.5 hours
-        assert duration.in_hours == expected
+        assert duration.in_hours() == expected
 
     def test_in_days(self):
-        """Test in_days property."""
+        """Test in_days method."""
         duration = Duration(days=2, hours=12)
 
         expected = 2 + 0.5  # 2.5 days
-        assert duration.in_days == expected
+        assert duration.in_days() == expected
 
     def test_in_weeks(self):
-        """Test in_weeks property."""
+        """Test in_weeks method."""
         duration = Duration(weeks=1, days=3, hours=12)
 
         # 1 week + 3.5 days = 10.5 days = 1.5 weeks
         expected = 10.5 / 7
-        assert duration.in_weeks == expected
+        assert duration.in_weeks() == expected
 
     def test_in_milliseconds(self):
-        """Test in_milliseconds property."""
+        """Test in_milliseconds method."""
         duration = Duration(seconds=2, microseconds=500000)
 
         expected = 2.5 * 1000  # 2500 milliseconds
-        assert duration.in_milliseconds == expected
+        assert duration.in_milliseconds() == expected
 
     def test_in_microseconds(self):
-        """Test in_microseconds property."""
+        """Test in_microseconds method."""
         duration = Duration(seconds=1, microseconds=500000)
 
         expected = 1.5 * 1_000_000  # 1,500,000 microseconds
-        assert duration.in_microseconds == expected
+        assert duration.in_microseconds() == expected
 
     def test_fractional_conversions(self):
         """Test conversion properties with fractional results."""
         duration = Duration(seconds=90)  # 1.5 minutes
 
-        assert duration.in_seconds == 90
-        assert duration.in_minutes == 1.5
-        assert duration.in_hours == 0.025  # 90/3600
-        assert duration.in_days == 90 / 86400
-        assert duration.in_weeks == (90 / 86400) / 7
+        assert duration.in_seconds() == 90
+        assert duration.in_minutes() == 1.5
+        assert duration.in_hours() == 0.025  # 90/3600
+        assert duration.in_days() == 90 / 86400
+        assert duration.in_weeks() == (90 / 86400) / 7
 
     def test_zero_duration_conversions(self):
         """Test conversion properties for zero duration."""
         duration = Duration()
 
-        assert duration.in_seconds == 0
-        assert duration.in_minutes == 0
-        assert duration.in_hours == 0
-        assert duration.in_days == 0
-        assert duration.in_weeks == 0
-        assert duration.in_milliseconds == 0
-        assert duration.in_microseconds == 0
+        assert duration.in_seconds() == 0
+        assert duration.in_minutes() == 0
+        assert duration.in_hours() == 0
+        assert duration.in_days() == 0
+        assert duration.in_weeks() == 0
+        assert duration.in_milliseconds() == 0
+        assert duration.in_microseconds() == 0
 
     def test_negative_duration_conversions(self):
         """Test conversion properties for negative durations."""
         duration = Duration(hours=-2, minutes=-30)
 
         expected_seconds = -(2 * 3600 + 30 * 60)  # -9000
-        assert duration.in_seconds == expected_seconds
-        assert duration.in_minutes == expected_seconds / 60
-        assert duration.in_hours == expected_seconds / 3600
-        assert duration.in_days == expected_seconds / 86400
+        assert duration.in_seconds() == expected_seconds
+        assert duration.in_minutes() == expected_seconds / 60
+        assert duration.in_hours() == expected_seconds / 3600
+        assert duration.in_days() == expected_seconds / 86400
 
     def test_calendar_components_excluded_from_conversions(self):
         """Test that calendar components (months/years) don't affect time conversions."""
@@ -172,18 +172,53 @@ class TestDurationConversionProperties:
 
         # Should only count the 24 hours, not the years/months
         expected_seconds = 24 * 3600  # 86400
-        assert duration.in_seconds == expected_seconds
-        assert duration.in_hours == 24
-        assert duration.in_days == 1
+        assert duration.in_seconds() == expected_seconds
+        assert duration.in_hours() == 24
+        assert duration.in_days() == 1
 
     def test_large_duration_conversions(self):
         """Test conversion properties with large durations."""
         duration = Duration(days=365, hours=12)  # 1 year + 12 hours
 
         total_hours = 365 * 24 + 12  # 8772 hours
-        assert duration.in_hours == total_hours
-        assert duration.in_days == 365.5
-        assert duration.in_weeks == 365.5 / 7
+        assert duration.in_hours() == total_hours
+        assert duration.in_days() == 365.5
+        assert duration.in_weeks() == 365.5 / 7
+
+    def test_whole_parameter_behavior(self):
+        """Test the whole parameter for in_* methods."""
+        duration = Duration(hours=2, minutes=30, seconds=45, microseconds=500000)
+
+        # Test in_seconds with whole=False (default) and whole=True
+        assert duration.in_seconds() == 9045.5  # 2.5 hours + 30 minutes + 45.5 seconds
+        assert duration.in_seconds(whole=True) == 9045
+
+        # Test in_minutes with whole parameter
+        expected_minutes = 150.75833333333333  # Approximately 150 minutes and 45.5 seconds
+        assert abs(duration.in_minutes() - expected_minutes) < 0.001
+        assert duration.in_minutes(whole=True) == 150
+
+        # Test in_hours with whole parameter
+        expected_hours = 2.5125  # 2 hours, 30 minutes, 45.5 seconds
+        assert abs(duration.in_hours() - expected_hours) < 0.001
+        assert duration.in_hours(whole=True) == 2
+
+        # Test with fractional days
+        long_duration = Duration(days=5, hours=18, minutes=30)
+        assert long_duration.in_days() == 5.770833333333333
+        assert long_duration.in_days(whole=True) == 5
+
+    def test_whole_parameter_with_negative_duration(self):
+        """Test whole parameter with negative durations."""
+        duration = Duration(hours=-2, minutes=-30, seconds=-15)
+
+        expected_seconds = -(2 * 3600 + 30 * 60 + 15)  # -9015
+        assert duration.in_seconds() == expected_seconds
+        assert duration.in_seconds(whole=True) == -9015
+
+        expected_minutes = expected_seconds / 60  # -150.25
+        assert duration.in_minutes() == expected_minutes
+        assert duration.in_minutes(whole=True) == -150
 
 
 class TestDurationStringRepresentation:
@@ -267,7 +302,7 @@ class TestDurationArithmetic:
         result = d1 + d2
 
         assert result.days == 8
-        assert result.seconds == 6 * 3600  # 2 + 4 hours
+        assert result.storage_seconds == 6 * 3600  # 2 + 4 hours
 
     def test_addition_overflow(self):
         """Test Duration addition with time overflow."""
@@ -278,7 +313,7 @@ class TestDurationArithmetic:
 
         # Should normalize: 30 hours = 1 day + 6 hours
         assert result.days == 1
-        assert result.seconds == 6 * 3600
+        assert result.storage_seconds == 6 * 3600
 
     def test_addition_calendar_components(self):
         """Test Duration addition with calendar components."""
@@ -299,7 +334,7 @@ class TestDurationArithmetic:
         result = duration * 3
 
         assert result.days == 6
-        assert result.seconds == 9 * 3600 + 90 * 60  # 3 * (3 hours + 30 minutes)
+        assert result.storage_seconds == 9 * 3600 + 90 * 60  # 3 * (3 hours + 30 minutes)
 
     def test_multiplication_float(self):
         """Test Duration multiplication by float."""
@@ -307,7 +342,7 @@ class TestDurationArithmetic:
 
         result = duration * 1.5
 
-        assert result.seconds == 3 * 3600  # 2 * 1.5 = 3 hours
+        assert result.storage_seconds == 3 * 3600  # 2 * 1.5 = 3 hours
 
     def test_multiplication_calendar_components(self):
         """Test Duration multiplication with calendar components."""
@@ -326,7 +361,7 @@ class TestDurationArithmetic:
         result = -duration
 
         assert result.days == -5
-        assert result.seconds == -(2 * 3600 + 30 * 60)
+        assert result.storage_seconds == -(2 * 3600 + 30 * 60)
 
     def test_subtraction(self):
         """Test Duration subtraction."""
@@ -336,7 +371,7 @@ class TestDurationArithmetic:
         result = d1 - d2
 
         assert result.days == 7
-        assert result.seconds == 3 * 3600  # 5 - 2 hours
+        assert result.storage_seconds == 3 * 3600  # 5 - 2 hours
 
     def test_absolute_value(self):
         """Test Duration absolute value."""
@@ -345,4 +380,4 @@ class TestDurationArithmetic:
         result = abs(duration)
 
         assert result.days == 5
-        assert result.seconds == 2 * 3600
+        assert result.storage_seconds == 2 * 3600

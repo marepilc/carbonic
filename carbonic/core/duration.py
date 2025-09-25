@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Literal, overload
 
 
 @dataclass(frozen=True, slots=True)
@@ -68,7 +69,8 @@ class Duration:
         return self._days
 
     @property
-    def seconds(self) -> int:
+    def storage_seconds(self) -> int:
+        """Get seconds component of storage (0-86399, representing seconds within a day)."""
         return self._seconds
 
     @property
@@ -109,44 +111,114 @@ class Duration:
     # Properties and operations
     def total_seconds(self) -> float:
         """Get total seconds for this duration (excluding calendar components)."""
-        total = self.days * 86400 + self.seconds + (self.microseconds / 1_000_000)
+        total = self.days * 86400 + self.storage_seconds + (self.microseconds / 1_000_000)
         return total
 
-    # Intuitive alias properties for total duration conversion
-    @property
-    def in_seconds(self) -> float:
-        """Get total duration expressed as seconds (alias for total_seconds)."""
-        return self.total_seconds()
+    # Intuitive alias methods for total duration conversion
+    @overload
+    def in_seconds(self, *, whole: Literal[True]) -> int: ...
 
-    @property
-    def in_minutes(self) -> float:
-        """Get total duration expressed as minutes."""
-        return self.total_seconds() / 60
+    @overload
+    def in_seconds(self, *, whole: Literal[False] = False) -> float: ...
 
-    @property
-    def in_hours(self) -> float:
-        """Get total duration expressed as hours."""
-        return self.total_seconds() / 3600
+    def in_seconds(self, *, whole: bool = False) -> int | float:
+        """Get total duration expressed as seconds.
 
-    @property
-    def in_days(self) -> float:
-        """Get total duration expressed as days."""
-        return self.total_seconds() / 86400
+        Args:
+            whole: If True, return integer (floor). If False, return float.
+        """
+        total = self.total_seconds()
+        return int(total) if whole else total
 
-    @property
-    def in_weeks(self) -> float:
-        """Get total duration expressed as weeks."""
-        return self.in_days / 7
+    @overload
+    def in_minutes(self, *, whole: Literal[True]) -> int: ...
 
-    @property
-    def in_milliseconds(self) -> float:
-        """Get total duration expressed as milliseconds."""
-        return self.total_seconds() * 1000
+    @overload
+    def in_minutes(self, *, whole: Literal[False] = False) -> float: ...
 
-    @property
-    def in_microseconds(self) -> float:
-        """Get total duration expressed as microseconds."""
-        return self.total_seconds() * 1_000_000
+    def in_minutes(self, *, whole: bool = False) -> int | float:
+        """Get total duration expressed as minutes.
+
+        Args:
+            whole: If True, return integer (floor). If False, return float.
+        """
+        total = self.total_seconds() / 60
+        return int(total) if whole else total
+
+    @overload
+    def in_hours(self, *, whole: Literal[True]) -> int: ...
+
+    @overload
+    def in_hours(self, *, whole: Literal[False] = False) -> float: ...
+
+    def in_hours(self, *, whole: bool = False) -> int | float:
+        """Get total duration expressed as hours.
+
+        Args:
+            whole: If True, return integer (floor). If False, return float.
+        """
+        total = self.total_seconds() / 3600
+        return int(total) if whole else total
+
+    @overload
+    def in_days(self, *, whole: Literal[True]) -> int: ...
+
+    @overload
+    def in_days(self, *, whole: Literal[False] = False) -> float: ...
+
+    def in_days(self, *, whole: bool = False) -> int | float:
+        """Get total duration expressed as days.
+
+        Args:
+            whole: If True, return integer (floor). If False, return float.
+        """
+        total = self.total_seconds() / 86400
+        return int(total) if whole else total
+
+    @overload
+    def in_weeks(self, *, whole: Literal[True]) -> int: ...
+
+    @overload
+    def in_weeks(self, *, whole: Literal[False] = False) -> float: ...
+
+    def in_weeks(self, *, whole: bool = False) -> int | float:
+        """Get total duration expressed as weeks.
+
+        Args:
+            whole: If True, return integer (floor). If False, return float.
+        """
+        total = self.in_days() / 7
+        return int(total) if whole else total
+
+    @overload
+    def in_milliseconds(self, *, whole: Literal[True]) -> int: ...
+
+    @overload
+    def in_milliseconds(self, *, whole: Literal[False] = False) -> float: ...
+
+    def in_milliseconds(self, *, whole: bool = False) -> int | float:
+        """Get total duration expressed as milliseconds.
+
+        Args:
+            whole: If True, return integer (floor). If False, return float.
+        """
+        total = self.total_seconds() * 1000
+        return int(total) if whole else total
+
+    @overload
+    def in_microseconds(self, *, whole: Literal[True]) -> int: ...
+
+    @overload
+    def in_microseconds(self, *, whole: Literal[False] = False) -> float: ...
+
+    def in_microseconds(self, *, whole: bool = False) -> int | float:
+        """Get total duration expressed as microseconds.
+
+        Args:
+            whole: If True, return integer (floor). If False, return float.
+        """
+        total = self.total_seconds() * 1_000_000
+        return int(total) if whole else total
 
     def __str__(self) -> str:
         """Return human-readable string representation."""
@@ -163,8 +235,8 @@ class Duration:
             parts.append(f"{self.days} day{'s' if self.days != 1 else ''}")
 
         # Convert seconds to hours, minutes, seconds for display
-        if self.seconds or self.microseconds:
-            hours, remainder = divmod(self.seconds, 3600)
+        if self.storage_seconds or self.microseconds:
+            hours, remainder = divmod(self.storage_seconds, 3600)
             minutes, secs = divmod(remainder, 60)
 
             if hours:
@@ -190,7 +262,7 @@ class Duration:
 
     def __repr__(self) -> str:
         """Return detailed string representation."""
-        return f"Duration(days={self.days}, seconds={self.seconds}, microseconds={self.microseconds}, months={self.months}, years={self.years})"
+        return f"Duration(days={self.days}, storage_seconds={self.storage_seconds}, microseconds={self.microseconds}, months={self.months}, years={self.years})"
 
     # Comparison methods
     def _normalize_for_comparison(self) -> tuple[float, int, int]:
@@ -254,7 +326,7 @@ class Duration:
 
         # Add time-based components (already normalized like timedelta)
         total_days = self.days + other.days
-        total_seconds = self.seconds + other.seconds
+        total_seconds = self.storage_seconds + other.storage_seconds
         total_microseconds = self.microseconds + other.microseconds
 
         # Handle overflow like timedelta does
@@ -311,7 +383,7 @@ class Duration:
 
         # Multiply time-based components (timedelta-compatible)
         total_days: int | float = self.days * k
-        total_seconds: int | float = self.seconds * k
+        total_seconds: int | float = self.storage_seconds * k
         total_microseconds: int | float = self.microseconds * k
 
         # Multiply calendar components separately

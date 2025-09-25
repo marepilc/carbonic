@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, overload
 from zoneinfo import ZoneInfo
 
 if TYPE_CHECKING:
@@ -564,7 +564,7 @@ class DateTime:
         # Create a timedelta from the Duration's time components
         delta = datetime.timedelta(
             days=duration.days,
-            seconds=duration.seconds,
+            seconds=duration.storage_seconds,
             microseconds=duration.microseconds
         )
 
@@ -612,9 +612,24 @@ class DateTime:
             return self.add_duration(other)
         return NotImplemented
 
-    def __sub__(self, other: Duration) -> DateTime:
-        """Subtract a Duration from this DateTime using - operator."""
-        if hasattr(other, 'days'):  # Duck typing for Duration-like objects
+    @overload
+    def __sub__(self, other: Duration) -> DateTime: ...
+
+    @overload
+    def __sub__(self, other: DateTime) -> Duration: ...
+
+    def __sub__(self, other: Duration | DateTime) -> DateTime | Duration:
+        """Subtract a Duration or DateTime from this DateTime using - operator.
+
+        Args:
+            other: Duration to subtract (returns DateTime) or DateTime to diff with (returns Duration)
+
+        Returns:
+            DateTime if subtracting Duration, Duration if subtracting DateTime
+        """
+        if isinstance(other, DateTime):
+            return self.diff(other)
+        elif hasattr(other, 'days'):  # Duck typing for Duration-like objects
             return self.subtract_duration(other)
         return NotImplemented
 

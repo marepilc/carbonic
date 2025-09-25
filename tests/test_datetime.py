@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from carbonic.core.datetime import DateTime
+from carbonic import DateTime, Duration
 
 
 class TestDateTimeConstructor:
@@ -548,7 +548,6 @@ class TestDateTimeFormatting:
 class TestDateTimeDurationIntegration:
     def test_datetime_diff_basic(self):
         """Test basic datetime difference calculation."""
-        from carbonic.core.duration import Duration
 
         dt1 = DateTime(2023, 12, 25, 10, 30, 45)
         dt2 = DateTime(2023, 12, 25, 12, 45, 30)
@@ -556,11 +555,10 @@ class TestDateTimeDurationIntegration:
         diff = dt2.diff(dt1)
         assert isinstance(diff, Duration)
         assert diff.days == 0
-        assert diff.seconds == 2 * 3600 + 14 * 60 + 45  # 2h 14m 45s
+        assert diff.storage_seconds == 2 * 3600 + 14 * 60 + 45  # 2h 14m 45s
 
     def test_datetime_diff_with_days(self):
         """Test datetime difference spanning days."""
-        from carbonic.core.duration import Duration
 
         dt1 = DateTime(2023, 12, 25, 14, 30, 0)
         dt2 = DateTime(2023, 12, 27, 10, 15, 30)
@@ -571,11 +569,10 @@ class TestDateTimeDurationIntegration:
         # Remaining time: 27th 10:15:30 - 25th 14:30:00 = 1d 19h 45m 30s
         # So seconds part should be: 19h 45m 30s = 19*3600 + 45*60 + 30
         expected_seconds = 19 * 3600 + 45 * 60 + 30
-        assert diff.seconds == expected_seconds
+        assert diff.storage_seconds == expected_seconds
 
     def test_datetime_diff_negative(self):
         """Test datetime difference with negative result."""
-        from carbonic.core.duration import Duration
 
         dt1 = DateTime(2023, 12, 25, 14, 30, 0)
         dt2 = DateTime(2023, 12, 25, 10, 15, 0)
@@ -585,11 +582,10 @@ class TestDateTimeDurationIntegration:
         assert diff.days == -1  # Goes to previous day due to negative seconds
         # -4h 15m = -15300 seconds, which gets normalized to -1 day + 70500 seconds
         expected_seconds = 24 * 3600 - (4 * 3600 + 15 * 60)
-        assert diff.seconds == expected_seconds
+        assert diff.storage_seconds == expected_seconds
 
     def test_datetime_diff_absolute(self):
         """Test datetime difference with absolute flag."""
-        from carbonic.core.duration import Duration
 
         dt1 = DateTime(2023, 12, 25, 14, 30, 0)
         dt2 = DateTime(2023, 12, 25, 10, 15, 0)
@@ -603,7 +599,6 @@ class TestDateTimeDurationIntegration:
 
     def test_datetime_diff_with_microseconds(self):
         """Test datetime difference including microseconds."""
-        from carbonic.core.duration import Duration
 
         dt1 = DateTime(2023, 12, 25, 10, 30, 45, 123456)
         dt2 = DateTime(2023, 12, 25, 10, 30, 46, 654321)
@@ -611,12 +606,11 @@ class TestDateTimeDurationIntegration:
         diff = dt2.diff(dt1)
         assert isinstance(diff, Duration)
         assert diff.days == 0
-        assert diff.seconds == 1  # 1 second difference
+        assert diff.storage_seconds == 1  # 1 second difference
         assert diff.microseconds == 654321 - 123456  # microsecond difference
 
     def test_datetime_diff_timezone_aware(self):
         """Test datetime difference with timezone-aware datetimes."""
-        from carbonic.core.duration import Duration
 
         # Same instant in different timezones
         dt_utc = DateTime(2023, 12, 25, 15, 0, 0, tz="UTC")
@@ -626,19 +620,18 @@ class TestDateTimeDurationIntegration:
         assert isinstance(diff, Duration)
         # Should be zero since they represent the same instant
         assert diff.days == 0
-        assert diff.seconds == 0
+        assert diff.storage_seconds == 0
         assert diff.microseconds == 0
 
     def test_datetime_diff_same_datetime(self):
         """Test difference between same datetimes."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2023, 12, 25, 14, 30, 45)
         diff = dt.diff(dt)
 
         assert isinstance(diff, Duration)
         assert diff.days == 0
-        assert diff.seconds == 0
+        assert diff.storage_seconds == 0
         assert diff.microseconds == 0
 
     def test_datetime_diff_type_error(self):
@@ -646,11 +639,10 @@ class TestDateTimeDurationIntegration:
         dt = DateTime(2023, 12, 25, 14, 30, 45)
 
         with pytest.raises(TypeError, match="Can only diff with another DateTime"):
-            dt.diff("not a datetime")
+            dt.diff("not a datetime")  # type: ignore
 
     def test_datetime_add_duration_basic(self):
         """Test adding Duration to DateTime."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2023, 12, 25, 14, 30, 45)
         duration = Duration(hours=2, minutes=15, seconds=30)
@@ -666,7 +658,6 @@ class TestDateTimeDurationIntegration:
 
     def test_datetime_add_duration_with_days(self):
         """Test adding Duration with days to DateTime."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2023, 12, 25, 14, 30, 45)
         duration = Duration(days=2, hours=10)
@@ -676,13 +667,12 @@ class TestDateTimeDurationIntegration:
         assert result.year == 2023
         assert result.month == 12
         assert result.day == 28  # 25 + 2 + 1 (from hour overflow) = 28
-        assert result.hour == 0   # 14 + 10 = 24 -> 0 with 1 day carry
+        assert result.hour == 0  # 14 + 10 = 24 -> 0 with 1 day carry
         assert result.minute == 30
         assert result.second == 45
 
     def test_datetime_add_duration_overflow_month(self):
         """Test adding Duration that causes month overflow."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2023, 12, 30, 20, 0, 0)
         duration = Duration(days=3, hours=8)
@@ -691,12 +681,11 @@ class TestDateTimeDurationIntegration:
         assert isinstance(result, DateTime)
         assert result.year == 2024  # Overflow to next year
         assert result.month == 1
-        assert result.day == 3     # Dec 30 + 3 days + 1 (from hour overflow) = Jan 3
-        assert result.hour == 4    # 20 + 8 = 28 -> 4 next day
+        assert result.day == 3  # Dec 30 + 3 days + 1 (from hour overflow) = Jan 3
+        assert result.hour == 4  # 20 + 8 = 28 -> 4 next day
 
     def test_datetime_add_duration_with_calendar_components(self):
         """Test adding Duration with calendar components."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2023, 12, 25, 14, 30, 45)
         duration = Duration(years=1, months=2, days=5, hours=3)
@@ -705,14 +694,13 @@ class TestDateTimeDurationIntegration:
         assert isinstance(result, DateTime)
         assert result.year == 2025
         assert result.month == 2
-        assert result.day == 28    # Same logic as Date: Feb 30 -> Feb 28
-        assert result.hour == 17   # 14 + 3
+        assert result.day == 28  # Same logic as Date: Feb 30 -> Feb 28
+        assert result.hour == 17  # 14 + 3
         assert result.minute == 30
         assert result.second == 45
 
     def test_datetime_subtract_duration(self):
         """Test subtracting Duration from DateTime."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2023, 12, 25, 14, 30, 45)
         duration = Duration(hours=2, minutes=15, seconds=30)
@@ -722,13 +710,12 @@ class TestDateTimeDurationIntegration:
         assert result.year == 2023
         assert result.month == 12
         assert result.day == 25
-        assert result.hour == 12   # 14 - 2
+        assert result.hour == 12  # 14 - 2
         assert result.minute == 15  # 30 - 15
         assert result.second == 15  # 45 - 30
 
     def test_datetime_subtract_duration_underflow(self):
         """Test subtracting Duration causing time underflow."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2024, 1, 2, 2, 15, 30)
         duration = Duration(days=1, hours=5, minutes=20)
@@ -738,13 +725,12 @@ class TestDateTimeDurationIntegration:
         assert result.year == 2023
         assert result.month == 12
         assert result.day == 31
-        assert result.hour == 20   # 2 - 5 = -3 -> 21 previous day -> 20 (with day carry)
+        assert result.hour == 20  # 2 - 5 = -3 -> 21 previous day -> 20 (with day carry)
         assert result.minute == 55  # 15 - 20 = -5 -> 55 previous hour
         assert result.second == 30
 
     def test_datetime_add_duration_with_microseconds(self):
         """Test adding Duration with microseconds."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2023, 12, 25, 14, 30, 45, 123456)
         duration = Duration(seconds=2, microseconds=500000)
@@ -756,7 +742,6 @@ class TestDateTimeDurationIntegration:
 
     def test_datetime_add_duration_microsecond_overflow(self):
         """Test adding Duration causing microsecond overflow."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2023, 12, 25, 14, 30, 45, 800000)
         duration = Duration(microseconds=400000)
@@ -768,19 +753,17 @@ class TestDateTimeDurationIntegration:
 
     def test_datetime_add_duration_method(self):
         """Test explicit add_duration method."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2023, 12, 25, 14, 30, 45)
         duration = Duration(hours=1, minutes=30)
 
         result = dt.add_duration(duration)
         assert isinstance(result, DateTime)
-        assert result.hour == 16    # 14 + 1 + 1 (carry from minutes)
-        assert result.minute == 0   # 30 + 30 = 60 -> 0 with hour carry
+        assert result.hour == 16  # 14 + 1 + 1 (carry from minutes)
+        assert result.minute == 0  # 30 + 30 = 60 -> 0 with hour carry
 
     def test_datetime_subtract_duration_method(self):
         """Test explicit subtract_duration method."""
-        from carbonic.core.duration import Duration
 
         dt = DateTime(2023, 12, 25, 14, 30, 45)
         duration = Duration(hours=1, minutes=15)
@@ -790,12 +773,83 @@ class TestDateTimeDurationIntegration:
         assert result.hour == 13
         assert result.minute == 15  # 30 - 15
 
+    def test_datetime_subtract_datetime(self):
+        """Test DateTime - DateTime subtraction using - operator."""
+
+        dt1 = DateTime(2023, 12, 25, 14, 30, 45)
+        dt2 = DateTime(2023, 12, 25, 12, 15, 30)
+
+        # dt1 - dt2 should give positive difference
+        diff = dt1 - dt2
+        assert isinstance(diff, Duration)
+        assert diff.days == 0
+        expected_seconds = 2 * 3600 + 15 * 60 + 15  # 2h 15m 15s
+        assert diff.storage_seconds == expected_seconds
+
+        # dt2 - dt1 should give negative difference
+        diff_reverse = dt2 - dt1
+        assert isinstance(diff_reverse, Duration)
+        # Negative seconds get normalized to previous day
+        assert diff_reverse.days == -1
+        assert diff_reverse.storage_seconds == 86400 - expected_seconds
+
+    def test_datetime_subtract_datetime_same(self):
+        """Test subtracting same datetime should return zero duration."""
+
+        dt = DateTime(2023, 12, 25, 14, 30, 45)
+        diff = dt - dt
+
+        assert isinstance(diff, Duration)
+        assert diff.days == 0
+        assert diff.storage_seconds == 0
+        assert diff.microseconds == 0
+
+    def test_datetime_subtract_datetime_with_days(self):
+        """Test DateTime - DateTime subtraction spanning multiple days."""
+
+        dt1 = DateTime(2023, 12, 27, 10, 15, 30)
+        dt2 = DateTime(2023, 12, 25, 14, 30, 0)
+
+        diff = dt1 - dt2
+        assert isinstance(diff, Duration)
+        assert diff.days == 1  # 1 full day
+        # Remaining time: 27th 10:15:30 - 25th 14:30:00 = 1d 19h 45m 30s
+        # So seconds part should be: 19h 45m 30s = 19*3600 + 45*60 + 30
+        expected_seconds = 19 * 3600 + 45 * 60 + 30
+        assert diff.storage_seconds == expected_seconds
+
+    def test_datetime_subtract_datetime_with_microseconds(self):
+        """Test DateTime - DateTime subtraction including microseconds."""
+
+        dt1 = DateTime(2023, 12, 25, 10, 30, 46, 654321)
+        dt2 = DateTime(2023, 12, 25, 10, 30, 45, 123456)
+
+        diff = dt1 - dt2
+        assert isinstance(diff, Duration)
+        assert diff.days == 0
+        assert diff.storage_seconds == 1  # 1 second difference
+        expected_microseconds = 654321 - 123456
+        assert diff.microseconds == expected_microseconds
+
+    def test_datetime_subtract_datetime_timezone_aware(self):
+        """Test DateTime - DateTime subtraction with timezone-aware datetimes."""
+
+        # Same instant in different timezones
+        dt_utc = DateTime(2023, 12, 25, 15, 0, 0, tz="UTC")
+        dt_ny = DateTime(2023, 12, 25, 10, 0, 0, tz="America/New_York")
+
+        diff = dt_utc - dt_ny
+        assert isinstance(diff, Duration)
+        # Should be zero since they represent the same instant
+        assert diff.days == 0
+        assert diff.storage_seconds == 0
+
     def test_datetime_duration_arithmetic_type_error(self):
         """Test Duration arithmetic with invalid types."""
         dt = DateTime(2023, 12, 25, 14, 30, 45)
 
         with pytest.raises(TypeError):
-            dt + "not a duration"
+            dt + "not a duration"  # type: ignore
 
         with pytest.raises(TypeError):
-            dt - 123
+            dt - 123  # type: ignore

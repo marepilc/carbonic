@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, overload
 
 if TYPE_CHECKING:
     from carbonic import Duration
@@ -305,7 +305,7 @@ class Date:
             raise TypeError("Can only add Duration objects")
 
         # Calculate total days from time components (seconds become fractional days)
-        time_days = (duration.seconds + duration.microseconds / 1_000_000) / 86400
+        time_days = (duration.storage_seconds + duration.microseconds / 1_000_000) / 86400
 
         # Add all components
         total_days = duration.days + int(time_days)
@@ -338,9 +338,24 @@ class Date:
             return self.add_duration(other)
         return NotImplemented
 
-    def __sub__(self, other: Duration) -> Date:
-        """Subtract a Duration from this Date using - operator."""
-        if hasattr(other, 'days'):  # Duck typing for Duration-like objects
+    @overload
+    def __sub__(self, other: Duration) -> Date: ...
+
+    @overload
+    def __sub__(self, other: Date) -> Duration: ...
+
+    def __sub__(self, other: Duration | Date) -> Date | Duration:
+        """Subtract a Duration or Date from this Date using - operator.
+
+        Args:
+            other: Duration to subtract (returns Date) or Date to diff with (returns Duration)
+
+        Returns:
+            Date if subtracting Duration, Duration if subtracting Date
+        """
+        if isinstance(other, Date):
+            return self.diff(other)
+        elif hasattr(other, 'days'):  # Duck typing for Duration-like objects
             return self.subtract_duration(other)
         return NotImplemented
 
