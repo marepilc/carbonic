@@ -15,6 +15,11 @@
     - Methods: add_to(), subtract_from(), start_of(), end_of()
     - Smart validation: Prevents invalid operations (minutes on Date)
     - Clean type safety with ClassVar declarations (35 comprehensive tests)
+  - Interval Class: Time range operations with half-open interval logic
+    - Operations: contains(), overlaps(), intersection(), union(), duration()
+    - Mixed Date/DateTime support with automatic type normalization
+    - Strict timezone consistency validation using stdlib zoneinfo
+    - Comprehensive comparison, hashing, and string representation (29 comprehensive tests)
   - Parsing & Formatting: ISO strict/relaxed, Carbon-style tokens, auto-detection
   - Timezone Handling: Full ZoneInfo support with proper UTC defaults
   - Comparison & Arithmetic: Comprehensive operators for all core classes
@@ -23,12 +28,7 @@
 
   🔄 Remaining Major Features
 
-  1. Interval Class
-
-  - Interval Class: Time intervals with start/end points and operations like overlap, contains, union
-  - These would enable operations like interval1.overlaps(interval2), interval.contains(date)
-
-  2. Enhanced Duration Features
+  1. Enhanced Duration Features
 
   - Duration.parse(): Parse ISO 8601 duration strings (P1Y2M3DT4H5M6S)
   - Duration.humanize(): Localized human-readable output ("2 days ago", "in 3 hours")
@@ -63,15 +63,15 @@
 
   Based on the Carbon PHP inspiration and typical datetime library usage, I'd suggest this order:
 
-  1. Interval Class - Time range operations (overlaps, contains, union, intersection)
-  2. Duration.parse() - Complete the Duration API with ISO 8601 support
-  3. Basic Localization - Polish/English humanization for Duration
-  4. Data Library Integrations - Expand ecosystem compatibility
+  1. Duration.parse() - Complete the Duration API with ISO 8601 support
+  2. Basic Localization - Polish/English humanization for Duration
+  3. Data Library Integrations - Expand ecosystem compatibility
+  4. Performance Optimizations - Optional ciso8601 for faster parsing
 
-  The Interval Class would provide valuable operations like:
+  Current implementation now provides comprehensive time range operations:
 
   ```python
-  # Time range operations
+  # Time range operations (now available!)
   meeting = Interval(start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 10, 30))
   lunch = Interval(start=DateTime(2024, 1, 15, 12, 0), end=DateTime(2024, 1, 15, 13, 0))
 
