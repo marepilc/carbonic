@@ -7,6 +7,7 @@ A fluent, immutable datetime library built with dataclasses and stdlib zoneinfo.
 from carbonic.core.datetime import DateTime
 from carbonic.core.date import Date
 from carbonic.core.duration import Duration
+from carbonic.core.period import Period
 
 __version__ = "0.1.0"
 
@@ -14,6 +15,7 @@ __all__ = [
     "DateTime",
     "Date",
     "Duration",
+    "Period",
     "now",
     "today",
 ]
