@@ -29,15 +29,28 @@ def test_namespace_registration():
     """Test that the .carbonic namespace is registered."""
     try:
         import carbonic_polars
-        df = pl.DataFrame({"test": [1, 2, 3]})
+        df = pl.DataFrame({"test_str": ["2023-12-25", "2024-01-01", "2023-06-15"]})
 
         # This should not raise an AttributeError if namespace is registered
-        expr = pl.col("test")
+        expr = pl.col("test_str")
         assert hasattr(expr, "carbonic")
 
-        # Test the placeholder method
-        carbonic_expr = expr.carbonic.placeholder()
-        assert carbonic_expr is not None
+        # Test the real functions work
+        result = df.with_columns([
+            pl.col("test_str").carbonic.parse_format("Y-m-d").alias("parsed"),
+            pl.col("test_str").carbonic.parse_iso().alias("iso_parsed")
+        ])
+
+        assert len(result) == 3
+        assert "parsed" in result.columns
+        assert "iso_parsed" in result.columns
+
+        # Check the placeholder behavior
+        parsed_values = result["parsed"].to_list()
+        assert all("parsed:" in val for val in parsed_values)
+
+        iso_values = result["iso_parsed"].to_list()
+        assert all("iso:" in val for val in iso_values)
 
         # Test DataFrame namespace
         assert hasattr(df, "carbonic")
