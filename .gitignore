@@ -66,3 +66,44 @@ dmypy.json
 
 *.ipynb
 .ruff_cache/
+
+# Rust / Cargo
+**/target/
+**/*.rs.bk
+**/Cargo.lock
+**/*.rlib
+**/*.rmeta
+
+# Maturin / PyO3 builds
+**/*.abi3.so
+**/*.pyd
+**/pyo3-build-config-*
+**/*.whl
+
+# Polars plugin development (specific overrides)
+# Most patterns are handled by ** rules above, but keeping specific ones for clarity
+
+# UV lock files (tracked for reproducible builds)
+# Keep uv.lock files tracked - they ensure reproducible builds
+# carbonic-polars/uv.lock is tracked intentionally
+
+# Temporary and cache files
+**/tmp/
+**/.tmp*/
+**/temp/
+**/.cache/
+
+# IDE files for Rust development
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

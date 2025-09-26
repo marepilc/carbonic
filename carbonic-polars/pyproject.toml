@@ -3,7 +3,7 @@ name = "carbonic-polars"
 version = "0.1.0"
 description = "High-performance Polars plugin providing Carbonic datetime functionality"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 dependencies = [
     "polars>=0.20.0",
     "carbonic>=0.1.0",
@@ -33,4 +33,10 @@ extend-select = [
     "I",  # isort
     "N",  # pep8-naming
     "UP", # pyupgrade
+]
+
+[dependency-groups]
+dev = [
+    "maturin",
+    "pytest",
 ]

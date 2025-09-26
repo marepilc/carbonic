@@ -1,0 +1,48 @@
+# Rust / Cargo
+/target/
+**/*.rs.bak
+Cargo.lock
+
+# Python virtual environment
+/.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# UV lock file is tracked for reproducible builds
+# uv.lock
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.whl
+
+# Maturin / PyO3 specific
+*.abi3.so
+*.pyd
+pyo3-build-config-*
+
+# Test / coverage
+.pytest_cache/
+htmlcov/
+.coverage
+*.cover
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Development files
+demo.py.bak
+src/*.rs.bak
+
+# Build intermediates
+/tmp/
+.tmp*/
