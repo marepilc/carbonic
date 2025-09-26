@@ -67,9 +67,3 @@ jobs:
       if: steps.version.outputs.is_release == 'false'
       run: |
         uv run mike deploy dev --push
-
-    - name: Build and deploy site
-      run: |
-        # Build the current version
-        uv run mkdocs build
-        # Note: mike handles the gh-pages branch deployment
