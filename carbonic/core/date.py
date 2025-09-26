@@ -1,3 +1,9 @@
+"""Date implementation for Carbonic.
+
+This module provides the core Date class with fluent API, immutability,
+and comprehensive date manipulation capabilities.
+"""
+
 from __future__ import annotations
 
 import datetime
@@ -11,9 +17,38 @@ from carbonic.core.exceptions import ParseError
 
 @dataclass(frozen=True, slots=True)
 class Date:
+    """Immutable date object with fluent API and comprehensive date operations.
+
+    The Date class provides a modern, type-safe wrapper around Python's date
+    with additional functionality for date manipulation and formatting.
+    All operations return new instances, maintaining immutability.
+
+    Attributes:
+        _date: Internal datetime.date object storing the actual date value
+
+    Examples:
+        >>> date = Date(2024, 1, 15)
+        >>> date.add_days(10).format("Y-m-d")
+        '2024-01-25'
+
+        >>> today = Date.today()
+        >>> today.start_of_month().format("F j, Y")
+        'January 1, 2024'
+    """
+
     _date: datetime.date
 
-    def __init__(self, year: int, month: int, day: int):
+    def __init__(self, year: int, month: int, day: int) -> None:
+        """Initialize a new Date instance.
+
+        Args:
+            year: Year (e.g., 2024)
+            month: Month (1-12)
+            day: Day of month (1-31)
+
+        Raises:
+            ValueError: If any date component is invalid
+        """
         object.__setattr__(self, "_date", datetime.date(year, month, day))
 
     # Constructors

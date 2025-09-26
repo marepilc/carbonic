@@ -1,3 +1,10 @@
+"""Interval implementation for Carbonic.
+
+This module provides the Interval class for representing time intervals
+with start and end points, supporting both Date and DateTime intervals
+with comprehensive operations like intersection, union, and overlap detection.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -1,3 +1,9 @@
+"""DateTime implementation for Carbonic.
+
+This module provides the core DateTime class with fluent API, immutability,
+timezone support, and comprehensive formatting capabilities inspired by PHP Carbon.
+"""
+
 from __future__ import annotations
 
 import datetime
@@ -11,6 +17,25 @@ from carbonic.core.duration import Duration
 
 @dataclass(frozen=True, slots=True)
 class DateTime:
+    """Immutable datetime object with fluent API and timezone support.
+
+    The DateTime class provides a modern, type-safe wrapper around Python's datetime
+    with additional functionality inspired by PHP Carbon. All operations return new
+    instances, maintaining immutability.
+
+    Attributes:
+        _dt: Internal datetime.datetime object storing the actual datetime value
+
+    Examples:
+        >>> dt = DateTime(2024, 1, 15, 14, 30, 0, tz="UTC")
+        >>> dt.add_hours(2).format("Y-m-d H:i:s")
+        '2024-01-15 16:30:00'
+
+        >>> now = DateTime.now("America/New_York")
+        >>> now.to_date_string()
+        '2024-01-15'
+    """
+
     _dt: datetime.datetime
 
     def __init__(
@@ -23,7 +48,23 @@ class DateTime:
         second: int = 0,
         microsecond: int = 0,
         tz: str | None = "UTC",
-    ):
+    ) -> None:
+        """Initialize a new DateTime instance.
+
+        Args:
+            year: Year (e.g., 2024)
+            month: Month (1-12)
+            day: Day of month (1-31)
+            hour: Hour (0-23, default: 0)
+            minute: Minute (0-59, default: 0)
+            second: Second (0-59, default: 0)
+            microsecond: Microsecond (0-999999, default: 0)
+            tz: Timezone string (default: "UTC", None for naive datetime)
+
+        Raises:
+            ValueError: If any datetime component is invalid
+            ZoneInfoNotFoundError: If timezone string is invalid
+        """
         if tz is None:
             tzinfo = None
         else:
@@ -37,6 +78,19 @@ class DateTime:
     # Constructors
     @classmethod
     def now(cls, tz: str | None = "UTC") -> DateTime:
+        """Create a DateTime instance for the current moment.
+
+        Args:
+            tz: Timezone string (default: "UTC", None for system local time)
+
+        Returns:
+            DateTime instance representing the current moment
+
+        Examples:
+            >>> DateTime.now()  # Current time in UTC
+            >>> DateTime.now("America/New_York")  # Current time in NY timezone
+            >>> DateTime.now(None)  # Current local time (naive)
+        """
         if tz is None:
             now_dt = datetime.datetime.now()
         else:
@@ -349,27 +403,81 @@ class DateTime:
 
     # Common format methods
     def to_iso_string(self) -> str:
-        """Return ISO datetime string (2025-09-23T14:30:45+00:00)."""
+        """Return ISO 8601 string (2025-09-23T14:30:45+00:00).
+
+        Returns:
+            ISO 8601 formatted datetime string with timezone
+
+        Examples:
+            >>> dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
+            >>> dt.to_iso_string()
+            '2024-01-15T14:30:00+00:00'
+        """
         return self._dt.isoformat()
 
     def to_date_string(self) -> str:
-        """Return ISO date string (2025-09-23)."""
+        """Return date string (2025-09-23).
+
+        Returns:
+            Date portion formatted as YYYY-MM-DD
+
+        Examples:
+            >>> dt = DateTime(2024, 1, 15, 14, 30)
+            >>> dt.to_date_string()
+            '2024-01-15'
+        """
         return self._dt.date().isoformat()
 
     def to_time_string(self) -> str:
-        """Return time string (14:30:45)."""
+        """Return time string (14:30:45).
+
+        Returns:
+            Time portion formatted as HH:MM:SS
+
+        Examples:
+            >>> dt = DateTime(2024, 1, 15, 14, 30, 45)
+            >>> dt.to_time_string()
+            '14:30:45'
+        """
         return self._dt.time().strftime("%H:%M:%S")
 
     def to_datetime_string(self) -> str:
-        """Return datetime string (2025-09-23 14:30:45)."""
+        """Return datetime string (2025-09-23 14:30:45).
+
+        Returns:
+            Datetime formatted as YYYY-MM-DD HH:MM:SS (no timezone)
+
+        Examples:
+            >>> dt = DateTime(2024, 1, 15, 14, 30, 45)
+            >>> dt.to_datetime_string()
+            '2024-01-15 14:30:45'
+        """
         return self._dt.strftime("%Y-%m-%d %H:%M:%S")
 
     def to_atom_string(self) -> str:
-        """Return Atom/RSS datetime string (ISO 8601)."""
+        """Return Atom/RSS datetime string (ISO 8601).
+
+        Returns:
+            ISO 8601 formatted string suitable for Atom/RSS feeds
+
+        Examples:
+            >>> dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
+            >>> dt.to_atom_string()
+            '2024-01-15T14:30:00+00:00'
+        """
         return self._dt.isoformat()
 
     def to_cookie_string(self) -> str:
-        """Return cookie datetime string (Tue, 23-Sep-2025 14:30:45 UTC)."""
+        """Return cookie datetime string (Tue, 23-Sep-2025 14:30:45 UTC).
+
+        Returns:
+            Cookie-compatible datetime string format
+
+        Examples:
+            >>> dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
+            >>> dt.to_cookie_string()
+            'Mon, 15-Jan-2024 14:30:00 UTC'
+        """
         # Format: Wdy, DD-Mon-YYYY HH:MM:SS GMT
         tz_name = (
             "UTC"
@@ -380,6 +488,19 @@ class DateTime:
 
     @classmethod
     def from_datetime(cls, dt: datetime.datetime) -> DateTime:
+        """Create a DateTime from a standard Python datetime object.
+
+        Args:
+            dt: Python datetime.datetime object to convert
+
+        Returns:
+            New DateTime instance preserving timezone information
+
+        Examples:
+            >>> import datetime
+            >>> dt = datetime.datetime(2024, 1, 15, 14, 30)
+            >>> carbonic_dt = DateTime.from_datetime(dt)
+        """
         if dt.tzinfo is None:
             return cls(
                 dt.year,
@@ -411,34 +532,42 @@ class DateTime:
     # Properties
     @property
     def year(self) -> int:
+        """The year component (e.g., 2024)."""
         return self._dt.year
 
     @property
     def month(self) -> int:
+        """The month component (1-12)."""
         return self._dt.month
 
     @property
     def day(self) -> int:
+        """The day of month component (1-31)."""
         return self._dt.day
 
     @property
     def hour(self) -> int:
+        """The hour component (0-23)."""
         return self._dt.hour
 
     @property
     def minute(self) -> int:
+        """The minute component (0-59)."""
         return self._dt.minute
 
     @property
     def second(self) -> int:
+        """The second component (0-59)."""
         return self._dt.second
 
     @property
     def microsecond(self) -> int:
+        """The microsecond component (0-999999)."""
         return self._dt.microsecond
 
     @property
     def tzinfo(self) -> datetime.tzinfo | None:
+        """The timezone info, or None for naive datetime."""
         return self._dt.tzinfo
 
     def __str__(self) -> str:

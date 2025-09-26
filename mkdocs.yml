@@ -1,0 +1,163 @@
+site_name: Carbonic
+site_description: A modern Python datetime library with fluent API and immutable design
+site_author: Marek Pilczuk
+site_url: https://carbonic.readthedocs.io/
+
+repo_name: marepilc/carbonic
+repo_url: https://github.com/marepilc/carbonic
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; 2024 Marek Pilczuk
+
+theme:
+  name: material
+  logo: assets/images/logo_mono.svg
+  favicon: assets/images/favicon.ico
+  font:
+    text: Exo 2
+    code: JetBrains Mono
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue grey
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue grey
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+    - toc.integrate
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/marepilc/carbonic
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/carbonic/
+  version:
+    provider: mike
+
+extra_css:
+  - assets/extra.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - def_list
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_toc_entry: true
+            show_object_full_path: false
+            show_category_heading: true
+            show_signature_annotations: true
+            separate_signature: true
+            line_length: 80
+            members_order: source
+            docstring_section_style: table
+            merge_init_into_class: true
+            show_if_no_docstring: false
+            inherited_members: false
+            filters:
+              - "!^_"
+              - "!^__init__$"
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+    - Core Concepts: getting-started/concepts.md
+    - Migration Guide: getting-started/migration.md
+  - User Guide:
+    - DateTime: guide/datetime.md
+    - Date: guide/date.md
+    - Duration: guide/duration.md
+    - Period: guide/period.md
+    - Interval: guide/interval.md
+    - Parsing & Formatting: guide/parsing-formatting.md
+    - Timezone Handling: guide/timezones.md
+    - Localization: guide/localization.md
+    - Business Days: guide/business-days.md
+    - Comparisons: guide/comparisons.md
+  - Examples:
+    - Common Tasks: examples/common-tasks.md
+    - Working with APIs: examples/api-integration.md
+    - Data Processing: examples/data-processing.md
+    - Scheduling: examples/scheduling.md
+    - Testing: examples/testing.md
+  - API Reference:
+    - Overview: api/index.md
+    - carbonic: api/carbonic.md
+    - DateTime: api/datetime.md
+    - Date: api/date.md
+    - Duration: api/duration.md
+    - Period: api/period.md
+    - Interval: api/interval.md
+    - Exceptions: api/exceptions.md
+    - Locale: api/locale.md
+  - Development:
+    - Contributing: development/contributing.md
+    - Development Setup: development/setup.md
+    - Testing: development/testing.md
+    - Release Process: development/releases.md
+    - Architecture: development/architecture.md
