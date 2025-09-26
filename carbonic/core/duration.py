@@ -697,6 +697,128 @@ class Duration:
         object.__setattr__(new_duration, "_calendar_years", abs(self._calendar_years))
         return new_duration
 
-    def humanize(self, *, max_units=2, locale: str | None = None) -> str:
-        """Return human-readable duration string."""
-        raise NotImplementedError("Duration humanization not yet implemented")
+    def humanize(self, *, max_units: int = 2, locale: str | None = None) -> str:
+        """Return human-readable duration string.
+
+        Args:
+            max_units: Maximum number of time units to display (default: 2)
+            locale: Locale for localization (default: None for English)
+
+        Returns:
+            Human-readable string like "2 days 3 hours" or "1 year 6 months"
+
+        Examples:
+            Duration(days=2, hours=3).humanize()  # "2 days 3 hours"
+            Duration(minutes=90).humanize(max_units=1)  # "1 hour"
+            Duration(seconds=45).humanize(locale="pl")  # "45 sekund" (if implemented)
+        """
+        if max_units < 1:
+            raise ValueError("max_units must be at least 1")
+
+        # For now, only support English (None) and explicit "en"
+        if locale is not None and locale not in ("en",):
+            if locale == "pl":
+                raise NotImplementedError("Polish locale not yet implemented")
+            else:
+                raise ValueError(f"Unsupported locale: {locale}")
+
+        # Helper function to format unit name with proper pluralization
+        def format_unit(value: int | float, unit: str) -> str:
+            if value == 1:
+                return f"{value} {unit}"
+            elif value == -1:
+                return f"{value} {unit}"
+            else:
+                return f"{value} {unit}s"
+
+        # Collect all non-zero components in order of significance
+        components = []
+
+        # Start with calendar components (highest precedence)
+        if self._calendar_years != 0:
+            components.append(format_unit(abs(self._calendar_years), "year"))
+        if self._calendar_months != 0:
+            components.append(format_unit(abs(self._calendar_months), "month"))
+
+        # Convert time-based components to appropriate units
+        total_seconds = abs(self.total_seconds())
+        if total_seconds == 0 and not components:
+            return "0 seconds"
+
+        # Extract time components from total seconds
+        if total_seconds > 0:
+            # Days (but not if we already have calendar years/months taking up slots)
+            days = int(total_seconds // 86400)
+            remaining_seconds = total_seconds % 86400
+
+            # Show weeks if it's a clean week division and no other larger components
+            if not components and days >= 7 and days % 7 == 0 and remaining_seconds == 0:
+                weeks = days // 7
+                components.append(format_unit(weeks, "week"))
+            elif days > 0:
+                components.append(format_unit(days, "day"))
+
+            # Hours
+            hours = int(remaining_seconds // 3600)
+            remaining_seconds = remaining_seconds % 3600
+            if hours > 0:
+                components.append(format_unit(hours, "hour"))
+
+            # Minutes
+            minutes = int(remaining_seconds // 60)
+            remaining_seconds = remaining_seconds % 60
+            if minutes > 0:
+                components.append(format_unit(minutes, "minute"))
+
+            # Seconds (including fractional)
+            if remaining_seconds > 0:
+                # Format seconds with appropriate precision
+                if remaining_seconds == int(remaining_seconds):
+                    seconds_int = int(remaining_seconds)
+                    components.append(format_unit(seconds_int, "second"))
+                else:
+                    # Handle fractional seconds - use fixed precision to avoid scientific notation
+                    if remaining_seconds < 0.001:  # Less than 1 millisecond
+                        seconds_str = f"{remaining_seconds:.6f}".rstrip('0').rstrip('.')
+                    elif remaining_seconds < 1:  # Less than 1 second
+                        seconds_str = f"{remaining_seconds:.3f}".rstrip('0').rstrip('.')
+                    else:
+                        seconds_str = f"{remaining_seconds:.6f}".rstrip('0').rstrip('.')
+
+                    # Make sure we don't end up with an empty string after stripping
+                    if seconds_str.endswith('.'):
+                        seconds_str = seconds_str[:-1]
+                    if not seconds_str:
+                        seconds_str = "0"
+
+                    components.append(f"{seconds_str} seconds")
+
+        # Handle the case where we have no components (shouldn't happen due to zero check above)
+        if not components:
+            return "0 seconds"
+
+        # Limit to max_units
+        components = components[:max_units]
+
+        # Handle negative durations
+        is_negative = (
+            self._calendar_years < 0 or
+            self._calendar_months < 0 or
+            self.total_seconds() < 0
+        )
+
+        # Join components
+        if len(components) == 1:
+            result = components[0]
+        else:
+            result = " ".join(components)
+
+        # Apply negative sign if needed
+        if is_negative:
+            if result.startswith("-"):
+                # Already has negative sign from the first component
+                pass
+            else:
+                result = f"-{result}"
+
+        return result

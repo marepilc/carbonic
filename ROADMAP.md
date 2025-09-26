@@ -20,11 +20,15 @@
     - Mixed Date/DateTime support with automatic type normalization
     - Strict timezone consistency validation using stdlib zoneinfo
     - Comprehensive comparison, hashing, and string representation (29 comprehensive tests)
-  - Enhanced Duration Features: ISO 8601 parsing with comprehensive format support
+  - Enhanced Duration Features: Complete duration manipulation and formatting
     - Duration.parse(): Complete ISO 8601 duration string parsing (P1Y2M3DT4H5M6S)
     - Support for all ISO 8601 formats: full, date-only, time-only, weeks, fractional components
     - Negative duration support, case-insensitive parsing, comprehensive error handling
     - Full type safety with proper fractional component conversion (14 comprehensive tests)
+    - Duration.humanize(): Human-readable duration formatting with localization support
+    - Smart unit selection: "2 days 3 hours", "1 week", "0.5 seconds" with proper pluralization
+    - Configurable max_units, negative duration handling, fractional seconds precision
+    - Calendar component priority (years/months first), locale framework ready (13 comprehensive tests)
   - Parsing & Formatting: ISO strict/relaxed, Carbon-style tokens, auto-detection
   - Timezone Handling: Full ZoneInfo support with proper UTC defaults
   - Comparison & Arithmetic: Comprehensive operators for all core classes
@@ -33,9 +37,8 @@
 
   🔄 Remaining Major Features
 
-  1. Enhanced Duration Features (Continued)
+  1. Enhanced Duration Features (Final)
 
-  - Duration.humanize(): Localized human-readable output ("2 days ago", "in 3 hours")
   - More sophisticated calendar arithmetic (business days, weekends)
 
   3. Localization System

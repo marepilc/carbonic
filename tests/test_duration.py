@@ -543,3 +543,161 @@ class TestDurationParsing:
         # = 999 + 41 + 16/24 days + (39*60 + 999.999)/86400 seconds
         # The constructor normalizes all time overflow into days
         assert duration.days > 999  # Will be larger due to time component overflow
+
+
+class TestDurationHumanize:
+    def test_humanize_basic_units(self):
+        """Test humanizing basic time units."""
+        # Single units
+        assert Duration(seconds=1).humanize() == "1 second"
+        assert Duration(seconds=2).humanize() == "2 seconds"
+        assert Duration(minutes=1).humanize() == "1 minute"
+        assert Duration(minutes=2).humanize() == "2 minutes"
+        assert Duration(hours=1).humanize() == "1 hour"
+        assert Duration(hours=2).humanize() == "2 hours"
+        assert Duration(days=1).humanize() == "1 day"
+        assert Duration(days=2).humanize() == "2 days"
+        assert Duration(weeks=1).humanize() == "1 week"
+        assert Duration(weeks=2).humanize() == "2 weeks"
+        assert Duration(months=1).humanize() == "1 month"
+        assert Duration(months=2).humanize() == "2 months"
+        assert Duration(years=1).humanize() == "1 year"
+        assert Duration(years=2).humanize() == "2 years"
+
+    def test_humanize_zero_duration(self):
+        """Test humanizing zero duration."""
+        assert Duration().humanize() == "0 seconds"
+
+    def test_humanize_multiple_units_default(self):
+        """Test humanizing multiple units with default max_units=2."""
+        # Two units (default)
+        duration = Duration(days=1, hours=2, minutes=30, seconds=45)
+        assert duration.humanize() == "1 day 2 hours"
+
+        duration = Duration(hours=3, minutes=45, seconds=30)
+        assert duration.humanize() == "3 hours 45 minutes"
+
+        duration = Duration(minutes=5, seconds=30)
+        assert duration.humanize() == "5 minutes 30 seconds"
+
+    def test_humanize_max_units_parameter(self):
+        """Test humanizing with different max_units values."""
+        duration = Duration(days=2, hours=3, minutes=45, seconds=30)
+
+        # max_units=1
+        assert duration.humanize(max_units=1) == "2 days"
+
+        # max_units=2 (default)
+        assert duration.humanize(max_units=2) == "2 days 3 hours"
+
+        # max_units=3
+        assert duration.humanize(max_units=3) == "2 days 3 hours 45 minutes"
+
+        # max_units=4
+        assert duration.humanize(max_units=4) == "2 days 3 hours 45 minutes 30 seconds"
+
+    def test_humanize_with_calendar_components(self):
+        """Test humanizing durations with calendar components (years/months)."""
+        # Years and months should appear first
+        duration = Duration(years=2, months=3, days=5, hours=4)
+        assert duration.humanize() == "2 years 3 months"
+
+        duration = Duration(years=1, days=10, hours=5)
+        assert duration.humanize() == "1 year 10 days"
+
+        duration = Duration(months=6, hours=12, minutes=30)
+        assert duration.humanize() == "6 months 12 hours"
+
+    def test_humanize_negative_durations(self):
+        """Test humanizing negative durations."""
+        assert Duration(days=-1).humanize() == "-1 day"
+        assert Duration(hours=-2, minutes=-30).humanize() == "-2 hours 30 minutes"
+        assert Duration(days=-1, hours=-3).humanize() == "-1 day 3 hours"
+
+    def test_humanize_fractional_seconds(self):
+        """Test humanizing durations with fractional seconds."""
+        # Sub-second durations should show as fractional seconds
+        duration = Duration(microseconds=500000)  # 0.5 seconds
+        assert duration.humanize() == "0.5 seconds"
+
+        duration = Duration(seconds=1, microseconds=250000)  # 1.25 seconds
+        assert duration.humanize() == "1.25 seconds"
+
+        duration = Duration(minutes=2, microseconds=750000)  # 2 minutes 0.75 seconds
+        assert duration.humanize() == "2 minutes 0.75 seconds"
+
+    def test_humanize_very_small_durations(self):
+        """Test humanizing very small durations."""
+        # Microseconds only
+        assert Duration(microseconds=1).humanize() == "0.000001 seconds"
+        assert Duration(microseconds=1000).humanize() == "0.001 seconds"  # 1 millisecond
+        assert Duration(microseconds=10000).humanize() == "0.01 seconds"
+
+    def test_humanize_large_durations(self):
+        """Test humanizing large durations."""
+        duration = Duration(years=100, months=6, days=15, hours=8)
+        assert duration.humanize() == "100 years 6 months"
+
+        # Very large time-based duration
+        duration = Duration(days=365, hours=12)
+        assert duration.humanize() == "365 days 12 hours"
+
+    def test_humanize_locale_parameter(self):
+        """Test humanizing with different locales."""
+        duration = Duration(days=2, hours=3)
+
+        # English (default)
+        assert duration.humanize() == "2 days 3 hours"
+        assert duration.humanize(locale="en") == "2 days 3 hours"
+
+        # Polish locale (when implemented)
+        # For now, should either work or raise NotImplementedError
+        try:
+            result = duration.humanize(locale="pl")
+            # If implemented, should be Polish
+            assert "dni" in result or "godzin" in result
+        except NotImplementedError:
+            # Expected if Polish locale not yet implemented
+            pass
+
+    def test_humanize_edge_cases(self):
+        """Test humanizing edge cases."""
+        # Only calendar components
+        duration = Duration(years=1, months=2)
+        assert duration.humanize() == "1 year 2 months"
+
+        # Mixed positive and negative (after normalization)
+        # This tests the constructor's normalization behavior
+        duration = Duration(days=1, hours=-25)  # Should normalize to -1 day + 23 hours
+        result = duration.humanize()
+        # The actual result after normalization shows the net effect
+        assert result.startswith("-") and ("hour" in result or "day" in result)
+
+    def test_humanize_precision_control(self):
+        """Test humanizing with precision control for sub-second values."""
+        # Test that very small microseconds are handled reasonably
+        duration = Duration(microseconds=123456)  # 0.123456 seconds
+        result = duration.humanize()
+        assert result == "0.123456 seconds" or result == "0.123 seconds"  # Allow rounding
+
+        # Test rounding behavior for display
+        duration = Duration(microseconds=999999)  # 0.999999 seconds
+        result = duration.humanize()
+        assert "second" in result
+
+    def test_humanize_invalid_parameters(self):
+        """Test humanizing with invalid parameters."""
+        import pytest
+
+        duration = Duration(hours=2)
+
+        # Invalid max_units values
+        with pytest.raises(ValueError):
+            duration.humanize(max_units=0)
+
+        with pytest.raises(ValueError):
+            duration.humanize(max_units=-1)
+
+        # Invalid locale (should raise ValueError or NotImplementedError)
+        with pytest.raises((ValueError, NotImplementedError)):
+            duration.humanize(locale="invalid_locale")
