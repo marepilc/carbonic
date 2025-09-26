@@ -1239,3 +1239,220 @@ def test_date_duration_arithmetic_type_error():
 
     with pytest.raises(TypeError):
         date - 123  # type: ignore
+
+
+class TestDateBusinessDays:
+    def test_is_weekday(self):
+        """Test checking if a date is a weekday (Monday-Friday)."""
+        # Monday 2023-12-25 (Christmas Day)
+        monday = Date(2023, 12, 25)
+        assert monday.is_weekday() is True
+
+        # Tuesday
+        tuesday = Date(2023, 12, 26)
+        assert tuesday.is_weekday() is True
+
+        # Wednesday
+        wednesday = Date(2023, 12, 27)
+        assert wednesday.is_weekday() is True
+
+        # Thursday
+        thursday = Date(2023, 12, 28)
+        assert thursday.is_weekday() is True
+
+        # Friday
+        friday = Date(2023, 12, 29)
+        assert friday.is_weekday() is True
+
+        # Saturday
+        saturday = Date(2023, 12, 30)
+        assert saturday.is_weekday() is False
+
+        # Sunday
+        sunday = Date(2023, 12, 31)
+        assert sunday.is_weekday() is False
+
+    def test_is_weekend(self):
+        """Test checking if a date is a weekend (Saturday-Sunday)."""
+        # Weekdays should not be weekend
+        monday = Date(2023, 12, 25)
+        assert monday.is_weekend() is False
+
+        friday = Date(2023, 12, 29)
+        assert friday.is_weekend() is False
+
+        # Weekend days
+        saturday = Date(2023, 12, 30)
+        assert saturday.is_weekend() is True
+
+        sunday = Date(2023, 12, 31)
+        assert sunday.is_weekend() is True
+
+    def test_add_business_days_basic(self):
+        """Test adding business days to dates."""
+        # Start on Monday, add 1 business day -> Tuesday
+        monday = Date(2023, 12, 25)
+        tuesday = monday.add_business_days(1)
+        assert tuesday == Date(2023, 12, 26)
+
+        # Add 4 business days from Monday -> Friday
+        friday = monday.add_business_days(4)
+        assert friday == Date(2023, 12, 29)
+
+        # Add 5 business days from Monday -> skip weekend, land on next Monday
+        next_monday = monday.add_business_days(5)
+        assert next_monday == Date(2024, 1, 1)  # Skip Sat 30, Sun 31
+
+    def test_add_business_days_from_weekend(self):
+        """Test adding business days starting from weekend."""
+        # Start on Saturday
+        saturday = Date(2023, 12, 30)
+
+        # Add 1 business day from Saturday -> Monday (skip Sunday)
+        monday = saturday.add_business_days(1)
+        assert monday == Date(2024, 1, 1)
+
+        # Start on Sunday
+        sunday = Date(2023, 12, 31)
+
+        # Add 1 business day from Sunday -> Monday
+        monday = sunday.add_business_days(1)
+        assert monday == Date(2024, 1, 1)
+
+    def test_add_business_days_zero(self):
+        """Test adding zero business days."""
+        # From weekday - should return same date
+        monday = Date(2023, 12, 25)
+        same_monday = monday.add_business_days(0)
+        assert same_monday == monday
+
+        # From weekend - should return next business day (Monday)
+        saturday = Date(2023, 12, 30)
+        monday = saturday.add_business_days(0)
+        assert monday == Date(2024, 1, 1)
+
+    def test_add_business_days_large_numbers(self):
+        """Test adding large numbers of business days."""
+        start_date = Date(2023, 12, 25)  # Monday
+
+        # Add 10 business days (2 full weeks)
+        result = start_date.add_business_days(10)
+        expected = Date(2024, 1, 8)  # Monday 2 weeks + 1 day later
+        assert result == expected
+
+        # Add 20 business days (4 full weeks)
+        result = start_date.add_business_days(20)
+        expected = Date(2024, 1, 22)  # Monday 4 weeks + 1 day later
+        assert result == expected
+
+    def test_subtract_business_days_basic(self):
+        """Test subtracting business days from dates."""
+        # Start on Friday, subtract 1 business day -> Thursday
+        friday = Date(2023, 12, 29)
+        thursday = friday.subtract_business_days(1)
+        assert thursday == Date(2023, 12, 28)
+
+        # Subtract 4 business days from Friday -> Monday
+        monday = friday.subtract_business_days(4)
+        assert monday == Date(2023, 12, 25)
+
+        # Subtract 5 business days from Friday -> skip weekend, land on previous Friday
+        prev_friday = friday.subtract_business_days(5)
+        assert prev_friday == Date(2023, 12, 22)
+
+    def test_subtract_business_days_from_weekend(self):
+        """Test subtracting business days starting from weekend."""
+        # Start on Saturday
+        saturday = Date(2023, 12, 30)
+
+        # Subtract 1 business day from Saturday -> Friday (skip going back through weekend)
+        friday = saturday.subtract_business_days(1)
+        assert friday == Date(2023, 12, 29)
+
+        # Start on Sunday
+        sunday = Date(2023, 12, 31)
+
+        # Subtract 1 business day from Sunday -> Friday
+        friday = sunday.subtract_business_days(1)
+        assert friday == Date(2023, 12, 29)
+
+    def test_subtract_business_days_zero(self):
+        """Test subtracting zero business days."""
+        # From weekday - should return same date
+        friday = Date(2023, 12, 29)
+        same_friday = friday.subtract_business_days(0)
+        assert same_friday == friday
+
+        # From weekend - should return previous business day (Friday)
+        saturday = Date(2023, 12, 30)
+        friday = saturday.subtract_business_days(0)
+        assert friday == Date(2023, 12, 29)
+
+    def test_business_days_negative_numbers(self):
+        """Test business day methods with negative numbers."""
+        monday = Date(2023, 12, 25)
+
+        # add_business_days with negative number should be same as subtract_business_days
+        result1 = monday.add_business_days(-3)
+        result2 = monday.subtract_business_days(3)
+        assert result1 == result2
+
+        # subtract_business_days with negative number should be same as add_business_days
+        result3 = monday.subtract_business_days(-3)
+        result4 = monday.add_business_days(3)
+        assert result3 == result4
+
+    def test_business_days_month_boundaries(self):
+        """Test business day arithmetic across month boundaries."""
+        # End of month
+        date = Date(2023, 11, 30)  # Thursday
+
+        # Add 1 business day -> Friday (Dec 1)
+        result = date.add_business_days(1)
+        assert result == Date(2023, 12, 1)
+
+        # Add 3 business days -> skip weekend, get Tuesday (Dec 5)
+        result = date.add_business_days(3)
+        assert result == Date(2023, 12, 5)
+
+    def test_business_days_year_boundaries(self):
+        """Test business day arithmetic across year boundaries."""
+        # End of year
+        date = Date(2023, 12, 29)  # Friday
+
+        # Add 1 business day -> Monday (Jan 1, 2024)
+        result = date.add_business_days(1)
+        assert result == Date(2024, 1, 1)
+
+        # Beginning of year
+        date = Date(2024, 1, 1)  # Monday
+
+        # Subtract 1 business day -> Friday (Dec 29, 2023)
+        result = date.subtract_business_days(1)
+        assert result == Date(2023, 12, 29)
+
+    def test_business_days_with_holidays(self):
+        """Test business day arithmetic with holidays."""
+        # This tests the holiday parameter when implemented
+        christmas = Date(2023, 12, 25)  # Monday, Christmas Day
+
+        # Without holidays - should be normal business day
+        result = christmas.add_business_days(1)
+        assert result == Date(2023, 12, 26)
+
+        # With holidays - should skip Christmas
+        # TODO: Uncomment when holiday support is implemented
+        # holidays = [Date(2023, 12, 25)]  # Christmas
+        # result = christmas.add_business_days(1, holidays=holidays)
+        # assert result == Date(2023, 12, 26)
+
+    def test_business_days_invalid_input(self):
+        """Test business day methods with invalid input."""
+        date = Date(2023, 12, 25)
+
+        # Test with non-integer input
+        with pytest.raises(TypeError):
+            date.add_business_days(1.5)  # type: ignore
+
+        with pytest.raises(TypeError):
+            date.subtract_business_days("1")  # type: ignore

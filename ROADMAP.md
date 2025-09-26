@@ -29,6 +29,11 @@
     - Smart unit selection: "2 days 3 hours", "1 week", "0.5 seconds" with proper pluralization
     - Configurable max_units, negative duration handling, fractional seconds precision
     - Calendar component priority (years/months first), locale framework ready (13 comprehensive tests)
+  - Calendar Arithmetic: Complete business day and weekend handling
+    - is_weekday(), is_weekend(): Weekend/weekday detection methods
+    - add_business_days(), subtract_business_days(): Business day arithmetic with weekend skipping
+    - Smart weekend handling: Auto-moves to nearest business day when starting on weekend
+    - Boundary crossing: Works across months/years, optimized for large numbers (14 comprehensive tests)
   - Parsing & Formatting: ISO strict/relaxed, Carbon-style tokens, auto-detection
   - Timezone Handling: Full ZoneInfo support with proper UTC defaults
   - Comparison & Arithmetic: Comprehensive operators for all core classes
@@ -36,10 +41,6 @@
   - Type Safety: Precise overloads for better IDE support and type checking
 
   🔄 Remaining Major Features
-
-  1. Enhanced Duration Features (Final)
-
-  - More sophisticated calendar arithmetic (business days, weekends)
 
   3. Localization System
 
@@ -65,6 +66,12 @@
   - Relative parsing: "tomorrow", "next week", "last month"
   - Natural language: "in 2 hours", "3 days ago"
   - More format support: RFC 2822, custom business formats
+
+  7. Holiday Support (Future Enhancement)
+
+  - Holiday calendar integration: Custom holiday lists for business day calculations
+  - Regional holiday support: Built-in holidays for major regions (US, EU, etc.)
+  - Holiday-aware business day methods: add_business_days(days, holidays=[])
 
   🎯 Suggested Next Priority
 

@@ -404,6 +404,119 @@ class Date:
         else:
             raise ValueError(f"Unknown unit: {unit}")
 
+    # Business day operations
+    def is_weekday(self) -> bool:
+        """Return True if this date is a weekday (Monday-Friday)."""
+        return self.weekday < 5  # Monday=0, Tuesday=1, ..., Friday=4
+
+    def is_weekend(self) -> bool:
+        """Return True if this date is a weekend (Saturday-Sunday)."""
+        return self.weekday >= 5  # Saturday=5, Sunday=6
+
+    def add_business_days(self, days: int) -> Date:
+        """Add business days to this date, skipping weekends.
+
+        Args:
+            days: Number of business days to add (can be negative)
+
+        Returns:
+            New Date with business days added
+
+        Examples:
+            Date(2023, 12, 25).add_business_days(1)  # Monday -> Tuesday
+            Date(2023, 12, 29).add_business_days(1)  # Friday -> Monday (skip weekend)
+        """
+        if not isinstance(days, int):
+            raise TypeError("days must be an integer")
+
+        if days < 0:
+            return self.subtract_business_days(-days)
+
+        if days == 0:
+            # If we're on a weekend, move to next business day
+            if self.is_weekend():
+                # Move to Monday
+                days_to_monday = 1 if self.weekday == 6 else 2  # Sunday->1, Saturday->2
+                return self.add(days=days_to_monday)
+            else:
+                return self
+
+        current_date = self
+        remaining_days = days
+
+        # If starting on weekend, first move to Monday (this counts as adding business days)
+        if current_date.is_weekend():
+            days_to_monday = 1 if current_date.weekday == 6 else 2  # Sunday->1, Saturday->2
+            current_date = current_date.add(days=days_to_monday)
+            remaining_days -= 1  # Moving to Monday counts as 1 business day
+
+        # Add complete weeks (5 business days = 7 calendar days)
+        complete_weeks = remaining_days // 5
+        if complete_weeks > 0:
+            current_date = current_date.add(days=complete_weeks * 7)
+            remaining_days = remaining_days % 5
+
+        # Add remaining days one by one, skipping weekends
+        for _ in range(remaining_days):
+            current_date = current_date.add(days=1)
+            # If we land on Saturday, skip to Monday
+            if current_date.weekday == 5:  # Saturday
+                current_date = current_date.add(days=2)
+
+        return current_date
+
+    def subtract_business_days(self, days: int) -> Date:
+        """Subtract business days from this date, skipping weekends.
+
+        Args:
+            days: Number of business days to subtract (can be negative)
+
+        Returns:
+            New Date with business days subtracted
+
+        Examples:
+            Date(2023, 12, 26).subtract_business_days(1)  # Tuesday -> Monday
+            Date(2024, 1, 1).subtract_business_days(1)    # Monday -> Friday (skip weekend)
+        """
+        if not isinstance(days, int):
+            raise TypeError("days must be an integer")
+
+        if days < 0:
+            return self.add_business_days(-days)
+
+        if days == 0:
+            # If we're on a weekend, move to previous business day
+            if self.is_weekend():
+                # Move to Friday
+                days_to_friday = 1 if self.weekday == 5 else 2  # Saturday->1, Sunday->2
+                return self.subtract(days=days_to_friday)
+            else:
+                return self
+
+        current_date = self
+        remaining_days = days
+
+        # If starting on weekend, first move to Friday (this counts as subtracting business days)
+        if current_date.is_weekend():
+            days_to_friday = 1 if current_date.weekday == 5 else 2  # Saturday->1, Sunday->2
+            current_date = current_date.subtract(days=days_to_friday)
+            remaining_days -= 1  # Moving to Friday counts as 1 business day
+
+        # Subtract complete weeks (5 business days = 7 calendar days)
+        complete_weeks = remaining_days // 5
+        if complete_weeks > 0:
+            current_date = current_date.subtract(days=complete_weeks * 7)
+            remaining_days = remaining_days % 5
+
+        # Subtract remaining days one by one, skipping weekends
+        for _ in range(remaining_days):
+            current_date = current_date.subtract(days=1)
+            # If we land on Sunday, skip to Friday
+            if current_date.weekday == 6:  # Sunday
+                current_date = current_date.subtract(days=2)
+
+        return current_date
+
     # Interop
     def to_datetime(self, tz: str | None = "UTC") -> datetime.datetime:
         """Convert to datetime.datetime with timezone (default UTC)."""
