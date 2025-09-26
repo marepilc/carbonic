@@ -49,13 +49,26 @@
   - Anchor Methods: start_of/end_of for various time periods
   - Type Safety: Precise overloads for better IDE support and type checking
 
+  - Polars Plugin Foundation: High-performance Rust plugin architecture established
+    - Successful proof-of-concept: Working Polars namespace (.carbonic) with vectorized operations
+    - Build pipeline: Complete maturin + PyO3 + pyo3-polars compilation workflow
+    - Plugin structure: Modular Rust code (parsing, business_days, formatting, expressions)
+    - Python integration: Custom namespaces for both expressions and DataFrames
+    - Test framework: Comprehensive testing with placeholder functions validated
+    - Ready for migration: Full foundation for separate carbonic-polars repository
+
   🔄 Remaining Major Features
 
-  3. Data Library Integrations
+  3. Data Library Integrations (External Repositories)
 
-  - Pandas adapters: DataFrame datetime operations, custom dtypes
-  - Polars adapters: Lazy evaluation compatibility
-  - Pydantic field types: Validation and serialization support
+  - **carbonic-polars**: High-performance Polars plugin (separate repository)
+    - Vectorized Carbonic format parsing with lazy evaluation compatibility
+    - Business day arithmetic operations (not available in standard Polars)
+    - Localized datetime formatting with multi-language support
+    - Duration humanization with proper pluralization
+    - Complete integration with Polars expression and DataFrame APIs
+  - **carbonic-pandas**: DataFrame datetime operations, custom dtypes (future)
+  - **carbonic-pydantic**: Validation and serialization field types (future)
 
   4. Performance Optimizations
 
@@ -73,10 +86,9 @@
   6. Additional Parsing Features
 
   - Relative parsing: "tomorrow", "next week", "last month"
-  - Natural language: "in 2 hours", "3 days ago"
   - More format support: RFC 2822, custom business formats
 
-  7. Holiday Support (Future Enhancement)
+  1. Holiday Support (Future Enhancement)
 
   - Holiday calendar integration: Custom holiday lists for business day calculations
   - Regional holiday support: Built-in holidays for major regions (US, EU, etc.)
@@ -84,12 +96,13 @@
 
   🎯 Suggested Next Priority
 
-  Based on the current completion status and typical datetime library usage patterns, the recommended development order is:
+  Based on the current completion status and successful Polars plugin foundation, the recommended development order is:
 
-  1. **Data Library Integrations** - Pandas/Polars adapters for ecosystem compatibility
-  2. **Performance Optimizations** - Optional ciso8601 for faster parsing acceleration
+  1. **Performance Optimizations** - Optional ciso8601 for faster parsing acceleration within core Carbonic
+  2. **Additional Parsing Features** - Relative date parsing
   3. **Additional Locale Support** - Spanish, French, German localization (post-performance)
-  4. **Additional Parsing Features** - Natural language and relative date parsing
+  4. **carbonic-polars Separate Repository** - Migrate and complete the Polars plugin as standalone package
+  5. **Other Data Library Integrations** - carbonic-pandas and carbonic-pydantic as separate repositories
 
   ## Current Status Summary
 
@@ -103,5 +116,6 @@
   - **Comprehensive i18n infrastructure with proper grammar handling**
   - Comprehensive timezone handling with stdlib integration
   - Full type safety with precise overloads
+  - **Polars Plugin Architecture: Complete foundation for high-performance external integrations**
 
-  **🔄 Next Phase:** Focus on data library integrations and performance optimizations to make Carbonic production-ready for diverse use cases.
+  **🔄 Next Phase:** Focus on performance optimizations and prepare for external data library integrations as separate repositories to maintain clean separation of concerns.
