@@ -68,17 +68,8 @@ jobs:
       run: |
         uv run mike deploy dev --push
 
-    - name: Build site for GitHub Pages
-      run: uv run mkdocs build
-
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: ./site
-
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+    - name: Build and deploy site
+      run: |
+        # Build the current version
+        uv run mkdocs build
+        # Note: mike handles the gh-pages branch deployment
