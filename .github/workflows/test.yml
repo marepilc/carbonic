@@ -28,7 +28,7 @@ jobs:
         run: uv sync --all-extras
 
       - name: Run tests
-        run: uv run pytest --cov=carbonic --cov-report=xml
+        run: uv run pytest
 
       - name: Run type checking
         run: uv run mypy carbonic
