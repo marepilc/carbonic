@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write  # Need write access to push to gh-pages branch
   pages: write
   id-token: write
 
