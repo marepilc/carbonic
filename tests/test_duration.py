@@ -194,7 +194,9 @@ class TestDurationConversionProperties:
         assert duration.in_seconds(whole=True) == 9045
 
         # Test in_minutes with whole parameter
-        expected_minutes = 150.75833333333333  # Approximately 150 minutes and 45.5 seconds
+        expected_minutes = (
+            150.75833333333333  # Approximately 150 minutes and 45.5 seconds
+        )
         assert abs(duration.in_minutes() - expected_minutes) < 0.001
         assert duration.in_minutes(whole=True) == 150
 
@@ -334,7 +336,9 @@ class TestDurationArithmetic:
         result = duration * 3
 
         assert result.days == 6
-        assert result.storage_seconds == 9 * 3600 + 90 * 60  # 3 * (3 hours + 30 minutes)
+        assert (
+            result.storage_seconds == 9 * 3600 + 90 * 60
+        )  # 3 * (3 hours + 30 minutes)
 
     def test_multiplication_float(self):
         """Test Duration multiplication by float."""
@@ -381,3 +385,161 @@ class TestDurationArithmetic:
 
         assert result.days == 5
         assert result.storage_seconds == 2 * 3600
+
+
+class TestDurationParsing:
+    def test_parse_basic_iso8601_date_only(self):
+        """Test parsing ISO 8601 date-only duration strings."""
+        # P1Y2M3D - 1 year, 2 months, 3 days
+        duration = Duration.parse("P1Y2M3D")
+        assert duration.years == 1
+        assert duration.months == 2
+        assert duration.days == 3
+        assert duration.storage_seconds == 0
+
+    def test_parse_basic_iso8601_time_only(self):
+        """Test parsing ISO 8601 time-only duration strings."""
+        # PT4H5M6S - 4 hours, 5 minutes, 6 seconds
+        duration = Duration.parse("PT4H5M6S")
+        assert duration.years == 0
+        assert duration.months == 0
+        assert duration.days == 0
+        assert duration.storage_seconds == 4 * 3600 + 5 * 60 + 6  # 14706
+
+    def test_parse_iso8601_combined(self):
+        """Test parsing ISO 8601 combined date and time duration."""
+        # P1Y2M3DT4H5M6S - 1 year, 2 months, 3 days, 4 hours, 5 minutes, 6 seconds
+        duration = Duration.parse("P1Y2M3DT4H5M6S")
+        assert duration.years == 1
+        assert duration.months == 2
+        assert duration.days == 3
+        assert duration.storage_seconds == 4 * 3600 + 5 * 60 + 6  # 14706
+
+    def test_parse_iso8601_weeks(self):
+        """Test parsing ISO 8601 week duration."""
+        # P2W - 2 weeks
+        duration = Duration.parse("P2W")
+        assert duration.years == 0
+        assert duration.months == 0
+        assert duration.days == 14  # 2 weeks = 14 days
+        assert duration.storage_seconds == 0
+
+    def test_parse_iso8601_fractional_weeks(self):
+        """Test parsing ISO 8601 fractional week duration."""
+        # P1.5W - 1.5 weeks = 1 week + 3.5 days = 1 week + 3 days
+        duration = Duration.parse("P1.5W")
+        assert duration.years == 0
+        assert duration.months == 0
+        assert duration.days == 10  # 1 week (7 days) + 3 days from 0.5 week
+        assert duration.storage_seconds == 0
+
+    def test_parse_iso8601_fractional_seconds(self):
+        """Test parsing ISO 8601 duration with fractional seconds."""
+        # PT1.5S - 1.5 seconds
+        duration = Duration.parse("PT1.5S")
+        assert duration.days == 0
+        assert duration.storage_seconds == 1
+        assert duration.microseconds == 500000  # 0.5 seconds = 500000 microseconds
+
+    def test_parse_iso8601_fractional_minutes(self):
+        """Test parsing ISO 8601 duration with fractional minutes."""
+        # PT2.5M - 2.5 minutes = 2 minutes 30 seconds
+        duration = Duration.parse("PT2.5M")
+        assert duration.days == 0
+        assert duration.storage_seconds == 2 * 60 + 30  # 150 seconds
+
+    def test_parse_iso8601_fractional_hours(self):
+        """Test parsing ISO 8601 duration with fractional hours."""
+        # PT1.5H - 1.5 hours = 1 hour 30 minutes
+        duration = Duration.parse("PT1.5H")
+        assert duration.days == 0
+        assert duration.storage_seconds == 1 * 3600 + 30 * 60  # 5400 seconds
+
+    def test_parse_iso8601_partial_components(self):
+        """Test parsing ISO 8601 duration with missing components."""
+        # P1Y3D - 1 year, 3 days (no months)
+        duration = Duration.parse("P1Y3D")
+        assert duration.years == 1
+        assert duration.months == 0
+        assert duration.days == 3
+
+        # PT30M - 30 minutes (no hours or seconds)
+        duration = Duration.parse("PT30M")
+        assert duration.storage_seconds == 30 * 60
+
+    def test_parse_iso8601_zero_values(self):
+        """Test parsing ISO 8601 duration with explicit zero values."""
+        # P0Y0M1DT0H0M0S - only 1 day
+        duration = Duration.parse("P0Y0M1DT0H0M0S")
+        assert duration.years == 0
+        assert duration.months == 0
+        assert duration.days == 1
+        assert duration.storage_seconds == 0
+
+    def test_parse_iso8601_negative_duration(self):
+        """Test parsing ISO 8601 negative duration."""
+        # -P1DT2H - negative 1 day 2 hours
+        duration = Duration.parse("-P1DT2H")
+        # The constructor normalizes -1 day -2 hours into -2 days + 22 hours
+        assert duration.days == -2
+        assert duration.storage_seconds == 22 * 3600  # 79200 seconds
+        # But the total should still be the expected negative value
+        assert duration.total_seconds() == -(1 * 86400 + 2 * 3600)  # -93600
+
+    def test_parse_iso8601_case_insensitive(self):
+        """Test parsing ISO 8601 duration is case insensitive for designators."""
+        # p1y2m3dt4h5m6s - lowercase should work
+        duration = Duration.parse("p1y2m3dt4h5m6s")
+        assert duration.years == 1
+        assert duration.months == 2
+        assert duration.days == 3
+        assert duration.storage_seconds == 4 * 3600 + 5 * 60 + 6
+
+    def test_parse_iso8601_invalid_format(self):
+        """Test parsing invalid ISO 8601 duration strings raises ValueError."""
+        import pytest
+
+        # Missing P prefix
+        with pytest.raises(ValueError, match="Invalid ISO 8601 duration format"):
+            Duration.parse("1Y2M3D")
+
+        # Invalid order
+        with pytest.raises(ValueError, match="Invalid ISO 8601 duration format"):
+            Duration.parse("P3D2M1Y")
+
+        # T without time components
+        with pytest.raises(ValueError, match="Invalid ISO 8601 duration format"):
+            Duration.parse("P1DT")
+
+        # Missing T for time components
+        with pytest.raises(ValueError, match="Invalid ISO 8601 duration format"):
+            Duration.parse("P1D2H")
+
+        # Empty string
+        with pytest.raises(ValueError, match="Invalid ISO 8601 duration format"):
+            Duration.parse("")
+
+        # Invalid characters
+        with pytest.raises(ValueError, match="Invalid ISO 8601 duration format"):
+            Duration.parse("P1X")
+
+    def test_parse_iso8601_edge_cases(self):
+        """Test parsing ISO 8601 duration edge cases."""
+        # Just P should be invalid
+        import pytest
+
+        with pytest.raises(ValueError):
+            Duration.parse("P")
+
+        # Zero duration
+        duration = Duration.parse("PT0S")
+        assert duration.total_seconds() == 0
+
+        # Large values - constructor will normalize overflow
+        duration = Duration.parse("P999Y999M999DT999H999M999.999S")
+        assert duration.years == 999
+        assert duration.months == 999
+        # 999 days + 999 hours (41 days) + 999 minutes (16 hours 39 minutes) + 999.999 seconds
+        # = 999 + 41 + 16/24 days + (39*60 + 999.999)/86400 seconds
+        # The constructor normalizes all time overflow into days
+        assert duration.days > 999  # Will be larger due to time component overflow

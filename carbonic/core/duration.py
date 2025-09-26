@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Literal, overload
 
@@ -105,13 +106,220 @@ class Duration:
     # Constructors
     @classmethod
     def parse(cls, s: str) -> Duration:
-        """Parse ISO 8601 duration string or custom format."""
-        raise NotImplementedError("Duration parsing not yet implemented")
+        """Parse ISO 8601 duration string or custom format.
+
+        Supports the following ISO 8601 duration formats:
+        - P[n]Y[n]M[n]DT[n]H[n]M[n]S (full format)
+        - P[n]Y[n]M[n]D (date only)
+        - PT[n]H[n]M[n]S (time only)
+        - P[n]W (weeks)
+        - -P... (negative durations)
+
+        Examples:
+            Duration.parse("P1Y2M3DT4H5M6S")  # 1 year, 2 months, 3 days, 4 hours, 5 minutes, 6 seconds
+            Duration.parse("PT2H30M")         # 2 hours, 30 minutes
+            Duration.parse("P2W")             # 2 weeks
+            Duration.parse("-P1DT2H")         # negative 1 day, 2 hours
+        """
+        if not s:
+            raise ValueError("Invalid ISO 8601 duration format: empty string")
+
+        original_s = s
+        negative = False
+
+        # Handle negative durations
+        if s.startswith("-"):
+            negative = True
+            s = s[1:]
+
+        # Normalize to uppercase for case insensitive parsing
+        s = s.upper()
+
+        # Must start with P
+        if not s.startswith("P"):
+            raise ValueError(
+                f"Invalid ISO 8601 duration format: '{original_s}' - must start with P"
+            )
+
+        # Remove P prefix
+        s = s[1:]
+
+        # Check for special case: just "P" with nothing else
+        if not s:
+            raise ValueError(
+                f"Invalid ISO 8601 duration format: '{original_s}' - empty duration"
+            )
+
+        # Handle week format P[n]W (mutually exclusive with other formats)
+        if "W" in s:
+            week_match = re.match(r"^(\d+(?:\.\d+)?)W$", s)
+            if not week_match:
+                raise ValueError(
+                    f"Invalid ISO 8601 duration format: '{original_s}' - invalid week format"
+                )
+
+            weeks_float = float(week_match.group(1))
+            if negative:
+                weeks_float = -weeks_float
+
+            # Convert fractional weeks to days + whole weeks
+            if weeks_float != int(weeks_float):
+                fractional_weeks = weeks_float - int(weeks_float)
+                days_from_fractional_weeks = int(fractional_weeks * 7)
+                weeks_int = int(weeks_float)
+                return cls(weeks=weeks_int, days=days_from_fractional_weeks)
+            else:
+                return cls(weeks=int(weeks_float))
+
+        # Split on T to separate date and time parts
+        if "T" in s:
+            parts = s.split("T")
+            if len(parts) != 2:
+                raise ValueError(
+                    f"Invalid ISO 8601 duration format: '{original_s}' - invalid T placement"
+                )
+            date_part, time_part = parts
+
+            # T cannot be at the end without time components
+            if not time_part:
+                raise ValueError(
+                    f"Invalid ISO 8601 duration format: '{original_s}' - T requires time components"
+                )
+        else:
+            date_part = s
+            time_part = ""
+
+        # Parse date part P[n]Y[n]M[n]D
+        years: float = 0
+        months: float = 0
+        days: float = 0
+        date_match = None
+
+        if date_part:
+            # Must match pattern with Y, M, D in correct order
+            date_pattern = (
+                r"^(?:(\d+(?:\.\d+)?)Y)?(?:(\d+(?:\.\d+)?)M)?(?:(\d+(?:\.\d+)?)D)?$"
+            )
+            date_match = re.match(date_pattern, date_part)
+
+            if not date_match:
+                raise ValueError(
+                    f"Invalid ISO 8601 duration format: '{original_s}' - invalid date format"
+                )
+
+            # Check that we have at least one date component if date_part exists
+            if not any(date_match.groups()):
+                raise ValueError(
+                    f"Invalid ISO 8601 duration format: '{original_s}' - no date components found"
+                )
+
+            if date_match.group(1) is not None:  # years
+                years = float(date_match.group(1))
+            if date_match.group(2) is not None:  # months
+                months = float(date_match.group(2))
+            if date_match.group(3) is not None:  # days
+                days = float(date_match.group(3))
+
+        # Parse time part T[n]H[n]M[n]S
+        hours: float = 0
+        minutes: float = 0
+        seconds: float = 0
+        time_match = None
+
+        if time_part:
+            # Must match pattern with H, M, S in correct order
+            time_pattern = (
+                r"^(?:(\d+(?:\.\d+)?)H)?(?:(\d+(?:\.\d+)?)M)?(?:(\d+(?:\.\d+)?)S)?$"
+            )
+            time_match = re.match(time_pattern, time_part)
+
+            if not time_match:
+                raise ValueError(
+                    f"Invalid ISO 8601 duration format: '{original_s}' - invalid time format"
+                )
+
+            # Check that we have at least one time component if time_part exists
+            if not any(time_match.groups()):
+                raise ValueError(
+                    f"Invalid ISO 8601 duration format: '{original_s}' - no time components found after T"
+                )
+
+            if time_match.group(1) is not None:  # hours
+                hours = float(time_match.group(1))
+            if time_match.group(2) is not None:  # minutes
+                minutes = float(time_match.group(2))
+            if time_match.group(3) is not None:  # seconds
+                seconds = float(time_match.group(3))
+
+        # Check that we have at least some components
+        # Note: we should allow zero values, so we check if any component was explicitly found
+        has_components = False
+        if date_part and date_match and any(g is not None for g in date_match.groups()):
+            has_components = True
+        if time_part and time_match and any(g is not None for g in time_match.groups()):
+            has_components = True
+        if not has_components:
+            raise ValueError(
+                f"Invalid ISO 8601 duration format: '{original_s}' - no duration components found"
+            )
+
+        # Apply negative sign if needed
+        if negative:
+            years = -years
+            months = -months
+            days = -days
+            hours = -hours
+            minutes = -minutes
+            seconds = -seconds
+
+        # Convert fractional components
+        # Handle fractional seconds -> microseconds
+        if seconds != int(seconds):
+            fractional_seconds = seconds - int(seconds)
+            microseconds = int(fractional_seconds * 1_000_000)
+            seconds = int(seconds)
+        else:
+            microseconds = 0
+            seconds = int(seconds)
+
+        # Handle fractional minutes -> seconds
+        if minutes != int(minutes):
+            fractional_minutes = minutes - int(minutes)
+            seconds += int(fractional_minutes * 60)
+            minutes = int(minutes)
+        else:
+            minutes = int(minutes)
+
+        # Handle fractional hours -> minutes
+        if hours != int(hours):
+            fractional_hours = hours - int(hours)
+            minutes += int(fractional_hours * 60)
+            hours = int(hours)
+        else:
+            hours = int(hours)
+
+        # Note: We don't convert fractional days/months/years to smaller units
+        # as they should maintain their calendar semantics
+        days = int(days)
+        months = int(months)
+        years = int(years)
+
+        return cls(
+            years=years,
+            months=months,
+            days=days,
+            hours=hours,
+            minutes=minutes,
+            seconds=seconds,
+            microseconds=microseconds,
+        )
 
     # Properties and operations
     def total_seconds(self) -> float:
         """Get total seconds for this duration (excluding calendar components)."""
-        total = self.days * 86400 + self.storage_seconds + (self.microseconds / 1_000_000)
+        total = (
+            self.days * 86400 + self.storage_seconds + (self.microseconds / 1_000_000)
+        )
         return total
 
     # Intuitive alias methods for total duration conversion
@@ -226,9 +434,13 @@ class Duration:
 
         # Show calendar components if they were provided in constructor
         if self._calendar_years:
-            parts.append(f"{self._calendar_years} year{'s' if self._calendar_years != 1 else ''}")
+            parts.append(
+                f"{self._calendar_years} year{'s' if self._calendar_years != 1 else ''}"
+            )
         if self._calendar_months:
-            parts.append(f"{self._calendar_months} month{'s' if self._calendar_months != 1 else ''}")
+            parts.append(
+                f"{self._calendar_months} month{'s' if self._calendar_months != 1 else ''}"
+            )
 
         # Show actual time-based components
         if self.days:
@@ -462,7 +674,11 @@ class Duration:
         """Return the absolute value of this Duration."""
         # Check if already positive
         total_seconds = self.total_seconds()
-        if (total_seconds >= 0 and self._calendar_months >= 0 and self._calendar_years >= 0):
+        if (
+            total_seconds >= 0
+            and self._calendar_months >= 0
+            and self._calendar_years >= 0
+        ):
             return self
 
         # For negative durations, create positive version
