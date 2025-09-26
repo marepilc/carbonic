@@ -607,9 +607,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#fast-parsing-recommended" class="md-nav__link">
+  <a href="#performance-optimizations-recommended" class="md-nav__link">
     <span class="md-ellipsis">
-      Fast Parsing (Recommended)
+      Performance Optimizations (Recommended)
     </span>
   </a>
   
@@ -1710,11 +1710,11 @@
 </span></code></pre></div>
 <h2 id="optional-dependencies">Optional Dependencies<a class="headerlink" href="#optional-dependencies" title="Permanent link">&para;</a></h2>
 <p>Carbonic offers optional dependencies for enhanced functionality:</p>
-<h3 id="fast-parsing-recommended">Fast Parsing (Recommended)<a class="headerlink" href="#fast-parsing-recommended" title="Permanent link">&para;</a></h3>
-<p>For significantly faster ISO datetime parsing:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pip<span class="w"> </span>install<span class="w"> </span>carbonic<span class="o">[</span>fast<span class="o">]</span>
+<h3 id="performance-optimizations-recommended">Performance Optimizations (Recommended)<a class="headerlink" href="#performance-optimizations-recommended" title="Permanent link">&para;</a></h3>
+<p>For significantly faster ISO datetime parsing and other performance improvements:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pip<span class="w"> </span>install<span class="w"> </span>carbonic<span class="o">[</span>performance<span class="o">]</span>
 </span></code></pre></div>
-<p>This installs <code>ciso8601</code>, which provides C-accelerated ISO datetime parsing that's 20-50x faster than the standard library.</p>
+<p>This installs <code>ciso8601</code>, which provides C-accelerated ISO datetime parsing that's ~10x faster than the standard library, plus enables other performance optimizations like lazy evaluation caching.</p>
 <h3 id="development">Development<a class="headerlink" href="#development" title="Permanent link">&para;</a></h3>
 <p>For development and contributing:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pip<span class="w"> </span>install<span class="w"> </span>carbonic<span class="o">[</span>dev<span class="o">]</span>
@@ -1735,13 +1735,13 @@
 </span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">current_time</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
 </span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current time: </span><span class="si">{</span><span class="n">current_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="n">dt</span> <span class="o">=</span> <span class="n">DateTime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="n">dt</span> <span class="o">=</span> <span class="n">DateTime</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
 </span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Example datetime: </span><span class="si">{</span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Y-m-d H:i:s&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Expected output:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>0.1.0
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>Current time: 2024-01-15T10:30:00+00:00
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Example datetime: 2024-01-15 14:30:00
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>0.2.0
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>Current time: 2025-01-15T10:30:00+00:00
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Example datetime: 2025-01-15 14:30:00
 </span></code></pre></div></p>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <h3 id="importerror-no-module-named-carbonic">ImportError: No module named 'carbonic'<a class="headerlink" href="#importerror-no-module-named-carbonic" title="Permanent link">&para;</a></h3>
@@ -1762,7 +1762,7 @@
 <h3 id="performance-issues">Performance Issues<a class="headerlink" href="#performance-issues" title="Permanent link">&para;</a></h3>
 <p>If datetime parsing is slow:</p>
 <ol>
-<li>Install the fast parsing extra: <code>pip install carbonic[fast]</code></li>
+<li>Install the performance extra: <code>pip install carbonic[performance]</code></li>
 <li>Verify ciso8601 is installed: <code>pip list | grep ciso8601</code></li>
 </ol>
 <h3 id="type-checking-issues">Type Checking Issues<a class="headerlink" href="#type-checking-issues" title="Permanent link">&para;</a></h3>
@@ -1816,7 +1816,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2024 Marek Pilczuk
+      Copyright &copy; 2025 Marek Pilczuk
     </div>
   
   
