@@ -97,3 +97,4 @@ now().add_days(3).end_of_month().to_date_string()
 - Lazy evaluation for expensive formatting operations
 - Memory-efficient immutable design with `__slots__`
 - Optional C extensions for parsing (ciso8601)
+- to memorize stick to Stdlib zoneinfo only

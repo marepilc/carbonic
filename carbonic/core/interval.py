@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, overload
 
-if TYPE_CHECKING:
-    from carbonic.core.date import Date
-    from carbonic.core.datetime import DateTime
-    from carbonic.core.duration import Duration
+from carbonic.core.date import Date
+from carbonic.core.datetime import DateTime
+from carbonic.core.duration import Duration
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,11 +33,8 @@ class Interval:
     def __post_init__(self):
         """Validate and normalize the interval after construction."""
         # Normalize mixed Date/DateTime to DateTime first for comparison
-        if type(self.start) != type(self.end):
+        if type(self.start) is not type(self.end):
             # Convert both to DateTime for consistency
-            from carbonic.core.date import Date
-            from carbonic.core.datetime import DateTime
-
             new_start = self.start
             new_end = self.end
 
@@ -55,8 +50,14 @@ class Interval:
                     else:
                         tz_str = "UTC"  # Default fallback
                 new_start = DateTime(
-                    self.start.year, self.start.month, self.start.day,
-                    0, 0, 0, 0, tz_str
+                    self.start.year,
+                    self.start.month,
+                    self.start.day,
+                    0,
+                    0,
+                    0,
+                    0,
+                    tz_str,
                 )
             elif isinstance(self.start, DateTime) and isinstance(self.end, Date):
                 # Convert Date end to DateTime (start of day)
@@ -68,22 +69,50 @@ class Interval:
                     else:
                         tz_str = "UTC"  # Default fallback
                 new_end = DateTime(
-                    self.end.year, self.end.month, self.end.day,
-                    0, 0, 0, 0, tz_str
+                    self.end.year, self.end.month, self.end.day, 0, 0, 0, 0, tz_str
                 )
 
             # Use object.__setattr__ since the dataclass is frozen
-            object.__setattr__(self, 'start', new_start)
-            object.__setattr__(self, 'end', new_end)
+            object.__setattr__(self, "start", new_start)
+            object.__setattr__(self, "end", new_end)
 
         # Now validate that end >= start
-        if self.end < self.start:
-            raise ValueError("End must be after or equal to start")
+        # After normalization, both should be the same type
+        if type(self.start) is type(self.end):
+            if self.end < self.start:  # type: ignore
+                raise ValueError("End must be after or equal to start")
+        else:
+            raise RuntimeError(
+                "Normalization failed - start and end are different types"
+            )
 
-        # Validate timezone consistency for DateTime objects
-        if hasattr(self.start, 'tzinfo') and hasattr(self.end, 'tzinfo'):
+        # Validate timezone consistency for DateTime objects only
+        if isinstance(self.start, DateTime) and isinstance(self.end, DateTime):
             if self.start.tzinfo != self.end.tzinfo:
                 raise ValueError("Start and end timezones must match")
+
+    def _safe_compare(self, a: Date | DateTime, op: str, b: Date | DateTime) -> bool:
+        """Safely compare Date/DateTime objects after normalization.
+
+        After __post_init__, both endpoints are guaranteed to be the same type.
+        """
+        # After __post_init__, both a and b should be the same type
+        if type(a) is type(b):
+            if op == "<":
+                return a < b  # type: ignore
+            elif op == "<=":
+                return a <= b  # type: ignore
+            elif op == ">":
+                return a > b  # type: ignore
+            elif op == ">=":
+                return a >= b  # type: ignore
+            else:
+                raise ValueError(f"Unsupported operator: {op}")
+        else:
+            # This should not happen after __post_init__ normalization
+            raise TypeError(
+                f"Cannot compare {type(a)} with {type(b)} after normalization"
+            )
 
     def duration(self) -> Duration:
         """Get the Duration of this interval.
@@ -91,7 +120,8 @@ class Interval:
         Returns:
             Duration object representing the time span
         """
-        return self.end - self.start
+        # After __post_init__, both are same type, so subtraction is safe
+        return self.end - self.start  # type: ignore
 
     def is_empty(self) -> bool:
         """Check if this interval is empty (zero duration).
@@ -99,7 +129,8 @@ class Interval:
         Returns:
             True if start == end, False otherwise
         """
-        return self.start == self.end
+        # After __post_init__, both are same type, so direct comparison is safe
+        return self.start == self.end  # type: ignore
 
     def contains(self, point: Date | DateTime) -> bool:
         """Check if this interval contains a time point.
@@ -115,25 +146,26 @@ class Interval:
             True if point is within the interval
         """
         # Handle mixed types by converting to common type
-        if type(point) != type(self.start):
+        if type(point) is not type(self.start):
             # Convert Date to DateTime for comparison
-            if hasattr(self.start, 'hour'):  # DateTime interval
-                if not hasattr(point, 'hour'):  # Date point
-                    from carbonic.core.datetime import DateTime
+            if hasattr(self.start, "hour"):  # DateTime interval
+                if not hasattr(point, "hour"):  # Date point
                     # Convert Date point to DateTime (start of day) with same timezone
                     from zoneinfo import ZoneInfo
+
                     tz_str = None
-                    if self.start.tzinfo is not None:
-                        if isinstance(self.start.tzinfo, ZoneInfo):
-                            tz_str = self.start.tzinfo.key
+                    if hasattr(self.start, "tzinfo") and self.start.tzinfo is not None:  # type: ignore
+                        if isinstance(self.start.tzinfo, ZoneInfo):  # type: ignore
+                            tz_str = self.start.tzinfo.key  # type: ignore
                         else:
                             tz_str = "UTC"  # fallback
                     point = DateTime(
-                        point.year, point.month, point.day,
-                        0, 0, 0, 0, tz_str
+                        point.year, point.month, point.day, 0, 0, 0, 0, tz_str
                     )
 
-        return self.start <= point < self.end
+        return self._safe_compare(self.start, "<=", point) and self._safe_compare(
+            point, "<", self.end
+        )
 
     def overlaps(self, other: Interval) -> bool:
         """Check if this interval overlaps with another interval.
@@ -144,12 +176,12 @@ class Interval:
         Returns:
             True if intervals overlap, False otherwise
         """
-        if not isinstance(other, Interval):
-            raise TypeError("Can only check overlap with another Interval")
 
         # Two intervals overlap if:
         # self.start < other.end AND other.start < self.end
-        return self.start < other.end and other.start < self.end
+        return self._safe_compare(self.start, "<", other.end) and self._safe_compare(
+            other.start, "<", self.end
+        )
 
     def intersection(self, other: Interval) -> Interval | None:
         """Get the intersection (overlapping part) of two intervals.
@@ -160,24 +192,23 @@ class Interval:
         Returns:
             Interval representing the overlap, or None if no overlap
         """
-        if not isinstance(other, Interval):
-            raise TypeError("Can only intersect with another Interval")
 
         if not self.overlaps(other):
             return None
 
         # Intersection start = max(self.start, other.start)
         # Intersection end = min(self.end, other.end)
-        intersection_start = max(self.start, other.start)
-        intersection_end = min(self.end, other.end)
+        # Use safe comparison to determine max/min
+        intersection_start = (
+            self.start
+            if self._safe_compare(self.start, ">=", other.start)
+            else other.start
+        )
+        intersection_end = (
+            self.end if self._safe_compare(self.end, "<=", other.end) else other.end
+        )
 
         return Interval(start=intersection_start, end=intersection_end)
-
-    @overload
-    def union(self, other: Interval) -> Interval: ...
-
-    @overload
-    def union(self, other: Interval) -> list[Interval]: ...
 
     def union(self, other: Interval) -> Interval | list[Interval]:
         """Get the union of two intervals.
@@ -189,14 +220,18 @@ class Interval:
             Single Interval if they overlap or are adjacent,
             List of Intervals if they are separate
         """
-        if not isinstance(other, Interval):
-            raise TypeError("Can only union with another Interval")
 
         # Check if intervals overlap or are adjacent
         if self.overlaps(other) or self._is_adjacent_to(other):
             # Return merged interval
-            union_start = min(self.start, other.start)
-            union_end = max(self.end, other.end)
+            union_start = (
+                self.start
+                if self._safe_compare(self.start, "<=", other.start)
+                else other.start
+            )
+            union_end = (
+                self.end if self._safe_compare(self.end, ">=", other.end) else other.end
+            )
             return Interval(start=union_start, end=union_end)
         else:
             # Return both intervals as separate list
@@ -204,37 +239,39 @@ class Interval:
 
     def _is_adjacent_to(self, other: Interval) -> bool:
         """Check if this interval is adjacent to another (touching at boundary)."""
-        return self.end == other.start or other.end == self.start
+        # After __post_init__, both intervals have same-type endpoints
+        return self.end == other.start or other.end == self.start  # type: ignore
 
     def __eq__(self, other: object) -> bool:
         """Check equality with another Interval."""
         if not isinstance(other, Interval):
             return False
-        return self.start == other.start and self.end == other.end
+        # After __post_init__, both intervals have same-type endpoints
+        return self.start == other.start and self.end == other.end  # type: ignore
 
-    def __lt__(self, other: Interval) -> bool:
+    def __lt__(self, other: object) -> bool:
         """Compare intervals by start time."""
         if not isinstance(other, Interval):
             return NotImplemented
-        return self.start < other.start
+        return self._safe_compare(self.start, "<", other.start)
 
-    def __le__(self, other: Interval) -> bool:
+    def __le__(self, other: object) -> bool:
         """Compare intervals by start time."""
         if not isinstance(other, Interval):
             return NotImplemented
-        return self.start <= other.start
+        return self._safe_compare(self.start, "<=", other.start)
 
-    def __gt__(self, other: Interval) -> bool:
+    def __gt__(self, other: object) -> bool:
         """Compare intervals by start time."""
         if not isinstance(other, Interval):
             return NotImplemented
-        return self.start > other.start
+        return self._safe_compare(self.start, ">", other.start)
 
-    def __ge__(self, other: Interval) -> bool:
+    def __ge__(self, other: object) -> bool:
         """Compare intervals by start time."""
         if not isinstance(other, Interval):
             return NotImplemented
-        return self.start >= other.start
+        return self._safe_compare(self.start, ">=", other.start)
 
     def __hash__(self) -> int:
         """Return hash for use in sets and dicts."""

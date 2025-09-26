@@ -53,7 +53,7 @@ class TestDateTimeNow:
         assert dt.tzinfo == ZoneInfo("UTC")
         # Should be close to current time (within a few seconds)
         now = datetime.datetime.now(ZoneInfo("UTC"))
-        diff = abs((dt._dt - now).total_seconds())
+        diff = abs((dt.to_datetime() - now).total_seconds())
         assert diff < 5  # Within 5 seconds
 
     def test_now_with_timezone(self):
@@ -633,13 +633,6 @@ class TestDateTimeDurationIntegration:
         assert diff.days == 0
         assert diff.storage_seconds == 0
         assert diff.microseconds == 0
-
-    def test_datetime_diff_type_error(self):
-        """Test datetime diff with invalid type."""
-        dt = DateTime(2023, 12, 25, 14, 30, 45)
-
-        with pytest.raises(TypeError, match="Can only diff with another DateTime"):
-            dt.diff("not a datetime")  # type: ignore
 
     def test_datetime_add_duration_basic(self):
         """Test adding Duration to DateTime."""

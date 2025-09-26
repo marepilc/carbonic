@@ -1,4 +1,4 @@
-from carbonic.core.duration import Duration
+from carbonic import Duration
 
 
 class TestDurationConstructor:
@@ -630,7 +630,9 @@ class TestDurationHumanize:
         """Test humanizing very small durations."""
         # Microseconds only
         assert Duration(microseconds=1).humanize() == "0.000001 seconds"
-        assert Duration(microseconds=1000).humanize() == "0.001 seconds"  # 1 millisecond
+        assert (
+            Duration(microseconds=1000).humanize() == "0.001 seconds"
+        )  # 1 millisecond
         assert Duration(microseconds=10000).humanize() == "0.01 seconds"
 
     def test_humanize_large_durations(self):
@@ -678,7 +680,9 @@ class TestDurationHumanize:
         # Test that very small microseconds are handled reasonably
         duration = Duration(microseconds=123456)  # 0.123456 seconds
         result = duration.humanize()
-        assert result == "0.123456 seconds" or result == "0.123 seconds"  # Allow rounding
+        assert (
+            result == "0.123456 seconds" or result == "0.123 seconds"
+        )  # Allow rounding
 
         # Test rounding behavior for display
         duration = Duration(microseconds=999999)  # 0.999999 seconds

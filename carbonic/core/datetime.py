@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import datetime
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, overload
+from typing import Callable, Literal, overload
 from zoneinfo import ZoneInfo
 
-if TYPE_CHECKING:
-    from carbonic.core.date import Date
-    from carbonic.core.duration import Duration
+from carbonic.core.date import Date
+from carbonic.core.duration import Duration
 
 
 @dataclass(frozen=True, slots=True)
@@ -75,8 +74,9 @@ class DateTime:
     @classmethod
     def _auto_parse(cls, s: str, tz: str | None) -> DateTime:
         """Auto-detect format and parse datetime string."""
-        from carbonic.core.exceptions import ParseError
         import re
+
+        from carbonic.core.exceptions import ParseError
 
         # Try ISO datetime with timezone first (2025-09-23T14:30:45+00:00)
         iso_tz_pattern = re.compile(
@@ -182,18 +182,15 @@ class DateTime:
             ("s", "%S"),  # Seconds with leading zero
         ]
 
-        result = fmt
+        result: str = fmt
+        placeholders: dict[str, str] = {}
 
-        # Use unique placeholders to avoid conflicts
-        placeholders = {}
         for i, (carbon_token, strftime_token) in enumerate(mappings):
             if carbon_token in result:
-                # Use a placeholder that won't conflict with Carbon tokens
                 placeholder = f"\x00{i}\x00"  # Use null chars as safe delimiters
                 result = result.replace(carbon_token, placeholder)
                 placeholders[placeholder] = strftime_token
 
-        # Replace placeholders with actual strftime tokens
         for placeholder, strftime_token in placeholders.items():
             result = result.replace(placeholder, strftime_token)
 
@@ -204,14 +201,27 @@ class DateTime:
         """Format datetime using strftime format string."""
         return self._dt.strftime(fmt)
 
-    def format(self, fmt: str) -> str:
-        """Format datetime using Carbon-style format string."""
-        return self._carbon_format(fmt)
+    def format(self, fmt: str, *, locale: str | None = None) -> str:
+        """Format datetime using Carbon-style format string.
 
-    def _carbon_format(self, fmt: str) -> str:
+        Args:
+            fmt: Carbon-style format string
+            locale: Locale code for localized month/day names (default: English)
+
+        Returns:
+            Formatted datetime string
+        """
+        return self._carbon_format(fmt, locale=locale)
+
+    def _carbon_format(self, fmt: str, *, locale: str | None = None) -> str:
         """Format datetime using Carbon-style tokens."""
+        # Get locale instance
+        from carbonic.locale import get_locale
+
+        locale_obj = get_locale(locale or "en")
+
         # Extended Carbon format token mappings for datetime
-        mappings = {
+        mappings: dict[str, Callable[[], str]] = {
             # Date tokens
             "Y": lambda: f"{self.year:04d}",  # 4-digit year
             "y": lambda: f"{self.year % 100:02d}",  # 2-digit year
@@ -220,10 +230,18 @@ class DateTime:
             "d": lambda: f"{self.day:02d}",  # Day with leading zero
             "j": lambda: f"{self.day}",  # Day without leading zero
             "S": lambda: self._ordinal_suffix(self.day),  # Ordinal suffix
-            "F": lambda: self._dt.strftime("%B"),  # Full month name
-            "M": lambda: self._dt.strftime("%b"),  # Short month name
-            "l": lambda: self._dt.strftime("%A"),  # Full day name
-            "D": lambda: self._dt.strftime("%a"),  # Short day name
+            "F": lambda: locale_obj.get_month_name(
+                self.month, short=False
+            ),  # Full month name
+            "M": lambda: locale_obj.get_month_name(
+                self.month, short=True
+            ),  # Short month name
+            "l": lambda: locale_obj.get_day_name(
+                self._dt.weekday(), short=False
+            ),  # Full day name
+            "D": lambda: locale_obj.get_day_name(
+                self._dt.weekday(), short=True
+            ),  # Short day name
             # Time tokens
             "H": lambda: f"{self.hour:02d}",  # Hour 24-format with leading zero
             "G": lambda: f"{self.hour}",  # Hour 24-format without leading zero
@@ -439,25 +457,25 @@ class DateTime:
             return False
         return self._dt == other._dt
 
-    def __lt__(self, other: DateTime) -> bool:
+    def __lt__(self, other: object) -> bool:
         """Check if this datetime is less than another."""
         if not isinstance(other, DateTime):
             return NotImplemented
         return self._dt < other._dt
 
-    def __le__(self, other: DateTime) -> bool:
+    def __le__(self, other: object) -> bool:
         """Check if this datetime is less than or equal to another."""
         if not isinstance(other, DateTime):
             return NotImplemented
         return self._dt <= other._dt
 
-    def __gt__(self, other: DateTime) -> bool:
+    def __gt__(self, other: object) -> bool:
         """Check if this datetime is greater than another."""
         if not isinstance(other, DateTime):
             return NotImplemented
         return self._dt > other._dt
 
-    def __ge__(self, other: DateTime) -> bool:
+    def __ge__(self, other: object) -> bool:
         """Check if this datetime is greater than or equal to another."""
         if not isinstance(other, DateTime):
             return NotImplemented
@@ -469,7 +487,14 @@ class DateTime:
 
     # Ops
     def add(
-        self, *, days=0, hours=0, minutes=0, seconds=0, months=0, years=0
+        self,
+        *,
+        days: int = 0,
+        hours: int = 0,
+        minutes: int = 0,
+        seconds: int = 0,
+        months: int = 0,
+        years: int = 0,
     ) -> DateTime:
         """Add time components to this datetime."""
         # Start with the current datetime
@@ -496,7 +521,7 @@ class DateTime:
 
         return DateTime.from_datetime(new_dt)
 
-    def subtract(self, **kwargs) -> DateTime:
+    def subtract(self, **kwargs: int) -> DateTime:
         """Subtract time components from this datetime."""
         # Negate all kwargs and call add
         negated_kwargs = {k: -v for k, v in kwargs.items()}
@@ -512,7 +537,7 @@ class DateTime:
         last_day = next_month - datetime.timedelta(days=1)
         return last_day.day
 
-    def diff(self, other: DateTime, *, absolute=False) -> Duration:
+    def diff(self, other: DateTime, *, absolute: bool = False) -> Duration:
         """Calculate difference between this datetime and another datetime.
 
         Args:
@@ -522,10 +547,6 @@ class DateTime:
         Returns:
             Duration representing the difference
         """
-        from carbonic.core.duration import Duration
-
-        if not isinstance(other, DateTime):
-            raise TypeError("Can only diff with another DateTime")
 
         # Convert both to datetime objects for calculation
         dt1 = self.to_datetime()
@@ -553,10 +574,6 @@ class DateTime:
         Returns:
             New DateTime with the duration added
         """
-        from carbonic.core.duration import Duration
-
-        if not isinstance(duration, Duration):
-            raise TypeError("Can only add Duration objects")
 
         # Convert this datetime to stdlib datetime for calculation
         dt = self.to_datetime()
@@ -565,7 +582,7 @@ class DateTime:
         delta = datetime.timedelta(
             days=duration.days,
             seconds=duration.storage_seconds,
-            microseconds=duration.microseconds
+            microseconds=duration.microseconds,
         )
 
         # Add the timedelta
@@ -598,17 +615,13 @@ class DateTime:
         Returns:
             New DateTime with the duration subtracted
         """
-        from carbonic.core.duration import Duration
-
-        if not isinstance(duration, Duration):
-            raise TypeError("Can only subtract Duration objects")
 
         # Use negation and add
         return self.add_duration(-duration)
 
     def __add__(self, other: Duration) -> DateTime:
         """Add a Duration to this DateTime using + operator."""
-        if hasattr(other, 'days'):  # Duck typing for Duration-like objects
+        if hasattr(other, "days"):  # Duck typing for Duration-like objects
             return self.add_duration(other)
         return NotImplemented
 
@@ -629,7 +642,7 @@ class DateTime:
         """
         if isinstance(other, DateTime):
             return self.diff(other)
-        elif hasattr(other, 'days'):  # Duck typing for Duration-like objects
+        elif hasattr(other, "days"):  # Duck typing for Duration-like objects
             return self.subtract_duration(other)
         return NotImplemented
 

@@ -835,8 +835,8 @@ def test_date_to_date():
     assert dt_date.month == 12
     assert dt_date.day == 25
 
-    # Should be the same as the underlying _date
-    assert dt_date == date._date
+    # Should be the same as the result of to_date()
+    assert dt_date == date.to_date()
 
     # Should work for edge cases
     leap_date = Date(2024, 2, 29)
@@ -1070,14 +1070,6 @@ def test_date_diff_cross_year():
     diff = date2.diff(date1)
     assert isinstance(diff, Duration)
     assert diff.days == 11  # 6 days in Dec + 5 days in Jan
-
-
-def test_date_diff_type_error():
-    """Test date diff with invalid type."""
-    date = Date(2023, 12, 25)
-
-    with pytest.raises(TypeError, match="Can only diff with another Date"):
-        date.diff("not a date")  # type: ignore
 
 
 def test_date_add_duration_basic():

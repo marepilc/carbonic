@@ -1,4 +1,5 @@
 import pytest
+from zoneinfo import ZoneInfo
 
 from carbonic import Date, DateTime, Duration, Interval
 
@@ -148,12 +149,10 @@ class TestIntervalOverlaps:
     def test_overlapping_intervals(self):
         """Test overlaps() with overlapping intervals."""
         interval1 = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 15, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 15, 0)
         )
         interval2 = Interval(
-            start=DateTime(2024, 1, 15, 12, 0),
-            end=DateTime(2024, 1, 15, 18, 0)
+            start=DateTime(2024, 1, 15, 12, 0), end=DateTime(2024, 1, 15, 18, 0)
         )
 
         assert interval1.overlaps(interval2)
@@ -162,12 +161,10 @@ class TestIntervalOverlaps:
     def test_non_overlapping_intervals(self):
         """Test overlaps() with non-overlapping intervals."""
         interval1 = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 12, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 12, 0)
         )
         interval2 = Interval(
-            start=DateTime(2024, 1, 15, 15, 0),
-            end=DateTime(2024, 1, 15, 18, 0)
+            start=DateTime(2024, 1, 15, 15, 0), end=DateTime(2024, 1, 15, 18, 0)
         )
 
         assert not interval1.overlaps(interval2)
@@ -176,12 +173,11 @@ class TestIntervalOverlaps:
     def test_adjacent_intervals(self):
         """Test overlaps() with adjacent intervals (touching at boundary)."""
         interval1 = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 12, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 12, 0)
         )
         interval2 = Interval(
             start=DateTime(2024, 1, 15, 12, 0),  # Starts exactly where interval1 ends
-            end=DateTime(2024, 1, 15, 15, 0)
+            end=DateTime(2024, 1, 15, 15, 0),
         )
 
         # Adjacent intervals don't overlap (end is exclusive)
@@ -201,12 +197,10 @@ class TestIntervalIntersection:
     def test_intersection_overlapping_intervals(self):
         """Test intersection() with overlapping intervals."""
         interval1 = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 15, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 15, 0)
         )
         interval2 = Interval(
-            start=DateTime(2024, 1, 15, 12, 0),
-            end=DateTime(2024, 1, 15, 18, 0)
+            start=DateTime(2024, 1, 15, 12, 0), end=DateTime(2024, 1, 15, 18, 0)
         )
 
         intersection = interval1.intersection(interval2)
@@ -218,12 +212,10 @@ class TestIntervalIntersection:
     def test_intersection_non_overlapping_intervals(self):
         """Test intersection() with non-overlapping intervals."""
         interval1 = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 12, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 12, 0)
         )
         interval2 = Interval(
-            start=DateTime(2024, 1, 15, 15, 0),
-            end=DateTime(2024, 1, 15, 18, 0)
+            start=DateTime(2024, 1, 15, 15, 0), end=DateTime(2024, 1, 15, 18, 0)
         )
 
         intersection = interval1.intersection(interval2)
@@ -232,8 +224,7 @@ class TestIntervalIntersection:
     def test_intersection_identical_intervals(self):
         """Test intersection() with identical intervals."""
         interval = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 15, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 15, 0)
         )
 
         intersection = interval.intersection(interval)
@@ -247,12 +238,10 @@ class TestIntervalUnion:
     def test_union_overlapping_intervals(self):
         """Test union() with overlapping intervals."""
         interval1 = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 15, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 15, 0)
         )
         interval2 = Interval(
-            start=DateTime(2024, 1, 15, 12, 0),
-            end=DateTime(2024, 1, 15, 18, 0)
+            start=DateTime(2024, 1, 15, 12, 0), end=DateTime(2024, 1, 15, 18, 0)
         )
 
         union = interval1.union(interval2)
@@ -265,12 +254,10 @@ class TestIntervalUnion:
     def test_union_adjacent_intervals(self):
         """Test union() with adjacent intervals."""
         interval1 = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 12, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 12, 0)
         )
         interval2 = Interval(
-            start=DateTime(2024, 1, 15, 12, 0),
-            end=DateTime(2024, 1, 15, 15, 0)
+            start=DateTime(2024, 1, 15, 12, 0), end=DateTime(2024, 1, 15, 15, 0)
         )
 
         union = interval1.union(interval2)
@@ -283,12 +270,10 @@ class TestIntervalUnion:
     def test_union_non_overlapping_intervals(self):
         """Test union() with non-overlapping intervals."""
         interval1 = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 12, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 12, 0)
         )
         interval2 = Interval(
-            start=DateTime(2024, 1, 15, 15, 0),
-            end=DateTime(2024, 1, 15, 18, 0)
+            start=DateTime(2024, 1, 15, 15, 0), end=DateTime(2024, 1, 15, 18, 0)
         )
 
         union = interval1.union(interval2)
@@ -317,12 +302,10 @@ class TestIntervalComparison:
     def test_interval_ordering(self):
         """Test Interval ordering (by start time)."""
         early = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 12, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 12, 0)
         )
         late = Interval(
-            start=DateTime(2024, 1, 15, 15, 0),
-            end=DateTime(2024, 1, 15, 18, 0)
+            start=DateTime(2024, 1, 15, 15, 0), end=DateTime(2024, 1, 15, 18, 0)
         )
 
         assert early < late
@@ -333,12 +316,10 @@ class TestIntervalComparison:
     def test_interval_hash(self):
         """Test Interval hashing for use in sets."""
         interval1 = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 17, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 17, 0)
         )
         interval2 = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 17, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 17, 0)
         )
 
         assert hash(interval1) == hash(interval2)
@@ -352,8 +333,7 @@ class TestIntervalStringRepresentation:
     def test_interval_str(self):
         """Test Interval string representation."""
         interval = Interval(
-            start=DateTime(2024, 1, 15, 9, 0),
-            end=DateTime(2024, 1, 15, 17, 0)
+            start=DateTime(2024, 1, 15, 9, 0), end=DateTime(2024, 1, 15, 17, 0)
         )
 
         result = str(interval)
@@ -364,10 +344,7 @@ class TestIntervalStringRepresentation:
 
     def test_interval_repr(self):
         """Test Interval repr."""
-        interval = Interval(
-            start=Date(2024, 1, 15),
-            end=Date(2024, 1, 20)
-        )
+        interval = Interval(start=Date(2024, 1, 15), end=Date(2024, 1, 20))
 
         result = repr(interval)
 
@@ -384,7 +361,9 @@ class TestIntervalEdgeCases:
 
         interval = Interval(start=start, end=end)
 
-        from zoneinfo import ZoneInfo
+        # After normalization, both should be DateTime objects
+        assert isinstance(interval.start, DateTime)
+        assert isinstance(interval.end, DateTime)
         assert interval.start.tzinfo == ZoneInfo("UTC")
         assert interval.end.tzinfo == ZoneInfo("UTC")
 

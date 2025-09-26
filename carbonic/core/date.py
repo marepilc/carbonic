@@ -3,11 +3,9 @@ from __future__ import annotations
 import datetime
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, overload
+from typing import Literal, overload
 
-if TYPE_CHECKING:
-    from carbonic import Duration
-
+from carbonic.core.duration import Duration
 from carbonic.core.exceptions import ParseError
 
 
@@ -186,25 +184,25 @@ class Date:
             return False
         return self._date == other._date
 
-    def __lt__(self, other: Date) -> bool:
+    def __lt__(self, other: object) -> bool:
         """Check if this date is less than another."""
         if not isinstance(other, Date):
             return NotImplemented
         return self._date < other._date
 
-    def __le__(self, other: Date) -> bool:
+    def __le__(self, other: object) -> bool:
         """Check if this date is less than or equal to another."""
         if not isinstance(other, Date):
             return NotImplemented
         return self._date <= other._date
 
-    def __gt__(self, other: Date) -> bool:
+    def __gt__(self, other: object) -> bool:
         """Check if this date is greater than another."""
         if not isinstance(other, Date):
             return NotImplemented
         return self._date > other._date
 
-    def __ge__(self, other: Date) -> bool:
+    def __ge__(self, other: object) -> bool:
         """Check if this date is greater than or equal to another."""
         if not isinstance(other, Date):
             return NotImplemented
@@ -229,7 +227,7 @@ class Date:
         return self.strftime(format_spec)
 
     # Operations
-    def add(self, *, years=0, months=0, days=0) -> Date:
+    def add(self, *, years: int = 0, months: int = 0, days: int = 0) -> Date:
         """Add years, months, and/or days to this date."""
         # Start with the current date
         new_date = self._date
@@ -252,7 +250,7 @@ class Date:
 
         return Date(new_date.year, new_date.month, new_date.day)
 
-    def subtract(self, *, years=0, months=0, days=0) -> Date:
+    def subtract(self, *, years: int = 0, months: int = 0, days: int = 0) -> Date:
         """Subtract years, months, and/or days from this date."""
         return self.add(years=-years, months=-months, days=-days)
 
@@ -266,7 +264,7 @@ class Date:
         last_day = next_month - datetime.timedelta(days=1)
         return last_day.day
 
-    def diff(self, other: Date, *, absolute=False) -> Duration:
+    def diff(self, other: Date, *, absolute: bool = False) -> Duration:
         """Calculate difference between this date and another date.
 
         Args:
@@ -276,10 +274,6 @@ class Date:
         Returns:
             Duration representing the difference
         """
-        from carbonic.core.duration import Duration
-
-        if not isinstance(other, Date):
-            raise TypeError("Can only diff with another Date")
 
         # Calculate difference in days
         delta = self._date - other._date
@@ -299,13 +293,11 @@ class Date:
         Returns:
             New Date with the duration added
         """
-        from carbonic.core.duration import Duration
-
-        if not isinstance(duration, Duration):
-            raise TypeError("Can only add Duration objects")
 
         # Calculate total days from time components (seconds become fractional days)
-        time_days = (duration.storage_seconds + duration.microseconds / 1_000_000) / 86400
+        time_days = (
+            duration.storage_seconds + duration.microseconds / 1_000_000
+        ) / 86400
 
         # Add all components
         total_days = duration.days + int(time_days)
@@ -324,17 +316,13 @@ class Date:
         Returns:
             New Date with the duration subtracted
         """
-        from carbonic.core.duration import Duration
-
-        if not isinstance(duration, Duration):
-            raise TypeError("Can only subtract Duration objects")
 
         # Use negation and add
         return self.add_duration(-duration)
 
     def __add__(self, other: Duration) -> Date:
         """Add a Duration to this Date using + operator."""
-        if hasattr(other, 'days'):  # Duck typing for Duration-like objects
+        if hasattr(other, "days"):  # Duck typing for Duration-like objects
             return self.add_duration(other)
         return NotImplemented
 
@@ -355,7 +343,7 @@ class Date:
         """
         if isinstance(other, Date):
             return self.diff(other)
-        elif hasattr(other, 'days'):  # Duck typing for Duration-like objects
+        elif hasattr(other, "days"):  # Duck typing for Duration-like objects
             return self.subtract_duration(other)
         return NotImplemented
 
@@ -426,8 +414,6 @@ class Date:
             Date(2023, 12, 25).add_business_days(1)  # Monday -> Tuesday
             Date(2023, 12, 29).add_business_days(1)  # Friday -> Monday (skip weekend)
         """
-        if not isinstance(days, int):
-            raise TypeError("days must be an integer")
 
         if days < 0:
             return self.subtract_business_days(-days)
@@ -446,7 +432,9 @@ class Date:
 
         # If starting on weekend, first move to Monday (this counts as adding business days)
         if current_date.is_weekend():
-            days_to_monday = 1 if current_date.weekday == 6 else 2  # Sunday->1, Saturday->2
+            days_to_monday = (
+                1 if current_date.weekday == 6 else 2
+            )  # Sunday->1, Saturday->2
             current_date = current_date.add(days=days_to_monday)
             remaining_days -= 1  # Moving to Monday counts as 1 business day
 
@@ -478,8 +466,6 @@ class Date:
             Date(2023, 12, 26).subtract_business_days(1)  # Tuesday -> Monday
             Date(2024, 1, 1).subtract_business_days(1)    # Monday -> Friday (skip weekend)
         """
-        if not isinstance(days, int):
-            raise TypeError("days must be an integer")
 
         if days < 0:
             return self.add_business_days(-days)
@@ -498,7 +484,9 @@ class Date:
 
         # If starting on weekend, first move to Friday (this counts as subtracting business days)
         if current_date.is_weekend():
-            days_to_friday = 1 if current_date.weekday == 5 else 2  # Saturday->1, Sunday->2
+            days_to_friday = (
+                1 if current_date.weekday == 5 else 2
+            )  # Saturday->1, Sunday->2
             current_date = current_date.subtract(days=days_to_friday)
             remaining_days -= 1  # Moving to Friday counts as 1 business day
 
@@ -539,12 +527,25 @@ class Date:
         """Format date using strftime format string."""
         return self._date.strftime(fmt)
 
-    def format(self, fmt: str) -> str:
-        """Format date using Carbon-style format string."""
-        return self._carbon_format(fmt)
+    def format(self, fmt: str, *, locale: str | None = None) -> str:
+        """Format date using Carbon-style format string.
 
-    def _carbon_format(self, fmt: str) -> str:
+        Args:
+            fmt: Carbon-style format string
+            locale: Locale code for localized month/day names (default: English)
+
+        Returns:
+            Formatted date string
+        """
+        return self._carbon_format(fmt, locale=locale)
+
+    def _carbon_format(self, fmt: str, *, locale: str | None = None) -> str:
         """Format date using Carbon-style tokens."""
+        # Get locale instance
+        from carbonic.locale import get_locale
+
+        locale_obj = get_locale(locale)
+
         # Carbon format token mappings
         mappings = {
             "Y": lambda: f"{self.year:04d}",  # 4-digit year
@@ -554,10 +555,18 @@ class Date:
             "d": lambda: f"{self.day:02d}",  # Day with leading zero
             "j": lambda: f"{self.day}",  # Day without leading zero
             "S": lambda: self._ordinal_suffix(self.day),  # Ordinal suffix
-            "F": lambda: self._date.strftime("%B"),  # Full month name
-            "M": lambda: self._date.strftime("%b"),  # Short month name
-            "l": lambda: self._date.strftime("%A"),  # Full day name
-            "D": lambda: self._date.strftime("%a"),  # Short day name
+            "F": lambda: locale_obj.get_month_name(
+                self.month, short=False
+            ),  # Full month name
+            "M": lambda: locale_obj.get_month_name(
+                self.month, short=True
+            ),  # Short month name
+            "l": lambda: locale_obj.get_day_name(
+                self.weekday, short=False
+            ),  # Full day name
+            "D": lambda: locale_obj.get_day_name(
+                self.weekday, short=True
+            ),  # Short day name
         }
 
         result = ""

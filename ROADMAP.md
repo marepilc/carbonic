@@ -20,6 +20,15 @@
     - Mixed Date/DateTime support with automatic type normalization
     - Strict timezone consistency validation using stdlib zoneinfo
     - Comprehensive comparison, hashing, and string representation (29 comprehensive tests)
+  - Localization System: Complete i18n infrastructure with English and Polish support
+    - Abstract Locale base class with pluggable architecture using Python stdlib conventions
+    - English locale: Full month/day names using Python's calendar module
+    - Polish locale: Complex 3-form pluralization (singular/plural/many) with proper grammar rules
+    - Localized Duration.humanize(): Smart pluralization ("2 dni", "5 sekund", "1 tydzień")
+    - Localized Date/DateTime formatting: Month and day names with locale parameter support
+    - Number formatting: Decimal comma for Polish, decimal point for English
+    - Grammar conflict resolution: Smart week/day display based on pluralization context
+    - Public API: get_locale(), register_locale(), is_locale_available() (25 comprehensive tests)
   - Enhanced Duration Features: Complete duration manipulation and formatting
     - Duration.parse(): Complete ISO 8601 duration string parsing (P1Y2M3DT4H5M6S)
     - Support for all ISO 8601 formats: full, date-only, time-only, weeks, fractional components
@@ -42,24 +51,24 @@
 
   🔄 Remaining Major Features
 
-  3. Localization System
-
-  - CLDR-style localization: Polish and English first, expandable architecture
-  - Localized formatting: Month/day names, relative time phrases
-  - Number formatting: Different decimal separators, digit grouping
-  - Humanization: "2 dni temu" vs "2 days ago"
-
-  4. Data Library Integrations
+  3. Data Library Integrations
 
   - Pandas adapters: DataFrame datetime operations, custom dtypes
   - Polars adapters: Lazy evaluation compatibility
   - Pydantic field types: Validation and serialization support
 
-  5. Performance Optimizations
+  4. Performance Optimizations
 
   - Optional ciso8601: Fast ISO datetime parsing acceleration
   - Memory optimizations: More efficient slots usage
   - Lazy evaluation: Expensive formatting operations
+
+  5. Additional Locale Support (Post Performance)
+
+  - Spanish locale: Complex verb conjugation support for relative phrases
+  - French locale: Gender agreement for month/day names, liaison rules
+  - German locale: Case declension support, compound time expressions
+  - Expandable architecture: Easy addition of new locales following established patterns
 
   6. Additional Parsing Features
 
@@ -77,9 +86,9 @@
 
   Based on the current completion status and typical datetime library usage patterns, the recommended development order is:
 
-  1. **Localization System** - Polish/English localization for Duration.humanize() and core formatting
-  2. **Data Library Integrations** - Pandas/Polars adapters for ecosystem compatibility
-  3. **Performance Optimizations** - Optional ciso8601 for faster parsing acceleration
+  1. **Data Library Integrations** - Pandas/Polars adapters for ecosystem compatibility
+  2. **Performance Optimizations** - Optional ciso8601 for faster parsing acceleration
+  3. **Additional Locale Support** - Spanish, French, German localization (post-performance)
   4. **Additional Parsing Features** - Natural language and relative date parsing
 
   ## Current Status Summary
@@ -90,7 +99,9 @@
   - ISO 8601 parsing and Carbon-style formatting
   - Business day arithmetic with weekend handling
   - Duration humanization with configurable output
+  - **Localization system with English and Polish support**
+  - **Comprehensive i18n infrastructure with proper grammar handling**
   - Comprehensive timezone handling with stdlib integration
   - Full type safety with precise overloads
 
-  **🔄 Next Phase:** Focus on ecosystem integration and user experience enhancements to make Carbonic production-ready for diverse use cases.
+  **🔄 Next Phase:** Focus on data library integrations and performance optimizations to make Carbonic production-ready for diverse use cases.
