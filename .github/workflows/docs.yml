@@ -67,3 +67,4 @@ jobs:
       if: steps.version.outputs.is_release == 'false'
       run: |
         uv run mike deploy dev --push
+        uv run mike set-default dev --push
