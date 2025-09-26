@@ -1,7 +1,14 @@
+"""Period implementation for Carbonic.
+
+This module provides the Period class for semantic datetime operations using
+named time periods like Period.DAY, Period.MONTH, etc. This enables more
+readable and maintainable date/datetime manipulation code.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, ClassVar
+from typing import TYPE_CHECKING, ClassVar, Literal
 
 if TYPE_CHECKING:
     from carbonic.core.date import Date
@@ -27,20 +34,15 @@ class Period:
     _type: Literal["minute", "hour", "day", "week", "month", "quarter", "year"]
 
     # Class variable declarations for type checking
-    MINUTE: ClassVar['Period']
-    HOUR: ClassVar['Period']
-    DAY: ClassVar['Period']
-    WEEK: ClassVar['Period']
-    MONTH: ClassVar['Period']
-    QUARTER: ClassVar['Period']
-    YEAR: ClassVar['Period']
+    MINUTE: ClassVar["Period"]
+    HOUR: ClassVar["Period"]
+    DAY: ClassVar["Period"]
+    WEEK: ClassVar["Period"]
+    MONTH: ClassVar["Period"]
+    QUARTER: ClassVar["Period"]
+    YEAR: ClassVar["Period"]
 
-    def add_to(
-        self,
-        dt: Date | DateTime,
-        *,
-        count: int = 1
-    ) -> Date | DateTime:
+    def add_to(self, dt: Date | DateTime, *, count: int = 1) -> Date | DateTime:
         """Add this period to a Date or DateTime.
 
         Args:
@@ -51,12 +53,12 @@ class Period:
             New Date or DateTime with the period added
         """
         if self._type == "minute":
-            if hasattr(dt, 'hour'):  # DateTime has hour attribute, Date doesn't
+            if hasattr(dt, "hour"):  # DateTime has hour attribute, Date doesn't
                 return dt.add(minutes=count)  # type: ignore[call-arg]
             else:
                 raise ValueError("Cannot add minutes to Date (use DateTime)")
         elif self._type == "hour":
-            if hasattr(dt, 'hour'):  # DateTime has hour attribute, Date doesn't
+            if hasattr(dt, "hour"):  # DateTime has hour attribute, Date doesn't
                 return dt.add(hours=count)  # type: ignore[call-arg]
             else:
                 raise ValueError("Cannot add hours to Date (use DateTime)")
@@ -74,12 +76,7 @@ class Period:
         else:
             raise ValueError(f"Unknown period type: {self._type}")
 
-    def subtract_from(
-        self,
-        dt: Date | DateTime,
-        *,
-        count: int = 1
-    ) -> Date | DateTime:
+    def subtract_from(self, dt: Date | DateTime, *, count: int = 1) -> Date | DateTime:
         """Subtract this period from a Date or DateTime.
 
         Args:
@@ -90,12 +87,12 @@ class Period:
             New Date or DateTime with the period subtracted
         """
         if self._type == "minute":
-            if hasattr(dt, 'hour'):  # DateTime has hour attribute, Date doesn't
+            if hasattr(dt, "hour"):  # DateTime has hour attribute, Date doesn't
                 return dt.subtract(minutes=count)  # type: ignore[call-arg]
             else:
                 raise ValueError("Cannot subtract minutes from Date (use DateTime)")
         elif self._type == "hour":
-            if hasattr(dt, 'hour'):  # DateTime has hour attribute, Date doesn't
+            if hasattr(dt, "hour"):  # DateTime has hour attribute, Date doesn't
                 return dt.subtract(hours=count)  # type: ignore[call-arg]
             else:
                 raise ValueError("Cannot subtract hours from Date (use DateTime)")
@@ -123,12 +120,14 @@ class Period:
             New Date or DateTime at the start of the period
         """
         # Check if the period type is supported for this datetime type
-        if hasattr(dt, 'start_of'):
+        if hasattr(dt, "start_of"):
             try:
                 return dt.start_of(self._type)  # type: ignore[arg-type]
             except (ValueError, TypeError):
-                if self._type in ("minute", "hour") and not hasattr(dt, 'hour'):
-                    raise ValueError(f"Cannot get start of {self._type} for Date (use DateTime)")
+                if self._type in ("minute", "hour") and not hasattr(dt, "hour"):
+                    raise ValueError(
+                        f"Cannot get start of {self._type} for Date (use DateTime)"
+                    )
                 raise
 
         raise ValueError(f"start_of not supported for {type(dt)}")
@@ -143,12 +142,14 @@ class Period:
             New Date or DateTime at the end of the period
         """
         # Check if the period type is supported for this datetime type
-        if hasattr(dt, 'end_of'):
+        if hasattr(dt, "end_of"):
             try:
                 return dt.end_of(self._type)  # type: ignore[arg-type]
             except (ValueError, TypeError):
-                if self._type in ("minute", "hour") and not hasattr(dt, 'hour'):
-                    raise ValueError(f"Cannot get end of {self._type} for Date (use DateTime)")
+                if self._type in ("minute", "hour") and not hasattr(dt, "hour"):
+                    raise ValueError(
+                        f"Cannot get end of {self._type} for Date (use DateTime)"
+                    )
                 raise
 
         raise ValueError(f"end_of not supported for {type(dt)}")

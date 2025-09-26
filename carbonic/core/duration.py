@@ -1,3 +1,9 @@
+"""Duration implementation for Carbonic.
+
+This module provides the core Duration class for representing time spans
+with support for calendar-aware operations and comprehensive formatting.
+"""
+
 from __future__ import annotations
 
 import re
@@ -7,6 +13,29 @@ from typing import Literal, overload
 
 @dataclass(frozen=True, slots=True)
 class Duration:
+    """Immutable duration object representing a span of time.
+
+    Duration handles both calendar-aware components (months, years) and
+    precise time components (days, hours, minutes, seconds, microseconds).
+    All operations return new instances, maintaining immutability.
+
+    Attributes:
+        _days: Number of days (aligned with datetime.timedelta)
+        _seconds: Number of seconds within the day (0-86399)
+        _microseconds: Number of microseconds within the second (0-999999)
+        _calendar_months: Calendar months component (for display/parsing)
+        _calendar_years: Calendar years component (for display/parsing)
+
+    Examples:
+        >>> duration = Duration(hours=2, minutes=30)
+        >>> duration.total_seconds()
+        9000.0
+
+        >>> long_duration = Duration(years=1, months=6, days=15)
+        >>> long_duration.format_human()
+        '1 year 6 months 15 days'
+    """
+
     # Core storage - aligned with datetime.timedelta
     _days: int
     _seconds: int
@@ -28,7 +57,7 @@ class Duration:
         weeks: int = 0,
         months: int = 0,
         years: int = 0,
-    ):
+    ) -> None:
         """Create a Duration from individual time components."""
         # Convert time components to basic units (timedelta-compatible)
         # Keep calendar components (months/years) separate for now
@@ -67,20 +96,38 @@ class Duration:
     # Properties
     @property
     def days(self) -> int:
+        """The number of days in this duration.
+
+        Returns:
+            Number of days as integer
+        """
         return self._days
 
     @property
     def storage_seconds(self) -> int:
-        """Get seconds component of storage (0-86399, representing seconds within a day)."""
+        """Get seconds component of storage (0-86399, representing seconds within a day).
+
+        Returns:
+            Seconds within the current day (internal storage format)
+        """
         return self._seconds
 
     @property
     def microseconds(self) -> int:
+        """The microseconds component of this duration.
+
+        Returns:
+            Number of microseconds (0-999999)
+        """
         return self._microseconds
 
     @property
     def milliseconds(self) -> int:
-        """Get milliseconds component."""
+        """Get milliseconds component.
+
+        Returns:
+            Number of milliseconds derived from microseconds
+        """
         return self._microseconds // 1000
 
     @property
@@ -316,7 +363,18 @@ class Duration:
 
     # Properties and operations
     def total_seconds(self) -> float:
-        """Get total seconds for this duration (excluding calendar components)."""
+        """Get total seconds for this duration (excluding calendar components).
+
+        Returns:
+            Total number of seconds as float, including fractional seconds
+            from microseconds. Calendar components (months, years) are not
+            included as they have variable length.
+
+        Examples:
+            >>> duration = Duration(hours=2, minutes=30, seconds=15)
+            >>> duration.total_seconds()
+            9015.0
+        """
         total = (
             self.days * 86400 + self.storage_seconds + (self.microseconds / 1_000_000)
         )
