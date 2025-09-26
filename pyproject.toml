@@ -3,7 +3,7 @@ name = "carbonic"
 version = "0.2.0"
 description = "A modern Python datetime library inspired by PHP Carbon"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "MIT"
 authors = [{ name = "Marek Pilczuk", email = "marek@mp76.pl" }]
 maintainers = [{ name = "Marek Pilczuk", email = "marek@mp76.pl" }]
 keywords = ["datetime", "date", "time", "carbon", "timezone"]
@@ -29,3 +29,13 @@ dev = [
     "pytest>=8.4.2",
     "ruff>=0.13.1",
 ]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["carbonic"]
+
+[tool.setuptools.package-dir]
+carbonic = "carbonic"
