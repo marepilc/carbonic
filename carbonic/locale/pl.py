@@ -11,7 +11,9 @@ class PolishLocale(Locale):
     def __init__(self):
         super().__init__("pl", "Polski")
 
-    def pluralize(self, count: int | float, singular: str, plural: str, many: str | None = None) -> str:
+    def pluralize(
+        self, count: int | float, singular: str, plural: str, many: str | None = None
+    ) -> str:
         """Polish pluralization rules:
         - 1: singular form (1 dzień)
         - 2-4 (but not 12-14): plural form (2 dni, 3 dni, 4 dni)
@@ -54,10 +56,10 @@ class PolishLocale(Locale):
             return str(int(number))
 
         # Format with up to 6 decimal places, removing trailing zeros
-        formatted = f"{number:.6f}".rstrip('0').rstrip('.')
+        formatted = f"{number:.6f}".rstrip("0").rstrip(".")
         if formatted:
             # Replace decimal point with comma
-            formatted = formatted.replace('.', ',')
+            formatted = formatted.replace(".", ",")
         else:
             formatted = "0"
 
@@ -87,13 +89,33 @@ class PolishLocale(Locale):
             raise ValueError(f"Month must be 1-12, got {month}")
 
         full_names = [
-            "styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec",
-            "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"
+            "styczeń",
+            "luty",
+            "marzec",
+            "kwiecień",
+            "maj",
+            "czerwiec",
+            "lipiec",
+            "sierpień",
+            "wrzesień",
+            "październik",
+            "listopad",
+            "grudzień",
         ]
 
         short_names = [
-            "sty", "lut", "mar", "kwi", "maj", "cze",
-            "lip", "sie", "wrz", "paź", "lis", "gru"
+            "sty",
+            "lut",
+            "mar",
+            "kwi",
+            "maj",
+            "cze",
+            "lip",
+            "sie",
+            "wrz",
+            "paź",
+            "lis",
+            "gru",
         ]
 
         return short_names[month - 1] if short else full_names[month - 1]
@@ -104,12 +126,15 @@ class PolishLocale(Locale):
             raise ValueError(f"Weekday must be 0-6 (Monday-Sunday), got {weekday}")
 
         full_names = [
-            "poniedziałek", "wtorek", "środa", "czwartek",
-            "piątek", "sobota", "niedziela"
+            "poniedziałek",
+            "wtorek",
+            "środa",
+            "czwartek",
+            "piątek",
+            "sobota",
+            "niedziela",
         ]
 
-        short_names = [
-            "pon", "wto", "śro", "czw", "pią", "sob", "nie"
-        ]
+        short_names = ["pon", "wto", "śro", "czw", "pią", "sob", "nie"]
 
         return short_names[weekday] if short else full_names[weekday]

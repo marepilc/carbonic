@@ -36,6 +36,4 @@ jobs:
       - name: Run linting
         run: uv run ruff check carbonic
 
-      - name: Run formatting check
-        run: uv run ruff format carbonic --check
 

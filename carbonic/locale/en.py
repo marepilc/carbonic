@@ -13,7 +13,9 @@ class EnglishLocale(Locale):
     def __init__(self):
         super().__init__("en", "English")
 
-    def pluralize(self, count: int | float, singular: str, plural: str, many: str | None = None) -> str:
+    def pluralize(
+        self, count: int | float, singular: str, plural: str, many: str | None = None
+    ) -> str:
         """English pluralization: singular for 1, plural for everything else."""
         if abs(count) == 1:
             return singular
@@ -25,7 +27,7 @@ class EnglishLocale(Locale):
             return str(int(number))
 
         # Format with up to 6 decimal places, removing trailing zeros
-        formatted = f"{number:.6f}".rstrip('0').rstrip('.')
+        formatted = f"{number:.6f}".rstrip("0").rstrip(".")
         return formatted if formatted else "0"
 
     def get_duration_unit_name(self, unit: str, count: int | float) -> str:
