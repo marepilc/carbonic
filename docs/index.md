@@ -41,7 +41,7 @@ Built-in timezone support using Python's standard `zoneinfo`:
 from carbonic import DateTime
 
 # Create timezone-aware datetime
-utc_time = DateTime.now("UTC")
+utc_time = DateTime.now()  # UTC by default
 ny_time = DateTime.now("America/New_York")
 
 # Convert between timezones

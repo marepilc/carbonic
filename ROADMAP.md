@@ -70,11 +70,11 @@
   - **carbonic-pandas**: DataFrame datetime operations, custom dtypes (future)
   - **carbonic-pydantic**: Validation and serialization field types (future)
 
-  4. Performance Optimizations
+  ✅ Performance Optimizations (COMPLETED)
 
-  - Optional ciso8601: Fast ISO datetime parsing acceleration
-  - Memory optimizations: More efficient slots usage
-  - Lazy evaluation: Expensive formatting operations
+  - **Optional ciso8601**: Fast ISO datetime parsing acceleration with graceful fallback
+  - **Memory optimizations**: Efficient slots usage across all core classes
+  - **Lazy evaluation**: Cached expensive formatting operations (locale lookups, timezone formatting)
 
   5. Additional Locale Support (Post Performance)
 
@@ -96,13 +96,12 @@
 
   🎯 Suggested Next Priority
 
-  Based on the current completion status and successful Polars plugin foundation, the recommended development order is:
+  Based on the current completion status with performance optimizations now complete, the recommended development order is:
 
-  1. **Performance Optimizations** - Optional ciso8601 for faster parsing acceleration within core Carbonic
-  2. **Additional Parsing Features** - Relative date parsing
-  3. **Additional Locale Support** - Spanish, French, German localization (post-performance)
-  4. **carbonic-polars Separate Repository** - Migrate and complete the Polars plugin as standalone package
-  5. **Other Data Library Integrations** - carbonic-pandas and carbonic-pydantic as separate repositories
+  1. **Additional Parsing Features** - Relative date parsing ("tomorrow", "next week", "last month")
+  2. **Additional Locale Support** - Spanish, French, German localization
+  3. **carbonic-polars Separate Repository** - Migrate and complete the Polars plugin as standalone package
+  4. **Other Data Library Integrations** - carbonic-pandas and carbonic-pydantic as separate repositories
 
   ## Current Status Summary
 
@@ -117,5 +116,6 @@
   - Comprehensive timezone handling with stdlib integration
   - Full type safety with precise overloads
   - **Polars Plugin Architecture: Complete foundation for high-performance external integrations**
+  - **Performance Optimizations: Fast ISO parsing (ciso8601), memory efficiency (slots), lazy evaluation (formatting cache)**
 
-  **🔄 Next Phase:** Focus on performance optimizations and prepare for external data library integrations as separate repositories to maintain clean separation of concerns.
+  **🔄 Next Phase:** Focus on additional parsing features and locale support, then prepare for external data library integrations as separate repositories to maintain clean separation of concerns.

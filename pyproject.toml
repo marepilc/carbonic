@@ -10,6 +10,11 @@ keywords = ["datetime", "date", "time", "carbon", "timezone"]
 requires-python = ">=3.12"
 dependencies = []
 
+[project.optional-dependencies]
+performance = [
+    "ciso8601>=2.3.0",
+]
+
 [project.urls]
 
 Repository = "https://github.com/marepilc/carbonic"

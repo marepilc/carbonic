@@ -132,6 +132,61 @@ class DateTime:
 
         from carbonic.core.exceptions import ParseError
 
+        # Try fast ciso8601 parsing for ISO formats first
+        try:
+            import ciso8601
+
+            # Try parsing with ciso8601 (handles ISO 8601 formats efficiently)
+            try:
+                parsed_dt = ciso8601.parse_datetime(s)
+            except ValueError:
+                # ciso8601 failed to parse, fall back to manual parsing
+                parsed_dt = None
+
+            if parsed_dt is not None:
+                # ciso8601 successfully parsed the datetime
+                if parsed_dt.tzinfo is None:
+                    # Naive datetime - apply provided timezone or default to UTC
+                    final_tz = tz if tz is not None else "UTC"
+                    return cls(
+                        parsed_dt.year,
+                        parsed_dt.month,
+                        parsed_dt.day,
+                        parsed_dt.hour,
+                        parsed_dt.minute,
+                        parsed_dt.second,
+                        parsed_dt.microsecond,
+                        tz=final_tz,
+                    )
+                else:
+                    # Timezone-aware datetime - convert timezone if needed
+                    if tz is not None:
+                        # User wants a specific timezone, apply it
+                        final_tz = tz
+                    else:
+                        # Keep original timezone, convert to string
+                        if isinstance(parsed_dt.tzinfo, ZoneInfo):
+                            final_tz = parsed_dt.tzinfo.key
+                        elif str(parsed_dt.tzinfo) in ("UTC", "+00:00", "Z"):
+                            final_tz = "UTC"
+                        else:
+                            final_tz = "UTC"  # Fallback for complex timezone offsets
+
+                    return cls(
+                        parsed_dt.year,
+                        parsed_dt.month,
+                        parsed_dt.day,
+                        parsed_dt.hour,
+                        parsed_dt.minute,
+                        parsed_dt.second,
+                        parsed_dt.microsecond,
+                        tz=final_tz,
+                    )
+        except ImportError:
+            # ciso8601 not available, fall back to manual parsing
+            pass
+
+        # Fallback to manual regex parsing for non-ISO formats or when ciso8601 fails
         # Try ISO datetime with timezone first (2025-09-23T14:30:45+00:00)
         iso_tz_pattern = re.compile(
             r"^(\d{4})-(\d{1,2})-(\d{1,2})T(\d{1,2}):(\d{1,2}):(\d{1,2})([+-]\d{2}:\d{2}|Z)$"
@@ -274,6 +329,9 @@ class DateTime:
 
         locale_obj = get_locale(locale or "en")
 
+        # Lazy evaluation cache for expensive operations
+        _cache: dict[str, str] = {}
+
         # Extended Carbon format token mappings for datetime
         mappings: dict[str, Callable[[], str]] = {
             # Date tokens
@@ -284,18 +342,22 @@ class DateTime:
             "d": lambda: f"{self.day:02d}",  # Day with leading zero
             "j": lambda: f"{self.day}",  # Day without leading zero
             "S": lambda: self._ordinal_suffix(self.day),  # Ordinal suffix
-            "F": lambda: locale_obj.get_month_name(
-                self.month, short=False
-            ),  # Full month name
-            "M": lambda: locale_obj.get_month_name(
-                self.month, short=True
-            ),  # Short month name
-            "l": lambda: locale_obj.get_day_name(
-                self._dt.weekday(), short=False
-            ),  # Full day name
-            "D": lambda: locale_obj.get_day_name(
-                self._dt.weekday(), short=True
-            ),  # Short day name
+            "F": lambda: _cache.setdefault(
+                f"F_{locale or 'en'}_{self.month}",
+                locale_obj.get_month_name(self.month, short=False)
+            ),  # Full month name (cached)
+            "M": lambda: _cache.setdefault(
+                f"M_{locale or 'en'}_{self.month}",
+                locale_obj.get_month_name(self.month, short=True)
+            ),  # Short month name (cached)
+            "l": lambda: _cache.setdefault(
+                f"l_{locale or 'en'}_{self._dt.weekday()}",
+                locale_obj.get_day_name(self._dt.weekday(), short=False)
+            ),  # Full day name (cached)
+            "D": lambda: _cache.setdefault(
+                f"D_{locale or 'en'}_{self._dt.weekday()}",
+                locale_obj.get_day_name(self._dt.weekday(), short=True)
+            ),  # Short day name (cached)
             # Time tokens
             "H": lambda: f"{self.hour:02d}",  # Hour 24-format with leading zero
             "G": lambda: f"{self.hour}",  # Hour 24-format without leading zero
@@ -307,11 +369,23 @@ class DateTime:
             "a": lambda: "am" if self.hour < 12 else "pm",  # am/pm lowercase
             "u": lambda: f"{self.microsecond:06d}",  # Microseconds
             "v": lambda: f"{self.microsecond // 1000:03d}",  # Milliseconds
-            # Timezone tokens
-            "T": lambda: self._timezone_abbr(),  # Timezone abbreviation
-            "O": lambda: self._timezone_offset(),  # Timezone offset (+0200)
-            "P": lambda: self._timezone_offset_colon(),  # Timezone offset (+02:00)
-            "Z": lambda: self._timezone_offset_seconds(),  # Timezone offset in seconds
+            # Timezone tokens (cached for performance)
+            "T": lambda: _cache.setdefault(
+                f"T_{self.tzinfo}",
+                self._timezone_abbr()
+            ),  # Timezone abbreviation (cached)
+            "O": lambda: _cache.setdefault(
+                f"O_{self.tzinfo}",
+                self._timezone_offset()
+            ),  # Timezone offset (+0200) (cached)
+            "P": lambda: _cache.setdefault(
+                f"P_{self.tzinfo}",
+                self._timezone_offset_colon()
+            ),  # Timezone offset (+02:00) (cached)
+            "Z": lambda: _cache.setdefault(
+                f"Z_{self.tzinfo}",
+                self._timezone_offset_seconds()
+            ),  # Timezone offset in seconds (cached)
             # Combined formats
             "c": lambda: self._dt.isoformat(),  # ISO 8601 date (2025-09-23T14:30:45+00:00)
             "r": lambda: self._dt.strftime("%a, %d %b %Y %H:%M:%S %z"),  # RFC 2822

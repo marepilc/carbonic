@@ -581,6 +581,9 @@ class Date:
 
         locale_obj = get_locale(locale)
 
+        # Lazy evaluation cache for expensive operations
+        _cache: dict[str, str] = {}
+
         # Carbon format token mappings
         mappings = {
             "Y": lambda: f"{self.year:04d}",  # 4-digit year
@@ -590,18 +593,22 @@ class Date:
             "d": lambda: f"{self.day:02d}",  # Day with leading zero
             "j": lambda: f"{self.day}",  # Day without leading zero
             "S": lambda: self._ordinal_suffix(self.day),  # Ordinal suffix
-            "F": lambda: locale_obj.get_month_name(
-                self.month, short=False
-            ),  # Full month name
-            "M": lambda: locale_obj.get_month_name(
-                self.month, short=True
-            ),  # Short month name
-            "l": lambda: locale_obj.get_day_name(
-                self.weekday, short=False
-            ),  # Full day name
-            "D": lambda: locale_obj.get_day_name(
-                self.weekday, short=True
-            ),  # Short day name
+            "F": lambda: _cache.setdefault(
+                f"F_{locale or 'en'}_{self.month}",
+                locale_obj.get_month_name(self.month, short=False)
+            ),  # Full month name (cached)
+            "M": lambda: _cache.setdefault(
+                f"M_{locale or 'en'}_{self.month}",
+                locale_obj.get_month_name(self.month, short=True)
+            ),  # Short month name (cached)
+            "l": lambda: _cache.setdefault(
+                f"l_{locale or 'en'}_{self.weekday}",
+                locale_obj.get_day_name(self.weekday, short=False)
+            ),  # Full day name (cached)
+            "D": lambda: _cache.setdefault(
+                f"D_{locale or 'en'}_{self.weekday}",
+                locale_obj.get_day_name(self.weekday, short=True)
+            ),  # Short day name (cached)
         }
 
         result = ""

@@ -46,15 +46,15 @@ uv add carbonic
 
 Carbonic offers optional dependencies for enhanced functionality:
 
-### Fast Parsing (Recommended)
+### Performance Optimizations (Recommended)
 
-For significantly faster ISO datetime parsing:
+For significantly faster ISO datetime parsing and other performance improvements:
 
 ```bash
-pip install carbonic[fast]
+pip install carbonic[performance]
 ```
 
-This installs `ciso8601`, which provides C-accelerated ISO datetime parsing that's 20-50x faster than the standard library.
+This installs `ciso8601`, which provides C-accelerated ISO datetime parsing that's ~10x faster than the standard library, plus enables other performance optimizations like lazy evaluation caching.
 
 
 ### Development
@@ -89,15 +89,15 @@ from carbonic import now, DateTime
 current_time = now()
 print(f"Current time: {current_time}")
 
-dt = DateTime(2024, 1, 15, 14, 30)
+dt = DateTime(2025, 1, 15, 14, 30)
 print(f"Example datetime: {dt.format('Y-m-d H:i:s')}")
 ```
 
 Expected output:
 ```
-0.1.0
-Current time: 2024-01-15T10:30:00+00:00
-Example datetime: 2024-01-15 14:30:00
+0.2.0
+Current time: 2025-01-15T10:30:00+00:00
+Example datetime: 2025-01-15 14:30:00
 ```
 
 ## Troubleshooting
@@ -123,7 +123,7 @@ This should not happen with Python 3.12+, but if you see this error:
 
 If datetime parsing is slow:
 
-1. Install the fast parsing extra: `pip install carbonic[fast]`
+1. Install the performance extra: `pip install carbonic[performance]`
 2. Verify ciso8601 is installed: `pip list | grep ciso8601`
 
 ### Type Checking Issues
