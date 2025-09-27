@@ -32,7 +32,7 @@ class Duration:
         9000.0
 
         >>> long_duration = Duration(years=1, months=6, days=15)
-        >>> long_duration.format_human()
+        >>> long_duration.humanize(max_units=3)
         '1 year 6 months 15 days'
     """
 

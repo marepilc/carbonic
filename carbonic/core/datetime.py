@@ -28,11 +28,11 @@ class DateTime:
 
     Examples:
         >>> dt = DateTime(2024, 1, 15, 14, 30, 0, tz="UTC")
-        >>> dt.add_hours(2).format("Y-m-d H:i:s")
+        >>> dt.add(hours=2).format("Y-m-d H:i:s")
         '2024-01-15 16:30:00'
 
-        >>> now = DateTime.now("America/New_York")
-        >>> now.to_date_string()
+        >>> now = DateTime.now("America/New_York")  # doctest: +SKIP
+        >>> now.to_date_string()  # doctest: +SKIP
         '2024-01-15'
     """
 
@@ -87,9 +87,9 @@ class DateTime:
             DateTime instance representing the current moment
 
         Examples:
-            >>> DateTime.now()  # Current time in UTC
-            >>> DateTime.now("America/New_York")  # Current time in NY timezone
-            >>> DateTime.now(None)  # Current local time (naive)
+            >>> DateTime.now()  # Current time in UTC  # doctest: +SKIP
+            >>> DateTime.now("America/New_York")  # Current time in NY timezone  # doctest: +SKIP
+            >>> DateTime.now(None)  # Current local time (naive)  # doctest: +SKIP
         """
         if tz is None:
             now_dt = datetime.datetime.now()

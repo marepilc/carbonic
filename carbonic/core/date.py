@@ -28,11 +28,11 @@ class Date:
 
     Examples:
         >>> date = Date(2024, 1, 15)
-        >>> date.add_days(10).format("Y-m-d")
+        >>> date.add(days=10).format("Y-m-d")
         '2024-01-25'
 
-        >>> today = Date.today()
-        >>> today.start_of_month().format("F j, Y")
+        >>> today = Date.today()  # doctest: +SKIP
+        >>> today.start_of("month").format("F j, Y")  # doctest: +SKIP
         'January 1, 2024'
     """
 
