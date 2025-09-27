@@ -1289,6 +1289,51 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#carbonic.DateTime.today" class="md-nav__link">
+    <span class="md-ellipsis">
+      today
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.DateTime.tomorrow" class="md-nav__link">
+    <span class="md-ellipsis">
+      tomorrow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.DateTime.yesterday" class="md-nav__link">
+    <span class="md-ellipsis">
+      yesterday
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.DateTime.next" class="md-nav__link">
+    <span class="md-ellipsis">
+      next
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.DateTime.previous" class="md-nav__link">
+    <span class="md-ellipsis">
+      previous
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#carbonic.DateTime.parse" class="md-nav__link">
     <span class="md-ellipsis">
       parse
@@ -1526,6 +1571,42 @@
   <a href="#carbonic.Date.today" class="md-nav__link">
     <span class="md-ellipsis">
       today
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.Date.tomorrow" class="md-nav__link">
+    <span class="md-ellipsis">
+      tomorrow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.Date.yesterday" class="md-nav__link">
+    <span class="md-ellipsis">
+      yesterday
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.Date.next" class="md-nav__link">
+    <span class="md-ellipsis">
+      next
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.Date.previous" class="md-nav__link">
+    <span class="md-ellipsis">
+      previous
     </span>
   </a>
   
@@ -3084,6 +3165,499 @@ instances, maintaining immutability.</p>
 <div class="doc doc-object doc-function">
 
 
+<h6 id="carbonic.DateTime.today" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">today</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#carbonic.DateTime.today" class="headerlink" title="Permanent link">&para;</a></h6>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">today</span><span class="p">(</span><span class="n">tz</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s1">&#39;UTC&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DateTime</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get the current date at 00:00:00 in the specified timezone.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>tz</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Timezone string (default: "UTC")</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;UTC&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="carbonic.core.datetime.DateTime
+
+
+  
+      dataclass
+  " href="../datetime/#carbonic.core.datetime.DateTime">DateTime</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>DateTime object representing today at midnight</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h6 id="carbonic.DateTime.tomorrow" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">tomorrow</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#carbonic.DateTime.tomorrow" class="headerlink" title="Permanent link">&para;</a></h6>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">tomorrow</span><span class="p">(</span><span class="n">tz</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s1">&#39;UTC&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DateTime</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get tomorrow's date at 00:00:00 in the specified timezone.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>tz</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Timezone string (default: "UTC")</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;UTC&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="carbonic.core.datetime.DateTime
+
+
+  
+      dataclass
+  " href="../datetime/#carbonic.core.datetime.DateTime">DateTime</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>DateTime object representing tomorrow at midnight</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h6 id="carbonic.DateTime.yesterday" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">yesterday</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#carbonic.DateTime.yesterday" class="headerlink" title="Permanent link">&para;</a></h6>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">yesterday</span><span class="p">(</span><span class="n">tz</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s1">&#39;UTC&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DateTime</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get yesterday's date at 00:00:00 in the specified timezone.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>tz</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Timezone string (default: "UTC")</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;UTC&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="carbonic.core.datetime.DateTime
+
+
+  
+      dataclass
+  " href="../datetime/#carbonic.core.datetime.DateTime">DateTime</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>DateTime object representing yesterday at midnight</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h6 id="carbonic.DateTime.next" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">next</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#carbonic.DateTime.next" class="headerlink" title="Permanent link">&para;</a></h6>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">next</span><span class="p">(</span><span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s1">&#39;UTC&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DateTime</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get a datetime in the future relative to now.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>unit</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Time unit ("second", "minute", "hour", "day", "week", "month", "quarter", "year")</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>count</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Number of units to add (default: 1)</p>
+              </div>
+            </td>
+            <td>
+                  <code>1</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>tz</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Timezone string (default: "UTC")</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;UTC&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="carbonic.core.datetime.DateTime
+
+
+  
+      dataclass
+  " href="../datetime/#carbonic.core.datetime.DateTime">DateTime</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>DateTime object in the future</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">DateTime</span><span class="o">.</span><span class="n">next</span><span class="p">(</span><span class="s2">&quot;day&quot;</span><span class="p">)</span>      <span class="c1"># Tomorrow</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">DateTime</span><span class="o">.</span><span class="n">next</span><span class="p">(</span><span class="s2">&quot;week&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># 2 weeks from now</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">DateTime</span><span class="o">.</span><span class="n">next</span><span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">)</span>    <span class="c1"># Next month</span>
+</span></code></pre></div>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h6 id="carbonic.DateTime.previous" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">previous</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#carbonic.DateTime.previous" class="headerlink" title="Permanent link">&para;</a></h6>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">previous</span><span class="p">(</span><span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s1">&#39;UTC&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DateTime</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get a datetime in the past relative to now.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>unit</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Time unit ("second", "minute", "hour", "day", "week", "month", "quarter", "year")</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>count</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Number of units to subtract (default: 1)</p>
+              </div>
+            </td>
+            <td>
+                  <code>1</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>tz</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Timezone string (default: "UTC")</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;UTC&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="carbonic.core.datetime.DateTime
+
+
+  
+      dataclass
+  " href="../datetime/#carbonic.core.datetime.DateTime">DateTime</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>DateTime object in the past</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">DateTime</span><span class="o">.</span><span class="n">previous</span><span class="p">(</span><span class="s2">&quot;day&quot;</span><span class="p">)</span>      <span class="c1"># Yesterday</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">DateTime</span><span class="o">.</span><span class="n">previous</span><span class="p">(</span><span class="s2">&quot;week&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># 2 weeks ago</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">DateTime</span><span class="o">.</span><span class="n">previous</span><span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">)</span>    <span class="c1"># Last month</span>
+</span></code></pre></div>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h6 id="carbonic.DateTime.parse" class="doc doc-heading">
             <span class="doc doc-object-name doc-function-name">parse</span>
 
@@ -3121,7 +3695,9 @@ instances, maintaining immutability.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The datetime string to parse</p>
+                <p>The datetime string to parse. Supports:
+- ISO 8601 formats (2024-01-15T14:30:00Z)
+- Custom formats when fmt is provided</p>
               </div>
             </td>
             <td>
@@ -3214,6 +3790,11 @@ Supports both strftime (%Y-%m-%d %H:%M:%S) and Carbon (Y-m-d H:i:s) formats.</p>
           </tr>
       </tbody>
     </table>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;2024-01-15T14:30:00Z&quot;</span><span class="p">)</span>
+</span></code></pre></div>
 
 
     </div>
@@ -4372,6 +4953,322 @@ All operations return new instances, maintaining immutability.</p>
 <div class="doc doc-object doc-function">
 
 
+<h6 id="carbonic.Date.tomorrow" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">tomorrow</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#carbonic.Date.tomorrow" class="headerlink" title="Permanent link">&para;</a></h6>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">tomorrow</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Date</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get tomorrow's date.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="carbonic.core.date.Date
+
+
+  
+      dataclass
+  " href="../date/#carbonic.core.date.Date">Date</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Date object representing tomorrow</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h6 id="carbonic.Date.yesterday" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">yesterday</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#carbonic.Date.yesterday" class="headerlink" title="Permanent link">&para;</a></h6>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">yesterday</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Date</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get yesterday's date.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="carbonic.core.date.Date
+
+
+  
+      dataclass
+  " href="../date/#carbonic.core.date.Date">Date</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Date object representing yesterday</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h6 id="carbonic.Date.next" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">next</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#carbonic.Date.next" class="headerlink" title="Permanent link">&para;</a></h6>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">next</span><span class="p">(</span><span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Date</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get a date in the future relative to today.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>unit</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Time unit ("day", "week", "month", "quarter", "year")</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>count</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Number of units to add (default: 1)</p>
+              </div>
+            </td>
+            <td>
+                  <code>1</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="carbonic.core.date.Date
+
+
+  
+      dataclass
+  " href="../date/#carbonic.core.date.Date">Date</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Date object in the future</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">Date</span><span class="o">.</span><span class="n">next</span><span class="p">(</span><span class="s2">&quot;day&quot;</span><span class="p">)</span>      <span class="c1"># Tomorrow</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">Date</span><span class="o">.</span><span class="n">next</span><span class="p">(</span><span class="s2">&quot;week&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># 2 weeks from today</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">Date</span><span class="o">.</span><span class="n">next</span><span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">)</span>    <span class="c1"># Next month</span>
+</span></code></pre></div>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h6 id="carbonic.Date.previous" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">previous</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#carbonic.Date.previous" class="headerlink" title="Permanent link">&para;</a></h6>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">previous</span><span class="p">(</span><span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Date</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get a date in the past relative to today.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>unit</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Time unit ("day", "week", "month", "quarter", "year")</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>count</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Number of units to subtract (default: 1)</p>
+              </div>
+            </td>
+            <td>
+                  <code>1</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="carbonic.core.date.Date
+
+
+  
+      dataclass
+  " href="../date/#carbonic.core.date.Date">Date</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Date object in the past</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">Date</span><span class="o">.</span><span class="n">previous</span><span class="p">(</span><span class="s2">&quot;day&quot;</span><span class="p">)</span>      <span class="c1"># Yesterday</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">Date</span><span class="o">.</span><span class="n">previous</span><span class="p">(</span><span class="s2">&quot;week&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># 2 weeks ago</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">Date</span><span class="o">.</span><span class="n">previous</span><span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">)</span>    <span class="c1"># Last month</span>
+</span></code></pre></div>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h6 id="carbonic.Date.parse" class="doc doc-heading">
             <span class="doc doc-object-name doc-function-name">parse</span>
 
@@ -4409,7 +5306,9 @@ All operations return new instances, maintaining immutability.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The date string to parse</p>
+                <p>The date string to parse. Supports:
+- ISO date formats (2024-01-15)
+- Custom formats when fmt is provided</p>
               </div>
             </td>
             <td>
@@ -4486,6 +5385,11 @@ Supports both strftime (%Y-%m-%d) and Carbon (Y-m-d) formats.</p>
           </tr>
       </tbody>
     </table>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">Date</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;2024-01-15&quot;</span><span class="p">)</span>
+</span></code></pre></div>
 
 
     </div>
