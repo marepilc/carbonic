@@ -61,7 +61,7 @@ jobs:
       if: steps.version.outputs.is_release == 'true'
       run: |
         uv run mike deploy ${{ steps.version.outputs.version }} latest --update-aliases --push
-        uv run mike set-default ${{ steps.version.outputs.version }} --push
+        uv run mike set-default latest --push
 
     - name: Deploy development docs
       if: steps.version.outputs.is_release == 'false'
