@@ -16,11 +16,11 @@ Chain operations naturally with a fluent API while maintaining immutability for 
 from carbonic import DateTime, now
 
 # Fluent chaining
-result = now().add_days(7).end_of_month().to_date_string()
+result = now().add(days=7).end_of("month").to_date_string()
 
 # All operations return new instances
 dt = DateTime(2024, 1, 15, 14, 30)
-new_dt = dt.add_hours(2)  # Original dt is unchanged
+new_dt = dt.add(hours=2)  # Original dt is unchanged
 ```
 
 ### 🔒 **Type Safe**
@@ -44,8 +44,8 @@ from carbonic import DateTime
 utc_time = DateTime.now()  # UTC by default
 ny_time = DateTime.now("America/New_York")
 
-# Convert between timezones
-london_time = utc_time.to_timezone("Europe/London")
+# Convert between timezones would require timezone conversion methods
+# (Note: timezone conversion methods may need to be implemented)
 ```
 
 ### 📅 **Rich Date Operations**
@@ -57,16 +57,16 @@ from carbonic import DateTime, Period
 dt = DateTime(2024, 1, 15)
 
 # Date arithmetic
-next_month = dt.add_months(1)
-last_friday = dt.previous(Period.FRIDAY)
+next_month = dt.add(months=1)
+# Note: Additional methods like previous(), next_business_day() may need implementation
 
 # Date boundaries
-start_of_week = dt.start_of_week()
-end_of_quarter = dt.end_of_quarter()
+start_of_week = dt.start_of("week")
+end_of_month = dt.end_of("month")
 
-# Business day calculations
-next_business_day = dt.next_business_day()
-business_days_between = dt.business_days_until(next_month)
+# Duration calculations
+other_dt = DateTime(2024, 2, 15)
+diff = dt.diff(other_dt)
 ```
 
 ### 🌐 **Localization Support**
@@ -74,19 +74,17 @@ Multi-language formatting and humanization:
 
 ```python
 from carbonic import DateTime
-from carbonic.locale import set_locale
 
 dt = DateTime(2024, 1, 15, 14, 30)
 
-# English (default)
-dt.format("l, F j, Y")  # "Monday, January 15, 2024"
+# English (default) formatting
+formatted_en = dt.format("l, F j, Y")  # "Monday, January 15, 2024"
 
-# Polish localization
-set_locale("pl")
-dt.format("l, j F Y")   # "poniedziałek, 15 stycznia 2024"
+# Polish localization formatting
+formatted_pl = dt.format("l, j F Y", locale="pl")  # "poniedziałek, 15 stycznia 2024"
 
-# Humanized differences
-dt.diff_for_humans()    # "2 days ago" / "2 dni temu"
+# Date string formatting
+date_string = dt.to_date_string()  # "2024-01-15"
 ```
 
 ### ⚡ **Performance Optimized**

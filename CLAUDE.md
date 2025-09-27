@@ -1,6 +1,6 @@
 # Carbonic - the datetime library
 
-The Python library, strongly inspired by PHP Carbon.
+A modern Python datetime library with fluent API, immutable design, and comprehensive timezone support.
 
 ## Development Setup
 
@@ -15,8 +15,13 @@ The Python library, strongly inspired by PHP Carbon.
 uv sync
 
 # Run tests
-uv run pytest
-uv run pytest --cov=carbonic --cov-report=html
+uv run pytest                                     # Regular tests only
+uv run pytest --cov=carbonic --cov-report=html   # With coverage
+
+# Test documentation examples (included in regular test suite)
+uv run pytest tests/test_documentation.py        # All documentation tests
+uv run pytest tests/test_documentation.py -k api # Just API docs
+uv run pytest docs/index.md --markdown-docs      # Direct testing of specific file
 
 # Type checking
 uv run mypy carbonic
@@ -44,20 +49,20 @@ carbonic/
 ## Core Design Principles
 
 **Immutable `dataclass`:** All datetime objects are frozen dataclasses with `slots=True`
-**Fluent API:** Carbon-style chaining with Pythonic method names
+**Fluent API:** Method chaining with Pythonic method names
 **Typed:** Full PEP 561 support, strict typing throughout
 **Timezone handling:** Stdlib `zoneinfo` only, strict timezone rules
 
 ### API Design Guidelines
 
-**Method naming:** Use Pythonic snake_case (e.g., `add_days()`, `end_of_month()`)
+**Method naming:** Use Pythonic snake_case (e.g., `add(days=7)`, `end_of("month")`)
 **Immutability:** All operations return new instances
 **Error handling:** Raise specific exceptions from `carbonic.core.exceptions`
 **Return types:** Always annotate with proper generic types
 
 Example fluent chaining:
 ```python
-now().add_days(3).end_of_month().to_date_string()
+now().add(days=3).end_of("month").to_date_string()
 ```
 
 ## Features

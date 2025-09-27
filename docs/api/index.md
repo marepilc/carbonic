@@ -21,7 +21,8 @@ current = now()
 dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
 
 # Fluent operations
-result = dt.add_days(7).end_of_month().to_timezone("America/New_York")
+result = dt.add(days=7).end_of("month")
+# Note: timezone conversion methods may need implementation
 ```
 
 ### [Date](date.md)
@@ -37,19 +38,20 @@ today_date = today()
 birthday = Date(1990, 5, 15)
 
 # Date arithmetic
-next_month = birthday.add_months(1)
+next_month = birthday.add(months=1)
 ```
 
 ### [Duration](duration.md)
 Represents spans of time that can be added to or subtracted from datetime objects.
 
 ```python
-from carbonic import Duration
+from carbonic import DateTime, Duration
 
 # Create duration
 duration = Duration(hours=2, minutes=30)
 
 # Use with datetime
+dt = DateTime.now()
 future = dt + duration
 ```
 
@@ -57,12 +59,15 @@ future = dt + duration
 Named time periods and weekday constants.
 
 ```python
-from carbonic import Period
+from carbonic import DateTime, Period
 
-# Weekday navigation
-next_friday = dt.next(Period.FRIDAY)
+dt = DateTime.now()
 
-# Time periods
+# Add time periods using Period constants
+next_month = Period.MONTH.add_to(dt)
+next_week = Period.WEEK.add_to(dt)
+
+# Time period constants
 monthly_period = Period.MONTH
 ```
 
@@ -70,12 +75,17 @@ monthly_period = Period.MONTH
 Represents time ranges between two datetime points.
 
 ```python
-from carbonic import Interval
+from carbonic import DateTime, Interval
 
 # Create interval
+start_dt = DateTime.now()
+end_dt = start_dt.add(hours=2)
 meeting = Interval(start_dt, end_dt)
 
 # Check overlaps
+other_start = start_dt.add(hours=1)
+other_end = other_start.add(hours=2)
+other_meeting = Interval(other_start, other_end)
 is_conflicting = meeting.overlaps(other_meeting)
 ```
 
@@ -85,7 +95,11 @@ is_conflicting = meeting.overlaps(other_meeting)
 ```python
 from carbonic import now
 
-now(tz: str | None = "UTC") -> DateTime
+# Get current time in UTC (default)
+current_utc = now()
+
+# Get current time in specific timezone
+current_ny = now("America/New_York")
 ```
 
 Create a DateTime instance for the current moment in the specified timezone.
@@ -100,7 +114,11 @@ Create a DateTime instance for the current moment in the specified timezone.
 ```python
 from carbonic import today
 
-today(tz: str | None = None) -> Date
+# Get today's date
+today_date = today()
+
+# Get today's date in specific timezone
+today_tokyo = today("Asia/Tokyo")
 ```
 
 Create a Date instance for today in the specified timezone.
@@ -119,11 +137,15 @@ Custom exceptions for error handling.
 ```python
 from carbonic.core.exceptions import (
     CarbonicError,
-    InvalidDate,
-    InvalidTime,
-    InvalidTimezone,
     ParseError
 )
+
+# Example usage
+try:
+    from carbonic import DateTime
+    dt = DateTime.parse("invalid-date-string")
+except ParseError as e:
+    print(f"Failed to parse: {e}")
 ```
 
 ## Locale Support
@@ -132,11 +154,15 @@ from carbonic.core.exceptions import (
 Localization and internationalization support.
 
 ```python
-from carbonic.locale import set_locale, get_locale
+from carbonic import DateTime
+from carbonic.locale import get_locale
 
-# Set locale for formatting
-set_locale("pl")  # Polish
-dt.format("l, j F Y")  # "poniedziałek, 15 stycznia 2024"
+# Get locale for formatting
+locale = get_locale("pl")  # Polish
+
+# Create datetime and format with locale
+dt = DateTime(2024, 1, 15, 14, 30)
+formatted = dt.format("l, j F Y", locale="pl")  # "poniedziałek, 15 stycznia 2024"
 ```
 
 ## Type System
@@ -149,14 +175,16 @@ Carbonic is fully typed and supports PEP 561. All classes and functions include 
 # Main classes and functions
 from carbonic import DateTime, Date, Duration, Period, Interval, now, today
 
-# Core classes (alternative import)
-from carbonic.core import DateTime, Date, Duration, Period, Interval
-
 # Exceptions
 from carbonic.core.exceptions import CarbonicError, ParseError
 
 # Locale support
-from carbonic.locale import set_locale, get_locale
+from carbonic.locale import get_locale
+
+# Example usage
+dt = DateTime.now()
+today_date = today()
+duration = Duration(hours=2)
 ```
 
 ## Design Principles
@@ -168,10 +196,11 @@ All objects are immutable dataclasses with `frozen=True` and `slots=True` for me
 Methods are designed to chain naturally while maintaining readability:
 
 ```python
+from carbonic import DateTime
+
 result = (DateTime.now()
-    .add_days(1)
-    .start_of_day()
-    .to_timezone("America/New_York")
+    .add(days=1)
+    .start_of("day")
     .format("Y-m-d H:i:s")
 )
 ```
@@ -180,21 +209,30 @@ result = (DateTime.now()
 Comprehensive type annotations throughout:
 
 ```python
+from carbonic import DateTime, Duration
+
 def schedule_meeting(
     start: DateTime,
     duration: Duration,
-    attendee_timezones: list[str]
+    attendee_count: int
 ) -> list[DateTime]:
     return [
-        start.to_timezone(tz)
-        for tz in attendee_timezones
+        start.add(hours=i)
+        for i in range(attendee_count)
     ]
+
+# Example usage
+start_time = DateTime.now()
+duration = Duration(hours=2)
+meetings = schedule_meeting(start_time, duration, 3)
 ```
 
 ### Timezone Awareness
 Strong emphasis on timezone-aware operations:
 
 ```python
+from carbonic import DateTime
+
 # Encouraged: explicit timezone
 dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
 

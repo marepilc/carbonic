@@ -1,6 +1,6 @@
 # Carbonic
 
-A modern Python datetime library inspired by PHP Carbon, built with stdlib `zoneinfo`, dataclasses for immutability, and comprehensive localization support.
+A modern Python datetime library with fluent API, built with stdlib `zoneinfo`, dataclasses for immutability, and comprehensive localization support.
 
 Carbonic provides an intuitive and fluent API for working with dates and times in Python, leveraging modern Python features for better type safety and performance.
 
@@ -46,7 +46,7 @@ from carbonic import DateTime, Duration
 
 # Create and manipulate dates
 now = DateTime.now()
-tomorrow = now.add_days(1)
+tomorrow = now.add(days=1)
 next_week = now.add(days=7)
 
 # Parse ISO strings (fast with ciso8601)

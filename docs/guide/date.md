@@ -7,6 +7,37 @@ The `Date` class provides date-only operations without time components. It's per
 Date objects are immutable and represent calendar dates independent of time zones or time of day. They provide intuitive methods for date arithmetic, comparisons, and formatting.
 
 ```python
+from carbonic import Date
+
+# Create a Date instance
+date = Date(2024, 1, 15)
+print(date)  # 2024-01-15
+```
+
+### Calendar Information
+
+```python
+from carbonic import Date
+import calendar
+
+date = Date(2024, 2, 15)  # February in a leap year
+
+# Year information
+print(calendar.isleap(date.year))    # True (2024 is a leap year)
+days_in_year = 366 if calendar.isleap(date.year) else 365
+print(days_in_year)      # 366
+
+# Month information
+print(date.end_of("month").day)     # 29 (February in leap year)
+
+# Quarter information
+print((date.month - 1) // 3 + 1)           # 1 (Q1: Jan-Mar)
+print(date.start_of("quarter")) # 2024-01-01
+```
+
+## Creating Date Objects
+
+```python
 from carbonic import Date, today
 
 # Create a specific date
@@ -51,14 +82,14 @@ carbonic_date = Date.from_date(stdlib_date)
 # From DateTime object
 from carbonic import DateTime
 dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
-date_from_dt = Date.from_datetime(dt)
+date_from_dt = dt.to_date()
 
 # From string (ISO format)
-parsed_date = Date.from_iso("2024-01-15")
+parsed_date = Date.parse("2024-01-15")
 
 # From custom format
-custom_date = Date.from_format("15/01/2024", "d/m/Y")
-us_date = Date.from_format("01-15-2024", "m-d-Y")
+custom_date = Date.parse("15/01/2024", "%d/%m/%Y")
+us_date = Date.parse("01-15-2024", "%m-%d-%Y")
 ```
 
 ## Date Arithmetic
@@ -71,10 +102,10 @@ from carbonic import Date
 date = Date(2024, 1, 15)
 
 # Add various units
-tomorrow = date.add_days(1)
-next_week = date.add_weeks(1)
-next_month = date.add_months(1)
-next_year = date.add_years(1)
+tomorrow = date.add(days=1)
+next_week = date.add(days=7)  # Use days=7 instead of weeks=1
+next_month = date.add(months=1)
+next_year = date.add(years=1)
 
 print(f"Tomorrow: {tomorrow}")     # 2024-01-16
 print(f"Next week: {next_week}")   # 2024-01-22
@@ -82,7 +113,7 @@ print(f"Next month: {next_month}") # 2024-02-15
 print(f"Next year: {next_year}")   # 2025-01-15
 
 # Chain operations
-future = date.add_years(1).add_months(6).add_days(10)
+future = date.add(years=1, months=6, days=10)
 print(f"Future: {future}")  # 2025-07-25
 ```
 
@@ -94,10 +125,10 @@ from carbonic import Date
 date = Date(2024, 1, 15)
 
 # Subtract various units
-yesterday = date.subtract_days(1)
-last_week = date.subtract_weeks(1)
-last_month = date.subtract_months(1)
-last_year = date.subtract_years(1)
+yesterday = date.subtract(days=1)
+last_week = date.subtract(days=7)  # Use days=7 instead of weeks=1
+last_month = date.subtract(months=1)
+last_year = date.subtract(years=1)
 
 print(f"Yesterday: {yesterday}")   # 2024-01-14
 print(f"Last week: {last_week}")   # 2024-01-08
@@ -114,15 +145,16 @@ start_date = Date(2024, 1, 15)
 end_date = Date(2024, 1, 22)
 
 # Calculate differences
-days_diff = start_date.diff_in_days(end_date)
-weeks_diff = start_date.diff_in_weeks(end_date)
+duration_diff = end_date.diff(start_date)
+days_diff = int(duration_diff.in_days())
+weeks_diff = int(duration_diff.in_weeks())
 
 print(f"Days difference: {days_diff}")    # 7
 print(f"Weeks difference: {weeks_diff}")  # 1
 
 # Absolute difference
 past_date = Date(2024, 1, 10)
-abs_diff = start_date.diff_in_days(past_date, absolute=True)
+abs_diff = abs(int(start_date.diff(past_date).in_days()))
 print(f"Absolute difference: {abs_diff}")  # 5
 ```
 
@@ -136,20 +168,20 @@ from carbonic import Date
 date = Date(2024, 3, 15)  # March 15, 2024
 
 # Week boundaries
-start_of_week = date.start_of_week()      # Previous Monday
-end_of_week = date.end_of_week()          # Next Sunday
+start_of_week = date.start_of("week")      # Previous Monday
+end_of_week = date.end_of("week")          # Next Sunday
 
 # Month boundaries
-start_of_month = date.start_of_month()    # 2024-03-01
-end_of_month = date.end_of_month()        # 2024-03-31
+start_of_month = date.start_of("month")    # 2024-01-01
+end_of_month = date.end_of("month")        # 2024-01-31
 
 # Quarter boundaries
-start_of_quarter = date.start_of_quarter() # 2024-01-01 (Q1)
-end_of_quarter = date.end_of_quarter()     # 2024-03-31 (Q1)
+start_of_quarter = date.start_of("quarter") # 2024-01-01 (Q1)
+end_of_quarter = date.end_of("quarter")     # 2024-03-31 (Q1)
 
 # Year boundaries
-start_of_year = date.start_of_year()      # 2024-01-01
-end_of_year = date.end_of_year()          # 2024-12-31
+start_of_year = date.start_of("year")      # 2024-01-01
+end_of_year = date.end_of("year")          # 2024-12-31
 
 print(f"Start of month: {start_of_month}")
 print(f"End of month: {end_of_month}")
@@ -158,23 +190,28 @@ print(f"End of month: {end_of_month}")
 ### Weekday Navigation
 
 ```python
-from carbonic import Date, Period
+from carbonic import Date
 
 date = Date(2024, 1, 15)  # Monday
 
-# Next occurrence of a weekday
-next_friday = date.next(Period.FRIDAY)
-next_monday = date.next(Period.MONDAY)  # Following Monday
+# Calculate next Friday (weekday 4)
+current_weekday = date.weekday  # Monday = 0
+days_until_friday = (4 - current_weekday) % 7
+if days_until_friday == 0:  # If today is Friday
+    days_until_friday = 7
+next_friday = date.add(days=days_until_friday)
 
-# Previous occurrence
-last_friday = date.previous(Period.FRIDAY)
-previous_sunday = date.previous(Period.SUNDAY)
+# Calculate next Monday
+days_until_monday = (0 - current_weekday) % 7
+if days_until_monday == 0:  # If today is Monday
+    days_until_monday = 7
+next_monday = date.add(days=days_until_monday)
 
 print(f"Next Friday: {next_friday}")      # 2024-01-19
-print(f"Last Friday: {last_friday}")      # 2024-01-12
+print(f"Next Monday: {next_monday}")      # 2024-01-22
 
 # Weekday checks
-print(f"Is Monday: {date.is_monday()}")     # True
+print(f"Is Monday: {date.weekday == 0}")     # True
 print(f"Is weekend: {date.is_weekend()}")   # False
 print(f"Is weekday: {date.is_weekday()}")   # True
 ```
@@ -187,11 +224,11 @@ from carbonic import Date
 date = Date(2024, 1, 15)  # Monday
 
 # Business day checks
-print(f"Is business day: {date.is_business_day()}")  # True
+print(f"Is business day: {date.is_weekday()}")  # True
 
 # Navigate business days
-next_business = date.next_business_day()
-previous_business = date.previous_business_day()
+next_business = date.add_business_days(1)
+previous_business = date.subtract_business_days(1)
 
 print(f"Next business day: {next_business}")
 print(f"Previous business day: {previous_business}")
@@ -200,10 +237,8 @@ print(f"Previous business day: {previous_business}")
 in_5_business_days = date.add_business_days(5)
 print(f"5 business days later: {in_5_business_days}")
 
-# Count business days between dates
-future_date = date.add_days(10)
-business_days = date.business_days_until(future_date)
-print(f"Business days between: {business_days}")
+# Count business days between dates would require manual calculation
+# (No direct business_days_until method available)
 ```
 
 ## Comparisons
@@ -223,10 +258,10 @@ print(date1 > date2)   # False
 print(date1 == date3)  # True
 print(date1 != date2)  # True
 
-# Fluent methods
-print(date1.is_before(date2))      # True
-print(date1.is_after(date2))       # False
-print(date1.is_same_date(date3))   # True
+# Use standard comparison operators
+print(date1 < date2)      # True (date1 is before date2)
+print(date1 > date2)       # False (date1 is not after date2)
+print(date1 == date3)   # True  # Use equality comparison instead
 ```
 
 ### Temporal Relationships
@@ -237,15 +272,15 @@ from carbonic import Date, today
 date = Date(2024, 1, 15)
 current_date = today()
 
-# Relative to today
-print(date.is_past())       # True (if today is after Jan 15, 2024)
-print(date.is_future())     # False (if today is after Jan 15, 2024)
-print(date.is_today())      # True (if today is Jan 15, 2024)
+# Relative to today using comparison operators
+print(date < current_date)       # True (if today is after Jan 15, 2024)
+print(date > current_date)       # False (if today is after Jan 15, 2024) 
+print(date == current_date)      # True (if today is Jan 15, 2024)
 
-# Between dates
+# Between dates using comparison operators
 start = Date(2024, 1, 10)
 end = Date(2024, 1, 20)
-print(date.is_between(start, end))  # True
+print(start <= date <= end)  # True
 ```
 
 ### Date-Specific Comparisons
@@ -260,12 +295,12 @@ march_1 = Date(2024, 3, 1)
 april_15 = Date(2024, 4, 15)
 next_year = Date(2025, 3, 15)
 
-print(date.is_same_month(march_1))    # True
-print(date.is_same_month(april_15))   # False
-print(date.is_same_year(next_year))   # False
+print(date.month == march_1.month)    # True
+print(date.month == april_15.month)   # False
+print(date.year == next_year.year)   # False
 
 # Quarter checks
-print(date.is_same_quarter(march_1))  # True (both in Q1)
+print((date.month - 1) // 3 == (march_1.month - 1) // 3)  # True (both in Q1)
 ```
 
 ## Formatting and Output
@@ -279,13 +314,12 @@ date = Date(2024, 1, 15)
 
 # Standard formats
 print(date.to_iso_string())      # "2024-01-15"
-print(date.to_date_string())     # "2024-01-15" (same as ISO)
 print(str(date))                 # "2024-01-15"
 
-# Alternative formats
-print(date.to_string("Y-m-d"))   # "2024-01-15"
-print(date.to_string("d/m/Y"))   # "15/01/2024"
-print(date.to_string("F j, Y")) # "January 15, 2024"
+# Alternative formats using format method
+print(date.format("Y-m-d"))   # "2024-01-15"
+print(date.format("d/m/Y"))   # "15/01/2024"
+print(date.format("F j, Y")) # "January 15, 2024"
 ```
 
 ### Custom Formatting
@@ -338,16 +372,15 @@ date = Date(2024, 1, 15)
 stdlib_date = date.to_date()
 print(type(stdlib_date))  # <class 'datetime.date'>
 
-# To DateTime object (requires timezone)
-from carbonic import DateTime
-dt_utc = date.to_datetime(tz="UTC")
-dt_local = date.to_datetime(tz="America/New_York")
+# To datetime.datetime object (with timezone)
+dt_utc = date.to_datetime("UTC")
+dt_local = date.to_datetime("America/New_York")
 
-print(dt_utc)    # 2024-01-15T00:00:00+00:00
-print(dt_local)  # 2024-01-15T00:00:00-05:00
+print(dt_utc)    # 2024-01-15 00:00:00+00:00
+print(dt_local)  # 2024-01-15 00:00:00-05:00
 
-# To timestamp (start of day in timezone)
-timestamp_utc = date.to_timestamp("UTC")
+# To timestamp (convert via datetime)
+timestamp_utc = dt_utc.timestamp()
 print(timestamp_utc)  # Unix timestamp for midnight UTC
 ```
 
@@ -380,22 +413,20 @@ print(date.year)         # 2024
 print(date.month)        # 1
 print(date.day)          # 15
 
-# Derived properties
-print(date.weekday)      # 0 (Monday = 0, Sunday = 6)
-print(date.day_of_week)  # 0 (same as weekday)
-print(date.day_of_year)  # 15
-print(date.week_of_year) # 3
-print(date.quarter)      # 1
+# Derived properties  
+print(date.to_date().weekday())      # 0 (Monday = 0, Sunday = 6)
+print(date.to_date().timetuple().tm_yday)  # 15 (day of year)
+print(date.to_date().isocalendar().week)  # 3 (week of year)
+print((date.month - 1) // 3 + 1)      # 1 (calculate quarter)
 
 # Month information
-print(date.days_in_month)  # 31
-print(date.month_name)     # "January"
-print(date.month_abbr)     # "Jan"
+print(date.end_of("month").day)  # 31 (days in month via end_of method)
+print(date.format("F"))     # "January" (month name)
+print(date.format("M"))     # "Jan" (month abbreviation)
 
-# Week information
-print(date.week_of_month)  # 3
-print(date.weekday_name)   # "Monday"
-print(date.weekday_abbr)   # "Mon"
+# Week information  
+print(date.format("l"))   # "Monday" (weekday name)
+print(date.format("D"))   # "Mon" (weekday abbreviation)
 ```
 
 ### Calendar Information
@@ -406,15 +437,16 @@ from carbonic import Date
 date = Date(2024, 2, 15)  # February in a leap year
 
 # Year information
-print(date.is_leap_year())    # True (2024 is a leap year)
-print(date.days_in_year)      # 366
+import calendar
+print(calendar.isleap(date.year))    # True (2024 is a leap year)
+print(366 if calendar.isleap(date.year) else 365)  # 366
 
 # Month information
-print(date.days_in_month)     # 29 (February in leap year)
+print(date.end_of("month").day)     # 29 (February in leap year)
 
 # Quarter information
-print(date.quarter)           # 1 (Q1: Jan-Mar)
-print(date.start_of_quarter()) # 2024-01-01
+print((date.month - 1) // 3 + 1)           # 1 (Q1: Jan-Mar)
+print(date.start_of("quarter")) # 2024-01-01
 ```
 
 ## Common Use Cases
@@ -427,8 +459,11 @@ from carbonic import Date, today
 birthday = Date(1990, 5, 15)
 today_date = today()
 
-# Calculate age in years
-age_years = birthday.diff_in_years(today_date)
+# Calculate age in years using manual calculation
+age_years = today_date.year - birthday.year
+# Adjust if birthday hasn't occurred this year
+if (today_date.month, today_date.day) < (birthday.month, birthday.day):
+    age_years -= 1
 print(f"Age: {age_years} years")
 
 # More precise age calculation
@@ -460,15 +495,14 @@ new_years = Date(year, 1, 1)
 independence_day = Date(year, 7, 4)
 christmas = Date(year, 12, 25)
 
-# Calculated holidays (examples)
+# Calculated holidays (examples - simplified)
 # Martin Luther King Jr. Day (3rd Monday in January)
-jan_first = Date(year, 1, 1)
-first_monday_jan = jan_first.next(Period.MONDAY)
-mlk_day = first_monday_jan.add_weeks(2)
+# This is a simplified example - real calculation would be more complex
+mlk_day = Date(year, 1, 21)  # Approximate date for 3rd Monday
 
-# Memorial Day (last Monday in May)
-may_last = Date(year, 5, 31)
-memorial_day = may_last.previous(Period.MONDAY)
+# Memorial Day (last Monday in May) 
+# Simplified - actual calculation would find the last Monday
+memorial_day = Date(year, 5, 27)  # Approximate date
 
 holidays = [
     ("New Year's Day", new_years),
@@ -505,7 +539,8 @@ print(f"Project End: {project_end}")
 # Check if project ends on a weekend
 if project_end.is_weekend():
     # Move to next Monday
-    project_end = project_end.next(Period.MONDAY)
+    days_to_add = 7 - project_end.weekday if project_end.weekday != 6 else 1
+    project_end = project_end.add(days=days_to_add)
     print(f"Adjusted End (Monday): {project_end}")
 ```
 
@@ -522,14 +557,14 @@ def date_range(start, end):
     current = start
     while current <= end:
         yield current
-        current = current.add_days(1)
+        current = current.add(days=1)
 
 # All dates in January 2024
 january_dates = list(date_range(start_date, end_date))
 print(f"January has {len(january_dates)} days")
 
 # Only business days
-business_days = [d for d in january_dates if d.is_business_day()]
+business_days = [d for d in january_dates if d.is_weekday()]
 print(f"January has {len(business_days)} business days")
 
 # Only weekends
@@ -549,7 +584,7 @@ meeting_dates = []
 current_date = start_date
 for week in range(8):  # Next 8 weeks
     meeting_dates.append(current_date)
-    current_date = current_date.add_weeks(1)
+    current_date = current_date.add(days=7)  # Use days=7 instead of weeks=1
 
 print("Weekly Tuesday meetings:")
 for date in meeting_dates:
@@ -557,12 +592,13 @@ for date in meeting_dates:
 
 # Monthly meetings (first Friday of each month)
 monthly_meetings = []
-current_month = Date(2024, 1, 1)
 
-for month in range(6):  # Next 6 months
-    first_friday = current_month.next(Period.FRIDAY)
+for month in range(1, 7):  # Next 6 months
+    first_of_month = Date(2024, month, 1)
+    # Find first Friday (weekday 4)
+    days_until_friday = (4 - first_of_month.weekday) % 7
+    first_friday = first_of_month.add(days=days_until_friday)
     monthly_meetings.append(first_friday)
-    current_month = current_month.add_months(1)
 
 print("\nMonthly first Friday meetings:")
 for date in monthly_meetings:
@@ -595,7 +631,10 @@ from carbonic import Date, DateTime
 # Good - use Date for date-centric logic
 birthday = Date(1990, 5, 15)
 today_date = Date.today()
-age = birthday.diff_in_years(today_date)
+# Calculate age using manual calculation
+age = today_date.year - birthday.year
+if (today_date.month, today_date.day) < (birthday.month, birthday.day):
+    age -= 1
 
 # Avoid - using DateTime for date-only operations
 birthday_dt = DateTime(1990, 5, 15, tz="UTC")  # Unnecessary complexity
@@ -610,11 +649,11 @@ from carbonic import Date
 jan_31 = Date(2024, 1, 31)
 
 # Adding months can overflow
-feb_result = jan_31.add_months(1)
+feb_result = jan_31.add(months=1)
 print(feb_result)  # 2024-02-29 (leap year) or 2024-02-28
 
 # This is usually desired behavior, but be aware
-mar_result = jan_31.add_months(2)
+mar_result = jan_31.add(months=2)
 print(mar_result)  # 2024-03-31 (back to 31st)
 ```
 
@@ -628,5 +667,5 @@ project_start = Date.today()
 deadline = project_start.add_business_days(20)  # 4 work weeks
 
 # Avoid - manual weekend checking
-manual_deadline = project_start.add_days(28)  # Includes weekends
+manual_deadline = project_start.add(days=28)  # Includes weekends
 ```

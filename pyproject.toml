@@ -1,12 +1,12 @@
 [project]
 name = "carbonic"
 version = "0.2.0"
-description = "A modern Python datetime library inspired by PHP Carbon"
+description = "A modern Python datetime library with fluent API and immutable design"
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Marek Pilczuk", email = "marek@mp76.pl" }]
 maintainers = [{ name = "Marek Pilczuk", email = "marek@mp76.pl" }]
-keywords = ["datetime", "date", "time", "carbon", "timezone"]
+keywords = ["datetime", "date", "time", "fluent", "timezone", "immutable"]
 requires-python = ">=3.12"
 dependencies = []
 
@@ -27,6 +27,7 @@ dev = [
     "mkdocstrings[python]>=0.30.1",
     "mypy>=1.18.2",
     "pytest>=8.4.2",
+    "pytest-markdown-docs>=0.5.0",
     "ruff>=0.13.1",
 ]
 
@@ -39,3 +40,21 @@ packages = ["carbonic"]
 
 [tool.setuptools.package-dir]
 carbonic = "carbonic"
+
+[tool.pytest.ini_options]
+addopts = [
+    "--doctest-modules",
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+]
+testpaths = [
+    "tests",
+    "carbonic",
+]
+# Note: Documentation examples are tested via tests/test_documentation.py
+# Run individual doc files with: uv run pytest docs/file.md --markdown-docs
+markers = [
+    "markdown: markdown documentation tests",
+    "benchmark: performance benchmark tests",
+]

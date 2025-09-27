@@ -265,13 +265,16 @@ Types:
 All datetime objects must be immutable:
 
 ```python
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+
 @dataclass(frozen=True, slots=True)
 class DateTime:
-    _dt: datetime.datetime
+    _dt: datetime
 
     def add_days(self, days: int) -> "DateTime":
         # Return new instance, never modify self
-        return self._replace_dt(self._dt + timedelta(days=days))
+        return DateTime(self._dt + timedelta(days=days))
 ```
 
 ### Fluent API
@@ -279,17 +282,21 @@ class DateTime:
 Methods should be chainable and read naturally:
 
 ```python
+from carbonic import DateTime
+
+# Create a sample datetime for the example
+dt = DateTime.now()
+
 # Good - fluent and readable
 result = (dt
-    .add_days(1)
-    .start_of_day()
-    .to_timezone("America/New_York")
+    .add(days=1)
+    .start_of("day")
 )
 
 # Avoid - requires intermediate variables
-dt1 = dt.add_days(1)
-dt2 = dt1.start_of_day()
-result = dt2.to_timezone("America/New_York")
+dt1 = dt.add(days=1)
+dt2 = dt1.start_of("day")
+result = dt2  # Note: timezone conversion would be done during creation
 ```
 
 ### Type Safety
@@ -297,6 +304,9 @@ result = dt2.to_timezone("America/New_York")
 Maintain strict typing throughout:
 
 ```python
+from typing import Any
+from datetime import datetime
+
 # Good - explicit types
 def diff_in_days(self, other: "DateTime") -> float:
     delta = other._dt - self._dt
@@ -304,7 +314,7 @@ def diff_in_days(self, other: "DateTime") -> float:
 
 # Avoid - untyped or Any
 def diff_in_days(self, other) -> Any:
-    ...
+    pass  # Using pass instead of ... for valid syntax
 ```
 
 ### Error Handling
@@ -312,7 +322,12 @@ def diff_in_days(self, other) -> Any:
 Use specific exceptions:
 
 ```python
-from carbonic.core.exceptions import InvalidTimezone
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from carbonic.core.exceptions import CarbonicError
+
+# Define a custom exception for this example
+class InvalidTimezone(CarbonicError):
+    pass
 
 def _validate_timezone(tz_name: str) -> ZoneInfo:
     try:

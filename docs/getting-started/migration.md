@@ -384,18 +384,18 @@ Pendulum users will appreciate Carbonic's similar philosophy with stdlib focus.
 # These libraries have some overhead for convenience
 # Carbonic aims to be faster while maintaining ease of use
 
-# If you need maximum performance for parsing:
-pip install carbonic[fast]  # Adds ciso8601 for ISO parsing
-
 # For bulk operations, consider:
 from carbonic import DateTime
 
+# Example data for demonstration
+many_iso_strings = ["2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z"]
+
 # Instead of parsing many strings:
-dates = [DateTime.from_iso(s) for s in many_iso_strings]
+dates = [DateTime.parse(s) for s in many_iso_strings]
 
 # Consider creating once and using arithmetic:
 base_date = DateTime(2024, 1, 1, tz="UTC")
-dates = [base_date.add_days(i) for i in range(365)]
+dates = [base_date.add(days=i) for i in range(5)]  # Generate 5 dates for example
 ```
 
 ### Memory Usage

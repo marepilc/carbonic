@@ -34,13 +34,12 @@ dt = DateTime(2024, 1, 15, 9, 0, tz="UTC")
 
 # Chain operations together
 result = (dt
-    .add_days(7)           # Add a week
-    .add_hours(2)          # Add 2 hours
-    .end_of_day()          # Move to end of day
-    .to_timezone("America/New_York")  # Convert timezone
+    .add(days=7)           # Add a week
+    .add(hours=2)          # Add 2 hours
+    .end_of("day")         # Move to end of day
 )
 
-print(result)  # 2024-01-22T18:59:59.999999-05:00
+print(result)  # 2024-01-22T23:59:59.999999+00:00
 ```
 
 ## Formatting Dates
@@ -48,6 +47,8 @@ print(result)  # 2024-01-22T18:59:59.999999-05:00
 Carbonic provides multiple ways to format dates and times:
 
 ```python
+from carbonic import DateTime
+
 dt = DateTime(2024, 1, 15, 14, 30, 45, tz="UTC")
 
 # ISO format
@@ -87,7 +88,7 @@ past = dt - three_days
 print(past)    # 2024-01-12T10:00:00+00:00
 
 # Chain with fluent methods
-result = dt.add_duration(mixed).subtract_hours(1)
+result = dt.add_duration(mixed).subtract(hours=1)
 print(result)  # 2024-01-16T11:30:45+00:00
 ```
 
@@ -107,12 +108,12 @@ birthday = Date(1990, 5, 15)
 holiday = Date(2024, 12, 25)
 
 # Date arithmetic
-next_week = today_date.add_days(7)
-last_month = today_date.subtract_months(1)
+next_week = today_date.add(days=7)
+last_month = today_date.subtract(months=1)
 
 # Date boundaries
-start_of_month = today_date.start_of_month()
-end_of_year = today_date.end_of_year()
+start_of_month = today_date.start_of("month")
+end_of_year = today_date.end_of("year")
 
 print(f"Start of month: {start_of_month}")  # 2024-01-01
 print(f"End of year: {end_of_year}")        # 2024-12-31
@@ -125,13 +126,11 @@ Carbonic makes timezone handling straightforward:
 ```python
 from carbonic import DateTime
 
-# Create UTC datetime
+# Create datetime in different timezones
 utc_time = DateTime(2024, 1, 15, 14, 30, tz="UTC")
-
-# Convert to different timezones
-tokyo_time = utc_time.to_timezone("Asia/Tokyo")
-london_time = utc_time.to_timezone("Europe/London")
-ny_time = utc_time.to_timezone("America/New_York")
+tokyo_time = DateTime(2024, 1, 15, 23, 30, tz="Asia/Tokyo")  # Same moment
+london_time = DateTime(2024, 1, 15, 14, 30, tz="Europe/London")
+ny_time = DateTime(2024, 1, 15, 9, 30, tz="America/New_York")
 
 print(f"UTC:    {utc_time}")     # 2024-01-15T14:30:00+00:00
 print(f"Tokyo:  {tokyo_time}")   # 2024-01-15T23:30:00+09:00
@@ -155,15 +154,14 @@ print(dt1 < dt2)   # True
 print(dt2 > dt3)   # False
 print(dt1 == dt1)  # True
 
-# Useful methods
-print(dt1.is_before(dt2))      # True
-print(dt2.is_after(dt1))       # True
-print(dt1.is_same_day(dt2))    # True
-print(dt1.is_same_day(dt3))    # False
+# More comparisons
+print(dt1 <= dt2)  # True
+print(dt2 >= dt1)  # True
+print(dt1 != dt2)  # True
 
-# Check relationships
-print(dt1.is_past())           # True (assuming current time is later)
-print(dt3.is_future())         # True (assuming current time is earlier)
+# Check if dates are the same
+same_day = (dt1.year == dt2.year and dt1.month == dt2.month and dt1.day == dt2.day)
+print(f"Same day: {same_day}")  # True
 ```
 
 ## Common Use Cases
@@ -175,12 +173,12 @@ from carbonic import DateTime
 
 # Parse ISO datetime from API response
 api_response = {"created_at": "2024-01-15T14:30:00Z"}
-created = DateTime.from_iso(api_response["created_at"])
+created = DateTime.parse(api_response["created_at"])
 
 # Format for API request
 request_data = {
     "start_date": created.to_iso_string(),
-    "end_date": created.add_days(7).to_iso_string()
+    "end_date": created.add(days=7).to_iso_string()
 }
 ```
 
@@ -191,13 +189,17 @@ from carbonic import DateTime, Period
 
 # Check if datetime falls on a business day
 dt = DateTime(2024, 1, 15)  # Monday
-print(dt.is_business_day())  # True
+date_part = dt.to_date()
+print(date_part.is_weekday())  # True
 
 # Find next business day
-next_business = dt.next_business_day()
+date_part = dt.to_date()
+next_business_date = date_part.add_business_days(1)
+print(f"Next business day: {next_business_date}")
 
-# Get last Friday
-last_friday = dt.previous(Period.FRIDAY)
+# Add business days
+week_later = date_part.add_business_days(5)
+print(f"5 business days later: {week_later}")
 ```
 
 ### Scheduling and Intervals
@@ -205,16 +207,13 @@ last_friday = dt.previous(Period.FRIDAY)
 ```python
 from carbonic import DateTime, Duration
 
-# Schedule something for next Monday at 9 AM
-now_dt = DateTime.now()
-next_monday = now_dt.next(Period.MONDAY).set_time(9, 0, 0)
-
-# Create a recurring interval
-meeting_start = next_monday
+# Schedule a meeting
+meeting_start = DateTime(2024, 1, 22, 9, 0, tz="UTC")  # Next Monday at 9 AM
 meeting_duration = Duration(hours=1)
 meeting_end = meeting_start + meeting_duration
 
 print(f"Meeting: {meeting_start} to {meeting_end}")
+print(f"Duration: {meeting_duration.in_hours()} hours")
 ```
 
 ## Next Steps

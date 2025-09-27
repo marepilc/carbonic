@@ -1,5 +1,5 @@
 """
-Carbonic - A modern Python datetime library inspired by PHP Carbon.
+Carbonic - A modern Python datetime library with fluent API and immutable design.
 
 A fluent, immutable datetime library built with dataclasses and stdlib zoneinfo.
 """

@@ -48,13 +48,13 @@ mixed = Duration(days=1, hours=2, minutes=30)
 from carbonic import Duration
 
 # Create from total values
-from_seconds = Duration.from_seconds(3661)     # 1 hour, 1 minute, 1 second
-from_minutes = Duration.from_minutes(90)       # 1 hour, 30 minutes
-from_hours = Duration.from_hours(25)           # 1 day, 1 hour
-from_days = Duration.from_days(1.5)            # 1 day, 12 hours
+from_seconds = Duration(seconds=3661)     # 1 hour, 1 minute, 1 second
+from_minutes = Duration(minutes=90)       # 1 hour, 30 minutes
+from_hours = Duration(hours=25)           # 25 hours
+from_days = Duration(days=1, hours=12)    # 1 day, 12 hours
 
 # From microseconds
-from_microseconds = Duration.from_microseconds(1500000)  # 1.5 seconds
+from_microseconds = Duration(microseconds=1500000)  # 1.5 seconds
 ```
 
 ### From Timedelta
@@ -65,8 +65,8 @@ import datetime
 
 # Convert from Python's timedelta
 td = datetime.timedelta(days=3, hours=2, minutes=15)
-duration = Duration.from_timedelta(td)
-print(duration)  # Duration(days=3, hours=2, minutes=15)
+duration = Duration(seconds=int(td.total_seconds()))
+print(duration)  # 3.0 days, 2.0 hours, and 15.0 minutes
 ```
 
 ### Zero Duration
@@ -75,12 +75,12 @@ print(duration)  # Duration(days=3, hours=2, minutes=15)
 from carbonic import Duration
 
 # Zero duration
-zero = Duration.zero()
-print(zero)  # Duration(days=0, hours=0, minutes=0, seconds=0)
+zero = Duration()
+print(zero)  # 0 seconds
 
-# Alternative
-zero_alt = Duration()
-print(zero_alt)  # Duration(days=0, hours=0, minutes=0, seconds=0)
+# Alternative - explicit zero values
+zero_alt = Duration(days=0, hours=0, minutes=0, seconds=0)
+print(zero_alt)  # 0 seconds
 ```
 
 ## Duration Arithmetic
@@ -98,11 +98,11 @@ total = d1 + d2
 print(total)  # Duration(hours=4, minutes=15)
 
 # Chain additions
-result = (Duration(hours=1)
-    .add(Duration(minutes=30))
-    .add(Duration(seconds=45))
+result = (Duration(hours=1) +
+    Duration(minutes=30) +
+    Duration(seconds=45)
 )
-print(result)  # Duration(hours=1, minutes=30, seconds=45)
+print(result)  # 1 hour, 30 minutes, and 45 seconds
 ```
 
 ### Subtracting Durations
@@ -117,9 +117,9 @@ d2 = Duration(hours=1, minutes=15)
 difference = d1 - d2
 print(difference)  # Duration(hours=2, minutes=15)
 
-# Subtract with method
-result = d1.subtract(d2)
-print(result)  # Duration(hours=2, minutes=15)
+# Same result using operator
+result = d1 - d2
+print(result)  # 2 hours and 15 minutes
 ```
 
 ### Multiplication and Division
@@ -131,19 +131,12 @@ base = Duration(hours=2, minutes=30)
 
 # Multiply by scalar
 doubled = base * 2
-print(doubled)  # Duration(hours=5, minutes=0)
+print(doubled)  # 5 hours
 
-# Divide by scalar
-halved = base / 2
-print(halved)  # Duration(hours=1, minutes=15)
-
-# Floor division
-floored = base // 2
-print(floored)  # Duration(hours=1, minutes=15)
-
-# Using methods
-tripled = base.multiply(3)
-quartered = base.divide(4)
+# Division not directly supported, but can create new duration
+half_seconds = base.total_seconds() / 2
+halved = Duration(seconds=int(half_seconds))
+print(halved)  # Duration for half the time
 ```
 
 ### Negation and Absolute Value
@@ -162,9 +155,9 @@ abs_duration = abs(negative)
 print(abs_duration)  # Duration(hours=2, minutes=30)
 
 # Check if negative
-print(duration.is_negative())   # False
-print(negative.is_negative())   # True
-print(duration.is_positive())   # True
+print(duration < Duration())   # False
+print(negative < Duration())   # True
+print(duration > Duration())   # True
 ```
 
 ## Using Durations with DateTime
@@ -228,16 +221,20 @@ duration = Duration(days=2, hours=3, minutes=30, seconds=45)
 
 # Get total values in different units
 print(duration.total_seconds())      # 183045.0
-print(duration.total_minutes())      # 3050.75
-print(duration.total_hours())        # 50.845833333333336
-print(duration.total_days())         # 2.118576388888889
+print(duration.in_minutes())      # 3050.75
+print(duration.in_hours())        # 50.845833333333336
+print(duration.in_days())         # 2.118576388888889
 
 # Get individual components
-print(duration.days)                 # 2
-print(duration.hours)               # 3 (remaining hours after days)
-print(duration.minutes)             # 30 (remaining minutes after hours)
-print(duration.seconds)             # 45 (remaining seconds)
-print(duration.microseconds)        # 0
+print(duration.days)                    # 2
+total_seconds = duration.storage_seconds
+remaining_hours = (total_seconds // 3600) % 24
+remaining_minutes = (total_seconds // 60) % 60
+remaining_seconds = total_seconds % 60
+print(f"Remaining hours: {remaining_hours}")    # 3 (remaining after days)
+print(f"Remaining minutes: {remaining_minutes}") # 30 (remaining after hours)
+print(f"Remaining seconds: {remaining_seconds}") # 45 (remaining after minutes)
+print(duration.microseconds)           # 0
 ```
 
 ### Component Access
@@ -248,9 +245,14 @@ from carbonic import Duration
 duration = Duration(days=5, hours=25, minutes=90)  # Overflow handled
 
 print(f"Days: {duration.days}")           # 6 (25 hours = 1 day + 1 hour)
-print(f"Hours: {duration.hours}")         # 2 (90 minutes = 1 hour + 30 minutes)
-print(f"Minutes: {duration.minutes}")     # 30
-print(f"Seconds: {duration.seconds}")     # 0
+# Calculate remaining components
+total_seconds = duration.storage_seconds
+remaining_hours = (total_seconds // 3600) % 24
+remaining_minutes = (total_seconds // 60) % 60
+remaining_seconds = total_seconds % 60
+print(f"Remaining hours: {remaining_hours}")    # 1 hour remaining after days
+print(f"Remaining minutes: {remaining_minutes}") # 30 minutes remaining
+print(f"Remaining seconds: {remaining_seconds}") # 0 seconds
 ```
 
 ### To Python Timedelta
@@ -261,7 +263,8 @@ from carbonic import Duration
 duration = Duration(days=3, hours=2, minutes=15)
 
 # Convert to timedelta
-td = duration.to_timedelta()
+import datetime
+td = datetime.timedelta(seconds=duration.total_seconds())
 print(type(td))  # <class 'datetime.timedelta'>
 print(td)        # 3 days, 2:15:00
 ```
@@ -296,11 +299,12 @@ from carbonic import Duration
 d1 = Duration(hours=2, minutes=30)
 d2 = Duration(hours=3)
 
-# Fluent methods
-print(d1.is_equal_to(d2))      # False
-print(d1.is_less_than(d2))     # True
-print(d1.is_greater_than(d2))  # False
-print(d1.is_between(Duration(hours=2), Duration(hours=3)))  # True
+# Standard comparison operators
+print(d1 == d2)      # False
+print(d1 < d2)       # True
+print(d1 > d2)       # False
+# Check if d1 is between two durations
+print(Duration(hours=2) <= d1 <= Duration(hours=3))  # True
 ```
 
 ### Zero and Sign Checks
@@ -313,14 +317,14 @@ positive = Duration(hours=1)
 negative = Duration(hours=-1)
 
 # Zero checks
-print(zero.is_zero())        # True
-print(positive.is_zero())    # False
+print(zero == Duration())        # True
+print(positive == Duration())    # False
 
 # Sign checks
-print(positive.is_positive())  # True
-print(negative.is_negative())  # True
-print(zero.is_positive())      # False
-print(zero.is_negative())      # False
+print(positive > Duration())  # True
+print(negative < Duration())  # True
+print(zero > Duration())      # False
+print(zero < Duration())      # False
 ```
 
 ## Formatting and Display
@@ -352,14 +356,21 @@ duration = Duration(days=2, hours=3, minutes=30)
 # Human readable string (basic implementation)
 def humanize_duration(d):
     parts = []
-    if d.days:
-        parts.append(f"{d.days} day{'s' if d.days != 1 else ''}")
-    if d.hours:
-        parts.append(f"{d.hours} hour{'s' if d.hours != 1 else ''}")
-    if d.minutes:
-        parts.append(f"{d.minutes} minute{'s' if d.minutes != 1 else ''}")
-    if d.seconds:
-        parts.append(f"{d.seconds} second{'s' if d.seconds != 1 else ''}")
+    total_seconds = d.storage_seconds
+
+    days = d.days
+    remaining_hours = (total_seconds // 3600) % 24
+    remaining_minutes = (total_seconds // 60) % 60
+    remaining_seconds = total_seconds % 60
+
+    if days:
+        parts.append(f"{days} day{'s' if days != 1 else ''}")
+    if remaining_hours:
+        parts.append(f"{remaining_hours} hour{'s' if remaining_hours != 1 else ''}")
+    if remaining_minutes:
+        parts.append(f"{remaining_minutes} minute{'s' if remaining_minutes != 1 else ''}")
+    if remaining_seconds:
+        parts.append(f"{remaining_seconds} second{'s' if remaining_seconds != 1 else ''}")
 
     return ", ".join(parts) if parts else "0 seconds"
 
@@ -376,21 +387,27 @@ duration = Duration(days=3, hours=2, minutes=30, seconds=45)
 # ISO 8601 duration format (PT2H30M for 2 hours 30 minutes)
 def to_iso_duration(d):
     parts = ["P"]
+    total_seconds = d.storage_seconds
 
-    if d.days:
-        parts.append(f"{d.days}D")
+    days = d.days
+    remaining_hours = (total_seconds // 3600) % 24
+    remaining_minutes = (total_seconds // 60) % 60
+    remaining_seconds = total_seconds % 60
+
+    if days:
+        parts.append(f"{days}D")
 
     time_parts = []
-    if d.hours:
-        time_parts.append(f"{d.hours}H")
-    if d.minutes:
-        time_parts.append(f"{d.minutes}M")
-    if d.seconds or d.microseconds:
+    if remaining_hours:
+        time_parts.append(f"{remaining_hours}H")
+    if remaining_minutes:
+        time_parts.append(f"{remaining_minutes}M")
+    if remaining_seconds or d.microseconds:
         if d.microseconds:
-            total_seconds = d.seconds + d.microseconds / 1_000_000
-            time_parts.append(f"{total_seconds}S")
+            total_secs = remaining_seconds + d.microseconds / 1_000_000
+            time_parts.append(f"{total_secs}S")
         else:
-            time_parts.append(f"{d.seconds}S")
+            time_parts.append(f"{remaining_seconds}S")
 
     if time_parts:
         parts.append("T")
@@ -460,8 +477,8 @@ hourly_wage = 25  # dollars
 weekly_hours = work_day * 5  # 5 work days
 monthly_hours = weekly_hours * 4  # 4 weeks
 
-weekly_pay = hourly_wage * weekly_hours.total_hours()
-monthly_pay = hourly_wage * monthly_hours.total_hours()
+weekly_pay = hourly_wage * weekly_hours.in_hours()
+monthly_pay = hourly_wage * monthly_hours.in_hours()
 
 print(f"Weekly pay: ${weekly_pay}")
 print(f"Monthly pay: ${monthly_pay}")
@@ -501,11 +518,11 @@ from carbonic import Duration
 duration = Duration(seconds=45, microseconds=750000)  # 45.75 seconds
 
 # Round to nearest second
-rounded_seconds = Duration.from_seconds(round(duration.total_seconds()))
+rounded_seconds = Duration(seconds=round(duration.total_seconds()))
 print(rounded_seconds)  # Duration(seconds=46)
 
 # Round to nearest minute
-rounded_minutes = Duration.from_minutes(round(duration.total_minutes()))
+rounded_minutes = Duration(minutes=round(duration.in_minutes()))
 print(rounded_minutes)  # Duration(minutes=1)
 ```
 
@@ -527,7 +544,7 @@ def normalize_duration(days=0, hours=0, minutes=0, seconds=0, microseconds=0):
         hours * 60 * 60 * 1_000_000 +
         days * 24 * 60 * 60 * 1_000_000
     )
-    return Duration.from_microseconds(total_microseconds)
+    return Duration(microseconds=total_microseconds)
 ```
 
 ### Working with Different Precisions
@@ -544,7 +561,7 @@ milliseconds = precise.total_seconds() * 1000
 print(f"Milliseconds: {milliseconds}")
 
 # Round to millisecond precision
-ms_duration = Duration.from_seconds(round(milliseconds / 1000, 3))
+ms_duration = Duration(seconds=round(milliseconds / 1000, 3))
 print(ms_duration)
 ```
 
@@ -587,11 +604,11 @@ from carbonic import Duration
 
 # Be careful with zero durations
 zero = Duration()
-print(zero.is_zero())  # True
+print(zero == Duration())  # True
 
 # Handle negative durations appropriately
 negative = Duration(hours=-2)
-print(negative.is_negative())  # True
+print(negative < Duration())  # True
 
 # Consider absolute values when needed
 absolute = abs(negative)

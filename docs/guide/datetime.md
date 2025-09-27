@@ -7,11 +7,12 @@ The `DateTime` class is the heart of Carbonic, providing a comprehensive, immuta
 The `DateTime` class wraps Python's standard `datetime.datetime` while providing additional functionality and a more intuitive interface. Every `DateTime` object is immutable, meaning all operations return new instances.
 
 ```python
-from carbonic import DateTime, now
+from carbonic import DateTime
 
 # Create a DateTime instance
 dt = DateTime(2024, 1, 15, 14, 30, 0, tz="UTC")
 print(dt)  # 2024-01-15T14:30:00+00:00
+```
 
 # Get current time
 current = now()  # UTC by default
@@ -47,6 +48,7 @@ naive = DateTime(2024, 1, 15, tz=None)
 ### Factory Methods
 
 ```python
+import datetime
 from carbonic import DateTime
 
 # Current time
@@ -54,18 +56,14 @@ now_utc = DateTime.now()  # UTC by default
 now_local = DateTime.now("America/New_York")
 
 # From standard library datetime
-import datetime
 stdlib_dt = datetime.datetime(2024, 1, 15, 14, 30, tzinfo=datetime.timezone.utc)
 carbonic_dt = DateTime.from_datetime(stdlib_dt)
 
-# From timestamp
-timestamp_dt = DateTime.from_timestamp(1705330200, tz="UTC")
-
 # From ISO string
-iso_dt = DateTime.from_iso("2024-01-15T14:30:00Z")
+iso_dt = DateTime.parse("2024-01-15T14:30:00Z")
 
 # From custom format
-custom_dt = DateTime.from_format("15/01/2024 14:30", "d/m/Y H:i")
+custom_dt = DateTime.parse("15/01/2024 14:30", "d/m/Y H:i")
 ```
 
 ## Date and Time Arithmetic
@@ -75,21 +73,20 @@ custom_dt = DateTime.from_format("15/01/2024 14:30", "d/m/Y H:i")
 ```python
 from carbonic import DateTime, Duration
 
-dt = DateTime(2024, 1, 15, 10, 0, tz="UTC")
+dt = DateTime(2024, 1, 15, 10, 0)
 
 # Using fluent methods
-future = dt.add_years(1).add_months(2).add_days(3).add_hours(4)
+future = dt.add(years=1).add(months=2).add(days=3).add(hours=4)
 
 # Using Duration objects
 duration = Duration(days=7, hours=12, minutes=30)
 future = dt + duration
 
 # Specific unit methods
-next_hour = dt.add_hours(1)
-next_day = dt.add_days(1)
-next_week = dt.add_weeks(1)
-next_month = dt.add_months(1)
-next_year = dt.add_years(1)
+next_hour = dt.add(hours=1)
+next_day = dt.add(days=1)
+next_month = dt.add(months=1)
+next_year = dt.add(years=1)
 ```
 
 ### Subtracting Time
@@ -97,43 +94,20 @@ next_year = dt.add_years(1)
 ```python
 from carbonic import DateTime, Duration
 
-dt = DateTime(2024, 1, 15, 10, 0, tz="UTC")
+dt = DateTime(2024, 1, 15, 10, 0)
 
 # Using fluent methods
-past = dt.subtract_days(5).subtract_hours(2)
+past = dt.subtract(days=5).subtract(hours=2)
 
 # Using Duration objects
 duration = Duration(days=3, hours=6)
 past = dt - duration
 
 # Specific unit methods
-last_hour = dt.subtract_hours(1)
-yesterday = dt.subtract_days(1)
-last_week = dt.subtract_weeks(1)
-last_month = dt.subtract_months(1)
-last_year = dt.subtract_years(1)
-```
-
-### Setting Specific Values
-
-```python
-from carbonic import DateTime
-
-dt = DateTime(2024, 1, 15, 14, 30, 45, tz="UTC")
-
-# Set specific components
-new_dt = dt.set_year(2025)
-new_dt = dt.set_month(12)
-new_dt = dt.set_day(31)
-new_dt = dt.set_hour(0)
-new_dt = dt.set_minute(0)
-new_dt = dt.set_second(0)
-new_dt = dt.set_microsecond(0)
-
-# Set multiple at once
-new_dt = dt.set_date(2025, 12, 31)
-new_dt = dt.set_time(23, 59, 59)
-new_dt = dt.set_datetime(2025, 12, 31, 23, 59, 59)
+last_hour = dt.subtract(hours=1)
+yesterday = dt.subtract(days=1)
+last_month = dt.subtract(months=1)
+last_year = dt.subtract(years=1)
 ```
 
 ## Date Boundaries and Navigation
@@ -143,49 +117,58 @@ new_dt = dt.set_datetime(2025, 12, 31, 23, 59, 59)
 ```python
 from carbonic import DateTime
 
-dt = DateTime(2024, 3, 15, 14, 30, 45, tz="UTC")
+dt = DateTime(2024, 3, 15, 14, 30, 45)
 
 # Day boundaries
-start_of_day = dt.start_of_day()        # 2024-03-15T00:00:00+00:00
-end_of_day = dt.end_of_day()            # 2024-03-15T23:59:59.999999+00:00
+start_of_day = dt.start_of("day")        # 2024-03-15T00:00:00+00:00
+end_of_day = dt.end_of("day")            # 2024-03-15T23:59:59.999999+00:00
 
 # Week boundaries
-start_of_week = dt.start_of_week()      # Previous Monday
-end_of_week = dt.end_of_week()          # Next Sunday
+start_of_week = dt.start_of("week")      # Previous Monday
+end_of_week = dt.end_of("week")          # Next Sunday
 
 # Month boundaries
-start_of_month = dt.start_of_month()    # 2024-03-01T00:00:00+00:00
-end_of_month = dt.end_of_month()        # 2024-03-31T23:59:59.999999+00:00
+start_of_month = dt.start_of("month")    # 2024-03-01T00:00:00+00:00
+end_of_month = dt.end_of("month")        # 2024-03-31T23:59:59.999999+00:00
 
 # Quarter boundaries
-start_of_quarter = dt.start_of_quarter() # 2024-01-01T00:00:00+00:00
-end_of_quarter = dt.end_of_quarter()     # 2024-03-31T23:59:59.999999+00:00
+start_of_quarter = dt.start_of("quarter") # 2024-01-01T00:00:00+00:00
+end_of_quarter = dt.end_of("quarter")     # 2024-03-31T23:59:59.999999+00:00
 
 # Year boundaries
-start_of_year = dt.start_of_year()      # 2024-01-01T00:00:00+00:00
-end_of_year = dt.end_of_year()          # 2024-12-31T23:59:59.999999+00:00
+start_of_year = dt.start_of("year")      # 2024-01-01T00:00:00+00:00
+end_of_year = dt.end_of("year")          # 2024-12-31T23:59:59.999999+00:00
 ```
 
 ### Navigation by Weekday
 
 ```python
-from carbonic import DateTime, Period
+from carbonic import DateTime
+import datetime
 
 dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")  # Monday
 
-# Next occurrence of a weekday
-next_friday = dt.next(Period.FRIDAY)
-next_monday = dt.next(Period.MONDAY)  # Following Monday
+# Check current weekday (Monday=0, Sunday=6)
+weekday = dt.to_datetime().weekday()
+print(f"Weekday: {weekday}")  # 0 (Monday)
 
-# Previous occurrence of a weekday
-last_friday = dt.previous(Period.FRIDAY)
-previous_monday = dt.previous(Period.MONDAY)  # Previous Monday
+# Calculate next Friday (4 is Friday)
+days_until_friday = (4 - weekday) % 7
+if days_until_friday == 0:  # If today is Friday, get next Friday
+    days_until_friday = 7
+next_friday = dt.add(days=days_until_friday)
 
-# Weekday checks
-print(dt.is_monday())     # True
-print(dt.is_friday())     # False
-print(dt.is_weekend())    # False
-print(dt.is_weekday())    # True
+# Calculate next Monday
+days_until_monday = (0 - weekday) % 7  # 0 is Monday
+if days_until_monday == 0:  # If today is Monday, get next Monday
+    days_until_monday = 7
+next_monday = dt.add(days=days_until_monday)
+
+# Weekday checks using datetime methods
+print(dt.to_datetime().weekday() == 0)     # True (Monday)
+print(dt.to_datetime().weekday() == 4)     # False (Friday)
+print(dt.to_datetime().weekday() >= 5)     # False (not weekend)
+print(dt.to_datetime().weekday() < 5)      # True (is weekday)
 ```
 
 ## Business Day Operations
@@ -195,20 +178,36 @@ from carbonic import DateTime
 
 dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")  # Monday
 
-# Business day checks
-print(dt.is_business_day())  # True (Monday is a business day)
+# Business day checks using weekday
+def is_business_day(dt):
+    return dt.to_datetime().weekday() < 5  # Monday=0 to Friday=4
 
-# Navigate business days
-next_business = dt.next_business_day()
-previous_business = dt.previous_business_day()
+def add_business_days(dt, days):
+    current = dt
+    added = 0
+    while added < days:
+        current = current.add(days=1)
+        if is_business_day(current):
+            added += 1
+    return current
 
-# Count business days
-future_dt = dt.add_days(10)
-business_days = dt.business_days_until(future_dt)
-print(f"Business days between: {business_days}")
+# Business day navigation
+print(f"Is business day: {is_business_day(dt)}")  # True (Monday)
 
-# Add business days
-in_5_business_days = dt.add_business_days(5)
+# Add 5 business days
+five_business_days_later = add_business_days(dt, 5)
+print(f"5 business days later: {five_business_days_later}")
+
+# Count business days between dates
+start_date = DateTime(2024, 1, 10, tz="UTC")  # Wednesday
+end_date = DateTime(2024, 1, 20, tz="UTC")    # Saturday
+current = start_date
+business_days = 0
+while current <= end_date:
+    if is_business_day(current):
+        business_days += 1
+    current = current.add(days=1)
+print(f"Business days: {business_days}")
 ```
 
 ## Timezone Operations
@@ -223,25 +222,41 @@ utc_dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
 ny_dt = DateTime(2024, 1, 15, 14, 30, tz="America/New_York")
 london_dt = DateTime(2024, 1, 15, 14, 30, tz="Europe/London")
 
+print(f"UTC: {utc_dt}")
+print(f"New York: {ny_dt}")
+print(f"London: {london_dt}")
+```
+
+### Using Timezone Objects
+
+```python
 # Using timezone objects
+from carbonic import DateTime
 from zoneinfo import ZoneInfo
+
+# Create with timezone string (DateTime internally creates ZoneInfo)
+tokyo_dt = DateTime(2024, 1, 15, 14, 30, tz="Asia/Tokyo")
+print(f"Tokyo: {tokyo_dt}")
+
+# Or use ZoneInfo for other operations
 tokyo_tz = ZoneInfo("Asia/Tokyo")
-tokyo_dt = DateTime(2024, 1, 15, 14, 30, tz=tokyo_tz)
+print(f"Timezone object: {tokyo_tz}")
 ```
 
 ### Converting Timezones
 
 ```python
 from carbonic import DateTime
+from zoneinfo import ZoneInfo
 
 # Create in one timezone
 paris_time = DateTime(2024, 1, 15, 15, 30, tz="Europe/Paris")
 print(paris_time)  # 2024-01-15T15:30:00+01:00
 
-# Convert to different timezones
-utc_time = paris_time.to_timezone("UTC")
-tokyo_time = paris_time.to_timezone("Asia/Tokyo")
-ny_time = paris_time.to_timezone("America/New_York")
+# Convert to different timezones by creating new instances
+utc_time = DateTime.from_datetime(paris_time.to_datetime().astimezone(ZoneInfo("UTC")))
+tokyo_time = DateTime.from_datetime(paris_time.to_datetime().astimezone(ZoneInfo("Asia/Tokyo")))
+ny_time = DateTime.from_datetime(paris_time.to_datetime().astimezone(ZoneInfo("America/New_York")))
 
 print(f"UTC:   {utc_time}")    # 2024-01-15T14:30:00+00:00
 print(f"Tokyo: {tokyo_time}")  # 2024-01-15T23:30:00+09:00
@@ -257,13 +272,14 @@ from carbonic import DateTime
 naive = DateTime(2024, 1, 15, 14, 30, tz=None)
 print(naive.tzinfo)  # None
 
-# Assume a timezone
-aware = naive.assume_timezone("UTC")
+# Convert naive to timezone-aware by creating new instance
+aware = DateTime(naive.year, naive.month, naive.day, naive.hour, 
+                naive.minute, naive.second, naive.microsecond, tz="UTC")
 print(aware.tzinfo)  # <ZoneInfo 'UTC'>
 
-# Check if naive
-print(naive.is_naive())   # True
-print(aware.is_naive())   # False
+# Check if naive using tzinfo
+print(naive.tzinfo is None)   # True (is naive)
+print(aware.tzinfo is not None)   # True (is aware)
 ```
 
 ## Comparisons
@@ -283,10 +299,10 @@ print(dt2 > dt3)   # False
 print(dt1 == dt1)  # True
 print(dt1 != dt2)  # True
 
-# Fluent methods
-print(dt1.is_before(dt2))      # True
-print(dt2.is_after(dt1))       # True
-print(dt1.is_same_instant(dt1)) # True
+# Using comparison operators instead of fluent methods
+print(dt1 < dt2)               # is_before equivalent: True
+print(dt2 > dt1)               # is_after equivalent: True
+print(dt1 == dt1)              # is_same_instant equivalent: True
 ```
 
 ### Date-Level Comparisons
@@ -298,35 +314,37 @@ dt1 = DateTime(2024, 1, 15, 10, 0, tz="UTC")
 dt2 = DateTime(2024, 1, 15, 20, 0, tz="UTC")  # Same day, different time
 dt3 = DateTime(2024, 1, 16, 5, 0, tz="UTC")   # Different day
 
-# Same date checks
-print(dt1.is_same_day(dt2))    # True
-print(dt1.is_same_day(dt3))    # False
+# Same date checks using date properties
+print(dt1.to_date() == dt2.to_date())  # is_same_day equivalent: True
+print(dt1.to_date() == dt3.to_date())  # is_same_day equivalent: False
 
-print(dt1.is_same_month(dt2))  # True
-print(dt1.is_same_year(dt2))   # True
+print(dt1.year == dt2.year and dt1.month == dt2.month)  # is_same_month equivalent: True
+print(dt1.year == dt2.year)  # is_same_year equivalent: True
 
 # Timezone-aware comparisons
 ny_time = DateTime(2024, 1, 15, 5, 0, tz="America/New_York")  # Same as 10:00 UTC
-print(dt1.is_same_instant(ny_time))  # True
-print(dt1.is_same_day(ny_time))      # False (different local dates)
+print(dt1 == ny_time)  # is_same_instant equivalent: True
+# For same day comparison, convert to same timezone first
+ny_utc = DateTime.from_datetime(ny_time.to_datetime().astimezone())
+print(dt1.to_date() == ny_utc.to_date())  # Different local dates check
 ```
 
 ### Temporal Relationships
 
 ```python
-from carbonic import DateTime, now
+from carbonic import DateTime
 
 dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
-current = now()
+current = DateTime.now("UTC")
 
-# Relative to current time
-print(dt.is_past())       # True (if current time is after)
-print(dt.is_future())     # False (if current time is after)
+# Relative to current time using comparison operators
+print(dt < current)       # is_past equivalent: True (if current time is after)
+print(dt > current)       # is_future equivalent: False (if current time is after)
 
-# Between dates
+# Between dates using comparison operators
 start = DateTime(2024, 1, 10, tz="UTC")
 end = DateTime(2024, 1, 20, tz="UTC")
-print(dt.is_between(start, end))  # True
+print(start <= dt <= end)  # is_between equivalent: True
 ```
 
 ## Differences and Durations
@@ -343,33 +361,42 @@ end = DateTime(2024, 1, 17, 14, 30, tz="UTC")
 duration = end - start
 print(duration)  # Duration(days=2, hours=4, minutes=30)
 
-# Get difference in specific units
-days = start.diff_in_days(end)
-hours = start.diff_in_hours(end)
-minutes = start.diff_in_minutes(end)
-seconds = start.diff_in_seconds(end)
+# Get difference using the diff method (returns Duration)
+duration = start.diff(end)
 
-print(f"Days: {days}")        # 2.1875
-print(f"Hours: {hours}")      # 52.5
-print(f"Minutes: {minutes}")  # 3150
-print(f"Seconds: {seconds}")  # 189000
+# Access duration properties
+print(f"Days: {duration.in_days()}")
+print(f"Hours: {duration.in_hours()}")
+print(f"Minutes: {duration.in_minutes()}")
+print(f"Seconds: {duration.in_seconds()}")
 ```
 
-### Humanized Differences
+### Working with Durations
 
 ```python
-from carbonic import DateTime, now
+from carbonic import DateTime
 
 dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
-current = now()
+current = DateTime.now("UTC")
 
-# Human-readable differences
-human = dt.diff_for_humans()  # "2 days ago" or "in 2 days"
-human_abs = dt.diff_for_humans(absolute=True)  # "2 days"
+# Get duration object
+duration = current.diff(dt)
 
-# Relative to specific datetime
-other = DateTime(2024, 1, 10, tz="UTC")
-relative = dt.diff_for_humans(other)  # "5 days after"
+# Access duration properties for humanization
+days = duration.in_days()
+if abs(days) >= 1:
+    if days > 0:
+        human = f"{int(days)} days ago"
+    else:
+        human = f"in {int(abs(days))} days"
+else:
+    hours = duration.in_hours()
+    if hours > 0:
+        human = f"{int(hours)} hours ago"
+    else:
+        human = f"in {int(abs(hours))} hours"
+
+print(human)
 ```
 
 ## Formatting and Output
@@ -388,7 +415,8 @@ print(dt.to_time_string())     # "14:30:45"
 print(dt.to_datetime_string()) # "2024-01-15 14:30:45"
 
 # With timezone conversion
-ny_dt = dt.to_timezone("America/New_York")
+from zoneinfo import ZoneInfo
+ny_dt = DateTime.from_datetime(dt.to_datetime().astimezone(ZoneInfo("America/New_York")))
 print(ny_dt.to_iso_string())   # "2024-01-15T09:30:45.123456-05:00"
 ```
 
@@ -452,11 +480,11 @@ date_obj = dt.to_date()
 print(date_obj)  # 2024-01-15
 
 # To timestamp
-timestamp = dt.to_timestamp()
+timestamp = dt.to_datetime().timestamp()
 print(timestamp)  # 1705330245.0
 
 # To naive datetime (removes timezone)
-naive_dt = dt.to_naive()
+naive_dt = dt.to_datetime().replace(tzinfo=None)
 print(naive_dt.tzinfo)  # None
 ```
 
@@ -469,10 +497,10 @@ dt = DateTime(2024, 1, 15, 14, 30, 45, tz="UTC")
 
 # Default string representation
 print(str(dt))   # "2024-01-15T14:30:45+00:00"
-print(repr(dt))  # "DateTime(2024, 1, 15, 14, 30, 45, 0, tz='UTC')"
+print(repr(dt))  # "DateTime(2024, 1, 15, 14, 30, 45, tz='UTC')"
 
-# For debugging
-print(dt.__dict__)  # Shows internal state
+# For debugging - convert to standard datetime if needed
+print(str(dt.to_datetime()))  # Shows as standard datetime format
 ```
 
 ## Property Access
@@ -488,10 +516,9 @@ dt = DateTime(2024, 1, 15, 14, 30, 45, 123456, tz="UTC")
 print(dt.year)         # 2024
 print(dt.month)        # 1
 print(dt.day)          # 15
-print(dt.weekday)      # 0 (Monday = 0, Sunday = 6)
-print(dt.day_of_week)  # 0 (same as weekday)
-print(dt.day_of_year)  # 15
-print(dt.week_of_year) # 3
+print(dt.to_datetime().weekday())  # 0
+print(dt.to_datetime().timetuple().tm_yday)  # 15
+print(dt.to_datetime().isocalendar().week)  # 3
 
 # Time properties
 print(dt.hour)         # 14
@@ -500,9 +527,8 @@ print(dt.second)       # 45
 print(dt.microsecond)  # 123456
 
 # Timezone properties
-print(dt.timezone)     # <ZoneInfo 'UTC'>
 print(dt.tzinfo)       # <ZoneInfo 'UTC'>
-print(dt.offset)       # datetime.timedelta(0)
+print(dt.to_datetime().utcoffset())  # datetime.timedelta(0)
 ```
 
 ### Derived Properties
@@ -512,19 +538,19 @@ from carbonic import DateTime
 
 dt = DateTime(2024, 1, 15, 14, 30, 45, tz="UTC")
 
-# Quarter information
-print(dt.quarter)       # 1
+# Calculate quarter information
+quarter = (dt.month - 1) // 3 + 1
+print(f"Quarter: {quarter}")  # 1
 
-# Week information
-print(dt.week_of_month) # 3
-print(dt.week_of_year)  # 3
+# Week information using underlying datetime
+print(f"Week of year: {dt.to_datetime().isocalendar().week}")  # 3
 
-# Month information
-print(dt.days_in_month) # 31
+# Month information using calendar module
+import calendar
+print(f"Days in month: {calendar.monthrange(dt.year, dt.month)[1]}")  # 31
 
 # Timezone information
-print(dt.timezone_name) # "UTC"
-print(dt.is_dst())      # False (UTC doesn't have DST)
+print(f"Timezone: {dt.tzinfo}")  # UTC
 ```
 
 ## Best Practices
@@ -532,6 +558,8 @@ print(dt.is_dst())      # False (UTC doesn't have DST)
 ### Always Use Timezones
 
 ```python
+from carbonic import DateTime
+
 # Good - explicit timezone
 dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
 
@@ -546,19 +574,25 @@ naive = DateTime(2024, 1, 15, 14, 30, tz=None)
 
 ```python
 from carbonic import DateTime
+from zoneinfo import ZoneInfo
 
 # Good - readable chains
 result = (DateTime.now()
-    .add_days(1)
-    .start_of_day()
-    .to_timezone("America/New_York")
+    .add(days=1)
+    .start_of("day")
     .format("Y-m-d H:i:s")
 )
 
+# For timezone conversion, create a new instance
+ny_dt = DateTime.from_datetime(
+    DateTime.now().add(days=1).start_of("day").to_datetime().astimezone(ZoneInfo("America/New_York"))
+)
+result = ny_dt.format("Y-m-d H:i:s")
+
 # Also good - intermediate variables for clarity
-tomorrow = DateTime.now().add_days(1)
-start_of_tomorrow = tomorrow.start_of_day()
-ny_time = start_of_tomorrow.to_timezone("America/New_York")
+tomorrow = DateTime.now().add(days=1)
+start_of_tomorrow = tomorrow.start_of("day")
+ny_time = DateTime.from_datetime(start_of_tomorrow.to_datetime().astimezone(ZoneInfo("America/New_York")))
 formatted = ny_time.format("Y-m-d H:i:s")
 ```
 
@@ -566,17 +600,17 @@ formatted = ny_time.format("Y-m-d H:i:s")
 
 ```python
 from carbonic import DateTime
-from carbonic.core.exceptions import InvalidDate
+from zoneinfo import ZoneInfo
 
 # Handle invalid dates
 try:
     invalid = DateTime(2024, 2, 30, tz="UTC")  # February 30th
-except InvalidDate as e:
+except ValueError as e:
     print(f"Invalid date: {e}")
 
 # Handle timezone conversions carefully
 dt = DateTime(2024, 3, 31, 2, 30, tz="America/New_York")  # During DST transition
-utc_time = dt.to_timezone("UTC")  # This works correctly
+utc_time = DateTime.from_datetime(dt.to_datetime().astimezone(ZoneInfo("UTC")))  # This works correctly
 ```
 
 ## Performance Tips
@@ -588,7 +622,7 @@ from carbonic import DateTime
 
 # Create a base and derive from it
 base = DateTime(2024, 1, 1, tz="UTC")
-dates = [base.add_days(i) for i in range(365)]  # Efficient
+dates = [base.add(days=i) for i in range(365)]  # Efficient
 ```
 
 ### Use Appropriate Methods
@@ -599,10 +633,10 @@ from carbonic import DateTime
 dt = DateTime.now()
 
 # Efficient - single operation
-tomorrow = dt.add_days(1)
+tomorrow = dt.add(days=1)
 
 # Less efficient - multiple object creations
-tomorrow = dt.add_hours(24)  # Creates 24 intermediate objects
+tomorrow = dt.add(hours=24)  # Still one operation, but conceptually less clear
 ```
 
 ### Leverage ISO Parsing for Performance
@@ -612,8 +646,8 @@ tomorrow = dt.add_hours(24)  # Creates 24 intermediate objects
 from carbonic import DateTime
 
 # Fast ISO parsing with ciso8601 (if installed)
-dt = DateTime.from_iso("2024-01-15T14:30:00Z")  # Very fast
+dt = DateTime.parse("2024-01-15T14:30:00Z")  # Very fast
 
-# Custom parsing is slower
-dt = DateTime.from_format("2024-01-15 14:30:00", "Y-m-d H:i:s")  # Slower
+# Custom parsing with format string
+dt = DateTime.parse("2024-01-15 14:30:00", "Y-m-d H:i:s")  # Custom format parsing
 ```

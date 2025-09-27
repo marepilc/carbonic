@@ -1,7 +1,7 @@
 """DateTime implementation for Carbonic.
 
 This module provides the core DateTime class with fluent API, immutability,
-timezone support, and comprehensive formatting capabilities inspired by PHP Carbon.
+timezone support, and comprehensive formatting capabilities.
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ class DateTime:
     """Immutable datetime object with fluent API and timezone support.
 
     The DateTime class provides a modern, type-safe wrapper around Python's datetime
-    with additional functionality inspired by PHP Carbon. All operations return new
+    with comprehensive datetime manipulation. All operations return new
     instances, maintaining immutability.
 
     Attributes:
@@ -344,19 +344,19 @@ class DateTime:
             "S": lambda: self._ordinal_suffix(self.day),  # Ordinal suffix
             "F": lambda: _cache.setdefault(
                 f"F_{locale or 'en'}_{self.month}",
-                locale_obj.get_month_name(self.month, short=False)
+                locale_obj.get_month_name(self.month, short=False),
             ),  # Full month name (cached)
             "M": lambda: _cache.setdefault(
                 f"M_{locale or 'en'}_{self.month}",
-                locale_obj.get_month_name(self.month, short=True)
+                locale_obj.get_month_name(self.month, short=True),
             ),  # Short month name (cached)
             "l": lambda: _cache.setdefault(
                 f"l_{locale or 'en'}_{self._dt.weekday()}",
-                locale_obj.get_day_name(self._dt.weekday(), short=False)
+                locale_obj.get_day_name(self._dt.weekday(), short=False),
             ),  # Full day name (cached)
             "D": lambda: _cache.setdefault(
                 f"D_{locale or 'en'}_{self._dt.weekday()}",
-                locale_obj.get_day_name(self._dt.weekday(), short=True)
+                locale_obj.get_day_name(self._dt.weekday(), short=True),
             ),  # Short day name (cached)
             # Time tokens
             "H": lambda: f"{self.hour:02d}",  # Hour 24-format with leading zero
@@ -371,20 +371,16 @@ class DateTime:
             "v": lambda: f"{self.microsecond // 1000:03d}",  # Milliseconds
             # Timezone tokens (cached for performance)
             "T": lambda: _cache.setdefault(
-                f"T_{self.tzinfo}",
-                self._timezone_abbr()
+                f"T_{self.tzinfo}", self._timezone_abbr()
             ),  # Timezone abbreviation (cached)
             "O": lambda: _cache.setdefault(
-                f"O_{self.tzinfo}",
-                self._timezone_offset()
+                f"O_{self.tzinfo}", self._timezone_offset()
             ),  # Timezone offset (+0200) (cached)
             "P": lambda: _cache.setdefault(
-                f"P_{self.tzinfo}",
-                self._timezone_offset_colon()
+                f"P_{self.tzinfo}", self._timezone_offset_colon()
             ),  # Timezone offset (+02:00) (cached)
             "Z": lambda: _cache.setdefault(
-                f"Z_{self.tzinfo}",
-                self._timezone_offset_seconds()
+                f"Z_{self.tzinfo}", self._timezone_offset_seconds()
             ),  # Timezone offset in seconds (cached)
             # Combined formats
             "c": lambda: self._dt.isoformat(),  # ISO 8601 date (2025-09-23T14:30:45+00:00)
@@ -851,7 +847,7 @@ class DateTime:
 
     # Anchors
     def start_of(
-        self, unit: Literal["minute", "hour", "day", "month", "year", "week"]
+        self, unit: Literal["minute", "hour", "day", "week", "month", "quarter", "year"]
     ) -> DateTime:
         """Return the start of the specified time period."""
         if unit == "minute":
@@ -916,6 +912,19 @@ class DateTime:
                 0,
                 tz=self.tzinfo.key if isinstance(self.tzinfo, ZoneInfo) else None,
             )
+        elif unit == "quarter":
+            # First month of quarter
+            first_month_of_quarter = ((self.month - 1) // 3) * 3 + 1
+            return DateTime(
+                self.year,
+                first_month_of_quarter,
+                1,
+                0,
+                0,
+                0,
+                0,
+                tz=self.tzinfo.key if isinstance(self.tzinfo, ZoneInfo) else None,
+            )
         elif unit == "year":
             # January 1st at 00:00:00
             return DateTime(
@@ -932,7 +941,7 @@ class DateTime:
             raise ValueError(f"Unknown unit: {unit}")
 
     def end_of(
-        self, unit: Literal["minute", "hour", "day", "month", "year", "week"]
+        self, unit: Literal["minute", "hour", "day", "week", "month", "quarter", "year"]
     ) -> DateTime:
         """Return the end of the specified time period."""
         if unit == "minute":
@@ -991,6 +1000,20 @@ class DateTime:
             return DateTime(
                 self.year,
                 self.month,
+                last_day,
+                23,
+                59,
+                59,
+                999999,
+                tz=self.tzinfo.key if isinstance(self.tzinfo, ZoneInfo) else None,
+            )
+        elif unit == "quarter":
+            # Last month of quarter
+            last_month_of_quarter = ((self.month - 1) // 3) * 3 + 3
+            last_day = self._last_day_of_month(self.year, last_month_of_quarter)
+            return DateTime(
+                self.year,
+                last_month_of_quarter,
                 last_day,
                 23,
                 59,
