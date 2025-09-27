@@ -128,7 +128,9 @@ class Date:
         elif unit == "year":
             return date.add(years=count)
         else:
-            raise ValueError(f"Unsupported time unit for Date: {unit}. Use 'day', 'week', 'month', 'quarter', or 'year'.")
+            raise ValueError(
+                f"Unsupported time unit for Date: {unit}. Use 'day', 'week', 'month', 'quarter', or 'year'."
+            )
 
     @classmethod
     def parse(cls, s: str, fmt: str | None = None) -> Date:
@@ -673,19 +675,19 @@ class Date:
             "S": lambda: self._ordinal_suffix(self.day),  # Ordinal suffix
             "F": lambda: _cache.setdefault(
                 f"F_{locale or 'en'}_{self.month}",
-                locale_obj.get_month_name(self.month, short=False)
+                locale_obj.get_month_name(self.month, short=False),
             ),  # Full month name (cached)
             "M": lambda: _cache.setdefault(
                 f"M_{locale or 'en'}_{self.month}",
-                locale_obj.get_month_name(self.month, short=True)
+                locale_obj.get_month_name(self.month, short=True),
             ),  # Short month name (cached)
             "l": lambda: _cache.setdefault(
                 f"l_{locale or 'en'}_{self.weekday}",
-                locale_obj.get_day_name(self.weekday, short=False)
+                locale_obj.get_day_name(self.weekday, short=False),
             ),  # Full day name (cached)
             "D": lambda: _cache.setdefault(
                 f"D_{locale or 'en'}_{self.weekday}",
-                locale_obj.get_day_name(self.weekday, short=True)
+                locale_obj.get_day_name(self.weekday, short=True),
             ),  # Short day name (cached)
         }
 

@@ -99,9 +99,13 @@ carbonic/
 │   │   ├── interval.py   # Interval implementation
 │   │   └── exceptions.py # Custom exceptions
 │   ├── locale/           # Localization support
-│   │   ├── base.py       # Base locale class
+│   │   ├── base.py       # Base locale class and registry
 │   │   ├── en.py         # English locale
-│   │   └── pl.py         # Polish locale
+│   │   ├── pl.py         # Polish locale
+│   │   ├── es.py         # Spanish locale
+│   │   ├── fr.py         # French locale
+│   │   ├── de.py         # German locale
+│   │   └── pt.py         # Portuguese locale
 │   └── __init__.py       # Public API
 ├── tests/                # Test suite
 ├── docs/                 # Documentation

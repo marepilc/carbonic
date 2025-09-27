@@ -70,22 +70,40 @@ diff = dt.diff(other_dt)
 ```
 
 ### 🌐 **Localization Support**
-Multi-language formatting and humanization:
+Multi-language formatting and humanization with support for 6 languages:
 
 ```python
-from carbonic import DateTime
+from carbonic import DateTime, Duration
 
 dt = DateTime(2024, 1, 15, 14, 30)
+duration = Duration(hours=2, minutes=30)
 
-# English (default) formatting
+# English (default)
 formatted_en = dt.format("l, F j, Y")  # "Monday, January 15, 2024"
+duration_en = duration.humanize()      # "2 hours 30 minutes"
 
-# Polish localization formatting
+# Polish localization
 formatted_pl = dt.format("l, j F Y", locale="pl")  # "poniedziałek, 15 stycznia 2024"
+duration_pl = duration.humanize(locale="pl")       # "2 godziny 30 minut"
 
-# Date string formatting
-date_string = dt.to_date_string()  # "2024-01-15"
+# Spanish localization
+formatted_es = dt.format("l, j \\de F \\de Y", locale="es")  # "lunes, 15 de enero de 2024"
+duration_es = duration.humanize(locale="es")       # "2 horas 30 minutos"
+
+# French localization
+formatted_fr = dt.format("l j F Y", locale="fr")   # "lundi 15 janvier 2024"
+duration_fr = duration.humanize(locale="fr")       # "2 heures 30 minutes"
+
+# German localization
+formatted_de = dt.format("l, j. F Y", locale="de") # "Montag, 15. Januar 2024"
+duration_de = duration.humanize(locale="de")       # "2 Stunden 30 Minuten"
+
+# Portuguese localization
+formatted_pt = dt.format("l, j \\de F \\de Y", locale="pt")  # "segunda-feira, 15 de janeiro de 2024"
+duration_pt = duration.humanize(locale="pt")       # "2 horas 30 minutos"
 ```
+
+**Supported Locales:** English (en), Polish (pl), Spanish (es), French (fr), German (de), Portuguese (pt)
 
 ### ⚡ **Performance Optimized**
 - Zero-copy operations where possible

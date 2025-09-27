@@ -151,19 +151,30 @@ except ParseError as e:
 ## Locale Support
 
 ### [Locale](locale.md)
-Localization and internationalization support.
+Localization and internationalization support for 6 languages.
 
 ```python
-from carbonic import DateTime
+from carbonic import DateTime, Duration
 from carbonic.locale import get_locale
 
-# Get locale for formatting
-locale = get_locale("pl")  # Polish
-
-# Create datetime and format with locale
+# Create datetime and duration
 dt = DateTime(2024, 1, 15, 14, 30)
-formatted = dt.format("l, j F Y", locale="pl")  # "poniedziałek, 15 stycznia 2024"
+duration = Duration(hours=2, minutes=30)
+
+# Format with different locales
+formatted_en = dt.format("l, F j, Y")           # "Monday, January 15, 2024"
+formatted_pl = dt.format("l, j F Y", locale="pl")  # "poniedziałek, 15 stycznia 2024"
+formatted_es = dt.format("l, j F Y", locale="es")  # "lunes, 15 enero 2024"
+formatted_fr = dt.format("l j F Y", locale="fr")   # "lundi 15 janvier 2024"
+formatted_de = dt.format("l, j. F Y", locale="de") # "Montag, 15. Januar 2024"
+formatted_pt = dt.format("l, j F Y", locale="pt")  # "segunda-feira, 15 janeiro 2024"
+
+# Duration humanization
+duration_en = duration.humanize()              # "2 hours 30 minutes"
+duration_es = duration.humanize(locale="es")   # "2 horas 30 minutos"
 ```
+
+**Supported Languages:** English (en), Polish (pl), Spanish (es), French (fr), German (de), Portuguese (pt)
 
 ## Type System
 

@@ -48,22 +48,41 @@ class Duration:
     def __init__(
         self,
         *,
-        days: int = 0,
-        hours: int = 0,
-        minutes: int = 0,
-        seconds: int = 0,
-        microseconds: int = 0,
-        milliseconds: int = 0,
-        weeks: int = 0,
+        days: int | float = 0,
+        hours: int | float = 0,
+        minutes: int | float = 0,
+        seconds: int | float = 0,
+        microseconds: int | float = 0,
+        milliseconds: int | float = 0,
+        weeks: int | float = 0,
         months: int = 0,
         years: int = 0,
     ) -> None:
         """Create a Duration from individual time components."""
         # Convert time components to basic units (timedelta-compatible)
         # Keep calendar components (months/years) separate for now
-        total_days = days + (weeks * 7)
-        total_seconds = seconds + (minutes * 60) + (hours * 3600)
-        total_microseconds = microseconds + (milliseconds * 1000)
+
+        # Convert all to precise units first, handling fractional values
+        total_days_float = float(days) + float(weeks) * 7
+        total_seconds_float = float(seconds) + float(minutes) * 60 + float(hours) * 3600
+        total_microseconds_float = float(microseconds) + float(milliseconds) * 1000
+
+        # Convert fractional days to seconds
+        if total_days_float != int(total_days_float):
+            fractional_days = total_days_float - int(total_days_float)
+            total_seconds_float += fractional_days * 86400
+            total_days_float = int(total_days_float)
+
+        # Convert fractional seconds to microseconds
+        if total_seconds_float != int(total_seconds_float):
+            fractional_seconds = total_seconds_float - int(total_seconds_float)
+            total_microseconds_float += fractional_seconds * 1_000_000
+            total_seconds_float = int(total_seconds_float)
+
+        # Convert to integers for storage
+        total_days = int(total_days_float)
+        total_seconds = int(total_seconds_float)
+        total_microseconds = int(total_microseconds_float)
 
         # Normalize microseconds and seconds overflow like timedelta does
         if total_microseconds >= 1_000_000:
