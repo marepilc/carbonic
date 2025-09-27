@@ -64,6 +64,24 @@ iso_dt = DateTime.parse("2024-01-15T14:30:00Z")
 
 # From custom format
 custom_dt = DateTime.parse("15/01/2024 14:30", "d/m/Y H:i")
+
+# Relative date/time functions
+today_dt = DateTime.today()       # Today at midnight UTC
+tomorrow_dt = DateTime.tomorrow() # Tomorrow at midnight UTC
+yesterday_dt = DateTime.yesterday() # Yesterday at midnight UTC
+
+# Future dates/times
+next_hour = DateTime.next("hour")        # 1 hour from now
+next_day = DateTime.next("day")          # 1 day from now (tomorrow)
+next_week = DateTime.next("week", 2)     # 2 weeks from now
+next_month = DateTime.next("month")      # 1 month from now
+next_quarter = DateTime.next("quarter")  # 3 months from now
+
+# Past dates/times
+prev_minute = DateTime.previous("minute", 30)  # 30 minutes ago
+prev_day = DateTime.previous("day")             # 1 day ago (yesterday)
+prev_week = DateTime.previous("week")           # 1 week ago
+prev_month = DateTime.previous("month", 3)      # 3 months ago
 ```
 
 ## Date and Time Arithmetic

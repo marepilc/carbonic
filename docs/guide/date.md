@@ -90,6 +90,24 @@ parsed_date = Date.parse("2024-01-15")
 # From custom format
 custom_date = Date.parse("15/01/2024", "%d/%m/%Y")
 us_date = Date.parse("01-15-2024", "%m-%d-%Y")
+
+# Relative date functions
+today_date = Date.today()       # Today's date
+tomorrow_date = Date.tomorrow() # Tomorrow's date
+yesterday_date = Date.yesterday() # Yesterday's date
+
+# Future dates
+next_day = Date.next("day")         # Tomorrow
+next_week = Date.next("week", 2)    # 2 weeks from today
+next_month = Date.next("month")     # 1 month from today
+next_quarter = Date.next("quarter") # 3 months from today
+next_year = Date.next("year")       # 1 year from today
+
+# Past dates
+prev_day = Date.previous("day")        # Yesterday
+prev_week = Date.previous("week")      # 1 week ago
+prev_month = Date.previous("month", 3) # 3 months ago
+prev_year = Date.previous("year")      # 1 year ago
 ```
 
 ## Date Arithmetic

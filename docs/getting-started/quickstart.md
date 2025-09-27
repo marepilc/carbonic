@@ -65,6 +65,38 @@ print(dt.to_date_string())       # "2024-01-15"
 print(dt.to_time_string())       # "14:30:45"
 ```
 
+## Relative Dates and Times
+
+Carbonic provides clean functions for relative date/time operations:
+
+```python
+from carbonic import DateTime, Date, today, tomorrow, yesterday
+
+# Simple date functions
+today_date = today()          # Today's date
+tomorrow_date = tomorrow()    # Tomorrow's date
+yesterday_date = yesterday()  # Yesterday's date
+
+# DateTime relative functions
+today_dt = DateTime.today()       # Today at midnight UTC
+tomorrow_dt = DateTime.tomorrow() # Tomorrow at midnight UTC
+now_dt = DateTime.now()           # Current datetime
+
+# Future dates/times with next()
+next_week = Date.next("week")           # 1 week from today
+next_month = DateTime.next("month")     # 1 month from now
+next_quarter = Date.next("quarter", 2)  # 2 quarters from today
+
+# Past dates/times with previous()
+last_week = Date.previous("week")       # 1 week ago
+last_month = DateTime.previous("month") # 1 month ago
+two_days_ago = Date.previous("day", 2)  # 2 days ago
+
+# Time-based relatives (DateTime only)
+next_hour = DateTime.next("hour")       # 1 hour from now
+prev_minutes = DateTime.previous("minute", 30)  # 30 minutes ago
+```
+
 ## Working with Durations
 
 Durations represent spans of time and can be added to or subtracted from datetimes:

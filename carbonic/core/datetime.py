@@ -98,11 +98,112 @@ class DateTime:
         return cls.from_datetime(now_dt)
 
     @classmethod
+    def today(cls, tz: str | None = "UTC") -> DateTime:
+        """Get the current date at 00:00:00 in the specified timezone.
+
+        Args:
+            tz: Timezone string (default: "UTC")
+
+        Returns:
+            DateTime object representing today at midnight
+        """
+        now = cls.now(tz)
+        return cls(now.year, now.month, now.day, 0, 0, 0, tz=tz)
+
+    @classmethod
+    def tomorrow(cls, tz: str | None = "UTC") -> DateTime:
+        """Get tomorrow's date at 00:00:00 in the specified timezone.
+
+        Args:
+            tz: Timezone string (default: "UTC")
+
+        Returns:
+            DateTime object representing tomorrow at midnight
+        """
+        return cls.today(tz).add(days=1)
+
+    @classmethod
+    def yesterday(cls, tz: str | None = "UTC") -> DateTime:
+        """Get yesterday's date at 00:00:00 in the specified timezone.
+
+        Args:
+            tz: Timezone string (default: "UTC")
+
+        Returns:
+            DateTime object representing yesterday at midnight
+        """
+        return cls.today(tz).add(days=-1)
+
+    @classmethod
+    def next(cls, unit: str, count: int = 1, tz: str | None = "UTC") -> DateTime:
+        """Get a datetime in the future relative to now.
+
+        Args:
+            unit: Time unit ("second", "minute", "hour", "day", "week", "month", "quarter", "year")
+            count: Number of units to add (default: 1)
+            tz: Timezone string (default: "UTC")
+
+        Returns:
+            DateTime object in the future
+
+        Examples:
+            >>> DateTime.next("day")      # Tomorrow
+            >>> DateTime.next("week", 2)  # 2 weeks from now
+            >>> DateTime.next("month")    # Next month
+        """
+        now = cls.now(tz)
+        return cls._add_relative_unit(now, unit, count)
+
+    @classmethod
+    def previous(cls, unit: str, count: int = 1, tz: str | None = "UTC") -> DateTime:
+        """Get a datetime in the past relative to now.
+
+        Args:
+            unit: Time unit ("second", "minute", "hour", "day", "week", "month", "quarter", "year")
+            count: Number of units to subtract (default: 1)
+            tz: Timezone string (default: "UTC")
+
+        Returns:
+            DateTime object in the past
+
+        Examples:
+            >>> DateTime.previous("day")      # Yesterday
+            >>> DateTime.previous("week", 2)  # 2 weeks ago
+            >>> DateTime.previous("month")    # Last month
+        """
+        now = cls.now(tz)
+        return cls._add_relative_unit(now, unit, -count)
+
+    @classmethod
+    def _add_relative_unit(cls, dt: DateTime, unit: str, count: int) -> DateTime:
+        """Add relative time units to a datetime."""
+        if unit == "second":
+            return dt.add(seconds=count)
+        elif unit == "minute":
+            return dt.add(minutes=count)
+        elif unit == "hour":
+            return dt.add(hours=count)
+        elif unit == "day":
+            return dt.add(days=count)
+        elif unit == "week":
+            return dt.add(days=count * 7)
+        elif unit == "month":
+            return dt.add(months=count)
+        elif unit == "quarter":
+            return dt.add(months=count * 3)
+        elif unit == "year":
+            return dt.add(years=count)
+        else:
+            raise ValueError(f"Unsupported time unit: {unit}")
+
+    @classmethod
     def parse(cls, s: str, fmt: str | None = None, tz: str | None = None) -> DateTime:
         """Parse a datetime string into a DateTime object.
 
         Args:
-            s: The datetime string to parse
+            s: The datetime string to parse. Supports:
+                - ISO 8601 formats (2024-01-15T14:30:00Z)
+                - Custom formats when fmt is provided
             fmt: Optional format string. If None, auto-detect format.
                 Supports both strftime (%Y-%m-%d %H:%M:%S) and Carbon (Y-m-d H:i:s) formats.
             tz: Optional timezone. If provided, applies to naive parsed datetimes.
@@ -112,6 +213,9 @@ class DateTime:
 
         Raises:
             ParseError: If the string cannot be parsed
+
+        Examples:
+            >>> DateTime.parse("2024-01-15T14:30:00Z")  # doctest: +SKIP
         """
         from carbonic.core.exceptions import ParseError
 

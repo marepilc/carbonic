@@ -59,11 +59,85 @@ class Date:
         return cls(today_date.year, today_date.month, today_date.day)
 
     @classmethod
+    def tomorrow(cls) -> Date:
+        """Get tomorrow's date.
+
+        Returns:
+            Date object representing tomorrow
+        """
+        return cls.today().add(days=1)
+
+    @classmethod
+    def yesterday(cls) -> Date:
+        """Get yesterday's date.
+
+        Returns:
+            Date object representing yesterday
+        """
+        return cls.today().add(days=-1)
+
+    @classmethod
+    def next(cls, unit: str, count: int = 1) -> Date:
+        """Get a date in the future relative to today.
+
+        Args:
+            unit: Time unit ("day", "week", "month", "quarter", "year")
+            count: Number of units to add (default: 1)
+
+        Returns:
+            Date object in the future
+
+        Examples:
+            >>> Date.next("day")      # Tomorrow
+            >>> Date.next("week", 2)  # 2 weeks from today
+            >>> Date.next("month")    # Next month
+        """
+        today = cls.today()
+        return cls._add_relative_unit(today, unit, count)
+
+    @classmethod
+    def previous(cls, unit: str, count: int = 1) -> Date:
+        """Get a date in the past relative to today.
+
+        Args:
+            unit: Time unit ("day", "week", "month", "quarter", "year")
+            count: Number of units to subtract (default: 1)
+
+        Returns:
+            Date object in the past
+
+        Examples:
+            >>> Date.previous("day")      # Yesterday
+            >>> Date.previous("week", 2)  # 2 weeks ago
+            >>> Date.previous("month")    # Last month
+        """
+        today = cls.today()
+        return cls._add_relative_unit(today, unit, -count)
+
+    @classmethod
+    def _add_relative_unit(cls, date: Date, unit: str, count: int) -> Date:
+        """Add relative time units to a date."""
+        if unit == "day":
+            return date.add(days=count)
+        elif unit == "week":
+            return date.add(days=count * 7)
+        elif unit == "month":
+            return date.add(months=count)
+        elif unit == "quarter":
+            return date.add(months=count * 3)
+        elif unit == "year":
+            return date.add(years=count)
+        else:
+            raise ValueError(f"Unsupported time unit for Date: {unit}. Use 'day', 'week', 'month', 'quarter', or 'year'.")
+
+    @classmethod
     def parse(cls, s: str, fmt: str | None = None) -> Date:
         """Parse a date string into a Date object.
 
         Args:
-            s: The date string to parse
+            s: The date string to parse. Supports:
+                - ISO date formats (2024-01-15)
+                - Custom formats when fmt is provided
             fmt: Optional format string. If None, auto-detect format.
                 Supports both strftime (%Y-%m-%d) and Carbon (Y-m-d) formats.
 
@@ -72,6 +146,9 @@ class Date:
 
         Raises:
             ParseError: If the string cannot be parsed
+
+        Examples:
+            >>> Date.parse("2024-01-15")  # doctest: +SKIP
         """
         if not s or not s.strip():
             raise ParseError("Empty date string")
@@ -86,6 +163,7 @@ class Date:
     @classmethod
     def _auto_parse(cls, s: str) -> Date:
         """Auto-detect format and parse date string."""
+
         # First try exact ISO format
         iso_pattern = re.compile(r"^(\d{4})-(\d{1,2})-(\d{1,2})$")
         match = iso_pattern.match(s)

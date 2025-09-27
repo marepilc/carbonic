@@ -20,6 +20,8 @@ __all__ = [
     "Interval",
     "now",
     "today",
+    "tomorrow",
+    "yesterday",
 ]
 
 
@@ -32,3 +34,13 @@ def now(tz: str | None = "UTC") -> DateTime:
 def today(tz: str | None = None) -> Date:
     """Create a Date instance for today."""
     return Date.today(tz)
+
+
+def tomorrow() -> Date:
+    """Create a Date instance for tomorrow."""
+    return Date.tomorrow()
+
+
+def yesterday() -> Date:
+    """Create a Date instance for yesterday."""
+    return Date.yesterday()

@@ -49,26 +49,24 @@
   - Anchor Methods: start_of/end_of for various time periods
   - Type Safety: Precise overloads for better IDE support and type checking
 
-  - Polars Plugin Foundation: High-performance Rust plugin architecture established
-    - Successful proof-of-concept: Working Polars namespace (.carbonic) with vectorized operations
-    - Build pipeline: Complete maturin + PyO3 + pyo3-polars compilation workflow
-    - Plugin structure: Modular Rust code (parsing, business_days, formatting, expressions)
-    - Python integration: Custom namespaces for both expressions and DataFrames
-    - Test framework: Comprehensive testing with placeholder functions validated
-    - Ready for migration: Full foundation for separate carbonic-polars repository
+  - Relative Date/Time Functions: Clean function-based API for relative date operations
+    - Date methods: today(), tomorrow(), yesterday(), next(unit, count), previous(unit, count)
+    - DateTime methods: today(), tomorrow(), yesterday(), next(unit, count, tz), previous(unit, count, tz)
+    - Convenience functions: today(), tomorrow(), yesterday() for easy imports
+    - Supported units: second, minute, hour, day, week, month, quarter, year
+    - Type-safe design: Proper validation and error messages for invalid units
+    - No localization issues: Function-based approach avoids natural language parsing complexity (31 comprehensive tests)
 
   🔄 Remaining Major Features
 
-  3. Data Library Integrations (External Repositories)
+  3. Data Library Integrations
 
-  - **carbonic-polars**: High-performance Polars plugin (separate repository)
-    - Vectorized Carbonic format parsing with lazy evaluation compatibility
-    - Business day arithmetic operations (not available in standard Polars)
-    - Localized datetime formatting with multi-language support
-    - Duration humanization with proper pluralization
-    - Complete integration with Polars expression and DataFrame APIs
-  - **carbonic-pandas**: DataFrame datetime operations, custom dtypes (future)
-  - **carbonic-pydantic**: Validation and serialization field types (future)
+  - **carbonic-pandas**: DataFrame datetime operations, custom dtypes (future external repository)
+  - **carbonic-pydantic**: Validation and serialization field types (optional dependency)
+    - Pydantic field types for Date, DateTime, Duration validation
+    - JSON serialization/deserialization support
+    - Custom validators for date ranges and business rules
+    - Available as `pip install carbonic[pydantic]` optional dependency
 
   ✅ Performance Optimizations (COMPLETED)
 
@@ -76,17 +74,18 @@
   - **Memory optimizations**: Efficient slots usage across all core classes
   - **Lazy evaluation**: Cached expensive formatting operations (locale lookups, timezone formatting)
 
-  5. Additional Locale Support (Post Performance)
+  4. Additional Locale Support
 
-  - Spanish locale: Complex verb conjugation support for relative phrases
-  - French locale: Gender agreement for month/day names, liaison rules
-  - German locale: Case declension support, compound time expressions
-  - Expandable architecture: Easy addition of new locales following established patterns
+  - **Spanish locale**: Month/day names, pluralization rules, number formatting
+  - **French locale**: Month/day names with gender agreement, pluralization, decimal formatting
+  - **German locale**: Month/day names with case declension, compound time expressions
+  - **Portuguese locale**: Month/day names, Brazilian/European variants, pluralization
+  - Expandable architecture: Easy addition of new locales following established English/Polish patterns
 
-  6. Additional Parsing Features
+  5. Additional Parsing Features
 
-  - Relative parsing: "tomorrow", "next week", "last month"
   - More format support: RFC 2822, custom business formats
+  - Enhanced format detection and validation
 
   1. Holiday Support (Future Enhancement)
 
@@ -96,12 +95,12 @@
 
   🎯 Suggested Next Priority
 
-  Based on the current completion status with performance optimizations now complete, the recommended development order is:
+  Based on the current completion status with performance optimizations and relative date functions now complete, the recommended development order is:
 
-  1. **Additional Parsing Features** - Relative date parsing ("tomorrow", "next week", "last month")
-  2. **Additional Locale Support** - Spanish, French, German localization
-  3. **carbonic-polars Separate Repository** - Migrate and complete the Polars plugin as standalone package
-  4. **Other Data Library Integrations** - carbonic-pandas and carbonic-pydantic as separate repositories
+  1. **pydantic Integration** - Validation and serialization field types as optional dependency
+  2. **Additional Locale Support** - Spanish, French, German, Portuguese localization
+  3. **Additional Parsing Features** - More format support (RFC 2822, custom business formats)
+  4. **Holiday Support** - Holiday calendar integration for business day calculations
 
   ## Current Status Summary
 
