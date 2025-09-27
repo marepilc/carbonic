@@ -1,6 +1,6 @@
 [project]
 name = "carbonic"
-version = "0.2.1"
+version = "0.2.2"
 description = "A modern Python datetime library with fluent API and immutable design"
 readme = "README.md"
 license = "MIT"
@@ -44,6 +44,9 @@ packages = [
 
 [tool.setuptools.package-dir]
 carbonic = "carbonic"
+
+[tool.setuptools.package-data]
+carbonic = ["py.typed"]
 
 [tool.pytest.ini_options]
 addopts = [
