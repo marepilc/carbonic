@@ -680,7 +680,7 @@ class Date:
             'Monday, January 15, 2024'
             >>> date.format("l, F j, Y", locale="es")  # doctest: +SKIP
             'lunes, enero 15, 2024'
-            >>> date.format("jS \\o\\f F Y")
+            >>> date.format("jS \\\\o\\\\f F Y")
             '15th of January 2024'
         """
         return self._carbon_format(fmt, locale=locale)
