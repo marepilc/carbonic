@@ -178,10 +178,6 @@ css = [
 name = "carbonic"
 version = "1.0.0"
 source = { editable = "." }
-dependencies = [
-    { name = "mike" },
-    { name = "mkdocs-material" },
-]
 
 [package.optional-dependencies]
 performance = [
@@ -194,6 +190,7 @@ pydantic = [
 [package.dev-dependencies]
 dev = [
     { name = "jupyter" },
+    { name = "mike" },
     { name = "mkdocs-material" },
     { name = "mkdocstrings", extra = ["python"] },
     { name = "mypy" },
@@ -205,8 +202,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "ciso8601", marker = "extra == 'performance'", specifier = ">=2.3.0" },
-    { name = "mike", specifier = ">=2.1.3" },
-    { name = "mkdocs-material", specifier = ">=9.6.20" },
     { name = "pydantic", marker = "extra == 'pydantic'", specifier = ">=2.0.0" },
 ]
 provides-extras = ["performance", "pydantic"]
@@ -214,6 +209,7 @@ provides-extras = ["performance", "pydantic"]
 [package.metadata.requires-dev]
 dev = [
     { name = "jupyter", specifier = ">=1.1.1" },
+    { name = "mike", specifier = ">=2.1.3" },
     { name = "mkdocs-material", specifier = ">=9.6.20" },
     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.30.1" },
     { name = "mypy", specifier = ">=1.18.2" },
