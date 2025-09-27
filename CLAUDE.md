@@ -103,3 +103,5 @@ now().add(days=3).end_of("month").to_date_string()
 - Memory-efficient immutable design with `__slots__`
 - Optional C extensions for parsing (ciso8601)
 - to memorize stick to Stdlib zoneinfo only
+- add # doctest: +SKIP to the examples that produce dynamic output.
+- strict typing is required

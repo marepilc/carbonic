@@ -56,6 +56,15 @@ pip install carbonic[performance]
 
 This installs `ciso8601`, which provides C-accelerated ISO datetime parsing that's ~10x faster than the standard library, plus enables other performance optimizations like lazy evaluation caching.
 
+### Pydantic Integration
+
+For data validation and serialization with Pydantic:
+
+```bash
+pip install carbonic[pydantic]
+```
+
+This enables custom Pydantic field types for all Carbonic datetime classes, allowing seamless integration with FastAPI, SQLModel, and other Pydantic-based frameworks.
 
 ### Development
 

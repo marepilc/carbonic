@@ -93,6 +93,11 @@ date_string = dt.to_date_string()  # "2024-01-15"
 - Memory-efficient immutable design with `__slots__`
 - Optional fast parsing with `ciso8601`
 
+### 🔗 **Framework Integration**
+- **Pydantic**: Custom field types for validation and serialization
+- **JSON Schema**: Automatic schema generation for APIs
+- **FastAPI**: Seamless integration with modern web frameworks
+
 ## Quick Start
 
 ### Installation
@@ -102,7 +107,10 @@ date_string = dt.to_date_string()  # "2024-01-15"
 pip install carbonic
 
 # With optional fast parsing
-pip install carbonic[fast]
+pip install carbonic[performance]
+
+# With Pydantic integration for validation
+pip install carbonic[pydantic]
 
 # Development installation
 pip install carbonic[dev]
@@ -131,6 +139,17 @@ future = dt + duration
 # Formatting
 iso_string = dt.to_iso_string()         # "2024-01-15T14:30:00+00:00"
 readable = dt.format("Y-m-d H:i:s")    # "2024-01-15 14:30:00"
+
+# Pydantic integration (requires: pip install carbonic[pydantic])
+from pydantic import BaseModel
+from carbonic.integrations.pydantic import DateTimeField
+
+class Event(BaseModel):
+    name: str
+    start_time: DateTimeField
+
+event = Event(name="Meeting", start_time="2024-01-15T14:30:00Z")
+print(event.start_time)  # DateTime(2024, 1, 15, 14, 30, 0, tz='UTC')
 ```
 
 ## Core Classes
