@@ -88,9 +88,9 @@ class Date:
             Date object in the future
 
         Examples:
-            >>> Date.next("day")      # Tomorrow
-            >>> Date.next("week", 2)  # 2 weeks from today
-            >>> Date.next("month")    # Next month
+            >>> Date.next("day")      # Tomorrow  # doctest: +SKIP
+            >>> Date.next("week", 2)  # 2 weeks from today  # doctest: +SKIP
+            >>> Date.next("month")    # Next month  # doctest: +SKIP
         """
         today = cls.today()
         return cls._add_relative_unit(today, unit, count)
@@ -107,9 +107,9 @@ class Date:
             Date object in the past
 
         Examples:
-            >>> Date.previous("day")      # Yesterday
-            >>> Date.previous("week", 2)  # 2 weeks ago
-            >>> Date.previous("month")    # Last month
+            >>> Date.previous("day")      # Yesterday  # doctest: +SKIP
+            >>> Date.previous("week", 2)  # 2 weeks ago  # doctest: +SKIP
+            >>> Date.previous("month")    # Last month  # doctest: +SKIP
         """
         today = cls.today()
         return cls._add_relative_unit(today, unit, -count)

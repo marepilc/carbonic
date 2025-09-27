@@ -147,9 +147,9 @@ class DateTime:
             DateTime object in the future
 
         Examples:
-            >>> DateTime.next("day")      # Tomorrow
-            >>> DateTime.next("week", 2)  # 2 weeks from now
-            >>> DateTime.next("month")    # Next month
+            >>> DateTime.next("day")      # Tomorrow  # doctest: +SKIP
+            >>> DateTime.next("week", 2)  # 2 weeks from now  # doctest: +SKIP
+            >>> DateTime.next("month")    # Next month  # doctest: +SKIP
         """
         now = cls.now(tz)
         return cls._add_relative_unit(now, unit, count)
@@ -167,9 +167,9 @@ class DateTime:
             DateTime object in the past
 
         Examples:
-            >>> DateTime.previous("day")      # Yesterday
-            >>> DateTime.previous("week", 2)  # 2 weeks ago
-            >>> DateTime.previous("month")    # Last month
+            >>> DateTime.previous("day")      # Yesterday  # doctest: +SKIP
+            >>> DateTime.previous("week", 2)  # 2 weeks ago  # doctest: +SKIP
+            >>> DateTime.previous("month")    # Last month  # doctest: +SKIP
         """
         now = cls.now(tz)
         return cls._add_relative_unit(now, unit, -count)

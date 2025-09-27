@@ -61,7 +61,6 @@
 
   3. Data Library Integrations
 
-  - **carbonic-pandas**: DataFrame datetime operations, custom dtypes (future external repository)
   - **carbonic-pydantic**: Validation and serialization field types (optional dependency)
     - Pydantic field types for Date, DateTime, Duration validation
     - JSON serialization/deserialization support
@@ -74,7 +73,7 @@
   - **Memory optimizations**: Efficient slots usage across all core classes
   - **Lazy evaluation**: Cached expensive formatting operations (locale lookups, timezone formatting)
 
-  4. Additional Locale Support
+  1. Additional Locale Support
 
   - **Spanish locale**: Month/day names, pluralization rules, number formatting
   - **French locale**: Month/day names with gender agreement, pluralization, decimal formatting
