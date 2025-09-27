@@ -417,12 +417,63 @@ class DateTime:
     def format(self, fmt: str, *, locale: str | None = None) -> str:
         """Format datetime using Carbon-style format string.
 
+        Uses Carbon-style tokens for flexible datetime formatting. Escape characters
+        with backslash (\\) to include them literally.
+
+        ## Format Tokens
+
+        | Token | Description | Example |
+        |-------|-------------|---------|
+        | **Date** | | |
+        | `Y` | 4-digit year | `2024` |
+        | `y` | 2-digit year | `24` |
+        | `m` | Month with leading zero | `01`, `12` |
+        | `n` | Month without leading zero | `1`, `12` |
+        | `d` | Day with leading zero | `01`, `31` |
+        | `j` | Day without leading zero | `1`, `31` |
+        | `S` | Ordinal suffix | `st`, `nd`, `rd`, `th` |
+        | `F` | Full month name (localized) | `January`, `enero` |
+        | `M` | Short month name (localized) | `Jan`, `ene` |
+        | `l` | Full day name (localized) | `Monday`, `lunes` |
+        | `D` | Short day name (localized) | `Mon`, `lun` |
+        | **Time** | | |
+        | `H` | Hour 24-format with leading zero | `00`, `23` |
+        | `G` | Hour 24-format without leading zero | `0`, `23` |
+        | `h` | Hour 12-format with leading zero | `01`, `12` |
+        | `g` | Hour 12-format without leading zero | `1`, `12` |
+        | `i` | Minutes with leading zero | `00`, `59` |
+        | `s` | Seconds with leading zero | `00`, `59` |
+        | `A` | AM/PM uppercase | `AM`, `PM` |
+        | `a` | am/pm lowercase | `am`, `pm` |
+        | `u` | Microseconds (6 digits) | `000000`, `123456` |
+        | `v` | Milliseconds (3 digits) | `000`, `123` |
+        | **Timezone** | | |
+        | `T` | Timezone abbreviation | `UTC`, `EST` |
+        | `O` | Timezone offset | `+0000`, `+0200` |
+        | `P` | Timezone offset with colon | `+00:00`, `+02:00` |
+        | `Z` | Timezone offset in seconds | `0`, `7200` |
+        | **Combined** | | |
+        | `c` | ISO 8601 datetime | `2024-01-15T14:30:45+00:00` |
+        | `r` | RFC 2822 datetime | `Mon, 15 Jan 2024 14:30:45 +0000` |
+
         Args:
-            fmt: Carbon-style format string
+            fmt: Carbon-style format string with tokens above
             locale: Locale code for localized month/day names (default: English)
+                  Supported: en, pl, es, fr, de, pt
 
         Returns:
             Formatted datetime string
+
+        Examples:
+            >>> dt = DateTime(2024, 1, 15, 14, 30, 45, tz="UTC")
+            >>> dt.format("Y-m-d H:i:s")
+            '2024-01-15 14:30:45'
+            >>> dt.format("l, F j, Y")
+            'Monday, January 15, 2024'
+            >>> dt.format("l, F j, Y", locale="es")  # doctest: +SKIP
+            'lunes, enero 15, 2024'
+            >>> dt.format("H:i A (T)")
+            '14:30 PM (UTC)'
         """
         return self._carbon_format(fmt, locale=locale)
 

@@ -645,12 +645,43 @@ class Date:
     def format(self, fmt: str, *, locale: str | None = None) -> str:
         """Format date using Carbon-style format string.
 
+        Uses Carbon-style tokens for flexible date formatting. Escape characters
+        with backslash (\\) to include them literally.
+
+        ## Format Tokens
+
+        | Token | Description | Example |
+        |-------|-------------|---------|
+        | `Y` | 4-digit year | `2024` |
+        | `y` | 2-digit year | `24` |
+        | `m` | Month with leading zero | `01`, `12` |
+        | `n` | Month without leading zero | `1`, `12` |
+        | `d` | Day with leading zero | `01`, `31` |
+        | `j` | Day without leading zero | `1`, `31` |
+        | `S` | Ordinal suffix | `st`, `nd`, `rd`, `th` |
+        | `F` | Full month name (localized) | `January`, `enero` |
+        | `M` | Short month name (localized) | `Jan`, `ene` |
+        | `l` | Full day name (localized) | `Monday`, `lunes` |
+        | `D` | Short day name (localized) | `Mon`, `lun` |
+
         Args:
-            fmt: Carbon-style format string
+            fmt: Carbon-style format string with tokens above
             locale: Locale code for localized month/day names (default: English)
+                  Supported: en, pl, es, fr, de, pt
 
         Returns:
             Formatted date string
+
+        Examples:
+            >>> date = Date(2024, 1, 15)
+            >>> date.format("Y-m-d")
+            '2024-01-15'
+            >>> date.format("l, F j, Y")
+            'Monday, January 15, 2024'
+            >>> date.format("l, F j, Y", locale="es")  # doctest: +SKIP
+            'lunes, enero 15, 2024'
+            >>> date.format("jS \\o\\f F Y")
+            '15th of January 2024'
         """
         return self._carbon_format(fmt, locale=locale)
 

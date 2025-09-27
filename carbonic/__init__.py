@@ -10,7 +10,7 @@ from carbonic.core.duration import Duration
 from carbonic.core.interval import Interval
 from carbonic.core.period import Period
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 
 __all__ = [
     "DateTime",
