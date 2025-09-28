@@ -1784,7 +1784,8 @@
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># Fluent operations</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">result</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">end_of</span><span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">)</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># Note: timezone conversion methods may need implementation</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># Convert between timezones</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">result</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">as_timezone</span><span class="p">(</span><span class="s2">&quot;America/New_York&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="date"><a href="date/">Date</a><a class="headerlink" href="#date" title="Permanent link">&para;</a></h3>
 <p>Date-only operations without time components.</p>
@@ -1972,7 +1973,7 @@
 <li><strong>Lazy Evaluation</strong>: Expensive formatting operations are deferred</li>
 </ul>
 <h2 id="version-compatibility">Version Compatibility<a class="headerlink" href="#version-compatibility" title="Permanent link">&para;</a></h2>
-<p>Current version: <strong>0.2.0</strong></p>
+<p>Current version: <strong>1.0.1</strong></p>
 <ul>
 <li><strong>Python</strong>: 3.12+</li>
 <li><strong>Dependencies</strong>: None (stdlib only)</li>

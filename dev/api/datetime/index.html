@@ -1373,6 +1373,33 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#carbonic.core.datetime.DateTime.format--escaping-carbon-tokens-with-curly-braces" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escaping Carbon tokens with curly braces
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.core.datetime.DateTime.format--mix-of-escaped-tokens-and-literal-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mix of escaped tokens and literal text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.core.datetime.DateTime.format--use-python-string-literals-for-special-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use Python string literals for special characters
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3108,8 +3135,9 @@ Supports both strftime (%Y-%m-%d %H:%M:%S) and Carbon (Y-m-d H:i:s) formats.</p>
     <div class="doc doc-contents ">
 
         <p>Format datetime using Carbon-style format string.</p>
-<p>Uses Carbon-style tokens for flexible datetime formatting. Escape characters
-with backslash () to include them literally.</p>
+<p>Uses Carbon-style tokens for flexible datetime formatting. Escape Carbon tokens
+with curly braces like {Y} to include them literally. Use Python string literals
+for special characters like \n, \t, \r.</p>
 <h6 id="carbonic.core.datetime.DateTime.format--format-tokens">Format Tokens<a class="headerlink" href="#carbonic.core.datetime.DateTime.format--format-tokens" title="Permanent link">&para;</a></h6>
 <table>
 <thead>
@@ -3360,6 +3388,18 @@ with backslash () to include them literally.</p>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="go">&#39;lunes, enero 15, 2024&#39;</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;H:i A (T)&quot;</span><span class="p">)</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="go">&#39;14:30 PM (UTC)&#39;</span>
+</span></code></pre></div>
+    <h5 id="carbonic.core.datetime.DateTime.format--escaping-carbon-tokens-with-curly-braces">Escaping Carbon tokens with curly braces<a class="headerlink" href="#carbonic.core.datetime.DateTime.format--escaping-carbon-tokens-with-curly-braces" title="Permanent link">&para;</a></h5>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{Y}</span><span class="s2"> = Y&quot;</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="go">&#39;Y = 2024&#39;</span>
+</span></code></pre></div>
+    <h5 id="carbonic.core.datetime.DateTime.format--mix-of-escaped-tokens-and-literal-text">Mix of escaped tokens and literal text<a class="headerlink" href="#carbonic.core.datetime.DateTime.format--mix-of-escaped-tokens-and-literal-text" title="Permanent link">&para;</a></h5>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{Y}</span><span class="s2">-</span><span class="si">{m}</span><span class="s2">-</span><span class="si">{d}</span><span class="s2"> = Y-m-d&quot;</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="go">&#39;Y-m-d = 2024-01-15&#39;</span>
+</span></code></pre></div>
+    <h5 id="carbonic.core.datetime.DateTime.format--use-python-string-literals-for-special-characters">Use Python string literals for special characters<a class="headerlink" href="#carbonic.core.datetime.DateTime.format--use-python-string-literals-for-special-characters" title="Permanent link">&para;</a></h5>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;Y-m-d</span><span class="se">\n</span><span class="s2">H:i:s&quot;</span><span class="p">)</span>  <span class="c1"># \n in Python string</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="go">&#39;2024-01-15\n14:30:45&#39;</span>
 </span></code></pre></div>
 
 
