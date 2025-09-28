@@ -4,7 +4,7 @@ on:
   push:
     branches: [master]
     tags:
-      - 'v[0-9]+.[0-9]+.0'  # Only deploy docs for feature releases (x.y.0)
+      - 'v[0-9]+.[0-9]+.[0-9]+'  # Deploy docs for all releases (x.y.z)
   workflow_dispatch:
 
 permissions:
@@ -48,8 +48,18 @@ jobs:
       run: |
         if [[ "${{ github.ref }}" == refs/tags/* ]]; then
           # Tagged release - extract version from tag (remove 'v' prefix)
-          VERSION=${GITHUB_REF#refs/tags/v}
+          FULL_VERSION=${GITHUB_REF#refs/tags/v}
+
+          # For 1.0.x releases, display as "1.0" (strip patch version)
+          if [[ "$FULL_VERSION" =~ ^1\.0\.[0-9]+$ ]]; then
+            VERSION="1.0"
+          else
+            # For other versions, use the full version
+            VERSION="$FULL_VERSION"
+          fi
+
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "full_version=$FULL_VERSION" >> $GITHUB_OUTPUT
           echo "is_release=true" >> $GITHUB_OUTPUT
         else
           # Push to master - deploy as 'dev'

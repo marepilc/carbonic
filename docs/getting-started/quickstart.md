@@ -158,16 +158,25 @@ Carbonic makes timezone handling straightforward:
 ```python
 from carbonic import DateTime
 
-# Create datetime in different timezones
+# Create a datetime in one timezone
 utc_time = DateTime(2024, 1, 15, 14, 30, tz="UTC")
-tokyo_time = DateTime(2024, 1, 15, 23, 30, tz="Asia/Tokyo")  # Same moment
-london_time = DateTime(2024, 1, 15, 14, 30, tz="Europe/London")
-ny_time = DateTime(2024, 1, 15, 9, 30, tz="America/New_York")
-
 print(f"UTC:    {utc_time}")     # 2024-01-15T14:30:00+00:00
+
+# Convert to different timezones using as_timezone()
+tokyo_time = utc_time.as_timezone("Asia/Tokyo")
+london_time = utc_time.as_timezone("Europe/London")
+ny_time = utc_time.as_timezone("America/New_York")
+
 print(f"Tokyo:  {tokyo_time}")   # 2024-01-15T23:30:00+09:00
 print(f"London: {london_time}")  # 2024-01-15T14:30:00+00:00
 print(f"NY:     {ny_time}")      # 2024-01-15T09:30:00-05:00
+
+# All represent the same moment in time
+print(utc_time == tokyo_time == london_time == ny_time)  # True
+
+# Convert to naive datetime (remove timezone)
+naive_time = utc_time.as_timezone(None)
+print(f"Naive:  {naive_time}")   # 2024-01-15T14:30:00 (no timezone)
 ```
 
 ## Comparisons

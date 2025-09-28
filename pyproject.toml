@@ -1,6 +1,6 @@
 [project]
 name = "carbonic"
-version = "1.0.0"
+version = "1.0.1"
 description = "A modern Python datetime library with fluent API and immutable design"
 readme = "README.md"
 license = "MIT"

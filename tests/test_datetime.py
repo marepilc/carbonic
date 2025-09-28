@@ -846,3 +846,135 @@ class TestDateTimeDurationIntegration:
 
         with pytest.raises(TypeError):
             dt - 123  # type: ignore
+
+
+class TestDateTimeTimezoneConversion:
+    """Test timezone conversion functionality."""
+
+    def test_as_timezone_basic_conversion(self):
+        """Test basic timezone conversion between UTC and other timezones."""
+        # UTC to New York (winter time, UTC-5)
+        utc_dt = DateTime(2024, 1, 15, 14, 30, 0, tz="UTC")
+        ny_dt = utc_dt.as_timezone("America/New_York")
+
+        assert ny_dt.year == 2024
+        assert ny_dt.month == 1
+        assert ny_dt.day == 15
+        assert ny_dt.hour == 9  # 14:30 UTC = 09:30 EST (UTC-5)
+        assert ny_dt.minute == 30
+        assert ny_dt.second == 0
+        assert str(ny_dt.tzinfo) == "America/New_York"
+
+    def test_as_timezone_summer_time(self):
+        """Test timezone conversion during daylight saving time."""
+        # UTC to New York (summer time, UTC-4)
+        utc_dt = DateTime(2024, 7, 15, 14, 30, 0, tz="UTC")
+        ny_dt = utc_dt.as_timezone("America/New_York")
+
+        assert ny_dt.hour == 10  # 14:30 UTC = 10:30 EDT (UTC-4)
+        assert ny_dt.minute == 30
+
+    def test_as_timezone_same_moment(self):
+        """Test that converted datetime represents the same moment."""
+        utc_dt = DateTime(2024, 1, 15, 14, 30, 0, tz="UTC")
+        ny_dt = utc_dt.as_timezone("America/New_York")
+        warsaw_dt = utc_dt.as_timezone("Europe/Warsaw")
+
+        # All should represent the same moment in time
+        assert utc_dt == ny_dt
+        assert utc_dt == warsaw_dt
+        assert ny_dt == warsaw_dt
+
+    def test_as_timezone_round_trip(self):
+        """Test converting timezone and back preserves the original."""
+        original = DateTime(2024, 1, 15, 14, 30, 45, 123456, tz="UTC")
+        converted = original.as_timezone("America/New_York")
+        back_to_utc = converted.as_timezone("UTC")
+
+        assert original == back_to_utc
+        assert original._dt == back_to_utc._dt  # Should be identical
+
+    def test_as_timezone_multiple_conversions(self):
+        """Test converting through multiple timezones."""
+        utc_dt = DateTime(2024, 1, 15, 14, 30, 0, tz="UTC")
+        ny_dt = utc_dt.as_timezone("America/New_York")
+        warsaw_dt = ny_dt.as_timezone("Europe/Warsaw")
+        tokyo_dt = warsaw_dt.as_timezone("Asia/Tokyo")
+
+        # All should represent the same moment
+        assert utc_dt == ny_dt == warsaw_dt == tokyo_dt
+
+    def test_as_timezone_to_naive(self):
+        """Test converting timezone-aware datetime to naive."""
+        aware_dt = DateTime(2024, 1, 15, 14, 30, 0, tz="UTC")
+        naive_dt = aware_dt.as_timezone(None)
+
+        assert naive_dt.tzinfo is None
+        assert naive_dt.year == 2024
+        assert naive_dt.month == 1
+        assert naive_dt.day == 15
+        assert naive_dt.hour == 14  # Keeps the local time representation
+        assert naive_dt.minute == 30
+        assert naive_dt.second == 0
+
+    def test_as_timezone_naive_to_naive(self):
+        """Test converting naive datetime to naive (should return copy)."""
+        naive_dt = DateTime(2024, 1, 15, 14, 30, 0, tz=None)
+        copy_dt = naive_dt.as_timezone(None)
+
+        assert copy_dt.tzinfo is None
+        assert copy_dt == naive_dt
+        assert copy_dt is not naive_dt  # Should be a new instance
+
+    def test_as_timezone_naive_to_aware_raises_error(self):
+        """Test that converting naive to timezone-aware raises ValueError."""
+        naive_dt = DateTime(2024, 1, 15, 14, 30, 0, tz=None)
+
+        with pytest.raises(ValueError, match="Cannot convert naive DateTime to timezone-aware"):
+            naive_dt.as_timezone("UTC")
+
+    def test_as_timezone_invalid_timezone(self):
+        """Test that invalid timezone raises ValueError."""
+        dt = DateTime(2024, 1, 15, 14, 30, 0, tz="UTC")
+
+        with pytest.raises(ValueError, match="Invalid timezone"):
+            dt.as_timezone("Invalid/Timezone")
+
+    def test_as_timezone_preserves_microseconds(self):
+        """Test that timezone conversion preserves microseconds."""
+        utc_dt = DateTime(2024, 1, 15, 14, 30, 45, 123456, tz="UTC")
+        ny_dt = utc_dt.as_timezone("America/New_York")
+
+        assert ny_dt.microsecond == 123456
+
+    def test_as_timezone_dst_boundary(self):
+        """Test timezone conversion around DST boundary."""
+        # Test time just before DST starts in 2024 (March 10, 2:00 AM -> 3:00 AM)
+        utc_dt = DateTime(2024, 3, 10, 6, 30, 0, tz="UTC")  # 1:30 AM EST
+        ny_dt = utc_dt.as_timezone("America/New_York")
+
+        assert ny_dt.hour == 1  # Should be 1:30 AM EST
+
+        # Test time after DST starts
+        utc_dt_after = DateTime(2024, 3, 10, 7, 30, 0, tz="UTC")  # After DST
+        ny_dt_after = utc_dt_after.as_timezone("America/New_York")
+
+        assert ny_dt_after.hour == 3  # Should be 3:30 AM EDT (skipped 2:30 AM)
+
+    def test_as_timezone_various_timezones(self):
+        """Test conversion to various worldwide timezones."""
+        utc_dt = DateTime(2024, 1, 15, 12, 0, 0, tz="UTC")
+
+        test_cases = [
+            ("Europe/London", 12),      # UTC+0 in winter
+            ("Europe/Warsaw", 13),      # UTC+1 in winter
+            ("Asia/Tokyo", 21),         # UTC+9
+            ("America/New_York", 7),    # UTC-5 in winter
+            ("America/Los_Angeles", 4), # UTC-8 in winter
+            ("Australia/Sydney", 23),   # UTC+11 in summer
+        ]
+
+        for tz_name, expected_hour in test_cases:
+            converted = utc_dt.as_timezone(tz_name)
+            assert converted.hour == expected_hour, f"Failed for {tz_name}"
+            assert converted == utc_dt  # Should represent same moment

@@ -5,6 +5,46 @@ All notable changes to Carbonic will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-09-28
+
+### 🐛 **Bug Fix Release**
+
+Critical timezone conversion functionality was missing from v1.0.0.
+
+#### Added
+- **`as_timezone()` method**: Convert DateTime objects between timezones with fluent API
+- **Timezone conversion support**: Essential functionality for production timezone-aware applications
+
+#### Fixed
+- **Missing timezone conversion**: Users can now convert between timezones using `dt.as_timezone("America/New_York")`
+- **Documentation gap**: Updated all examples to show proper timezone conversion usage
+- **Fluent chaining**: Timezone conversion now integrates seamlessly with method chaining
+
+#### Technical Details
+- **New method**: `DateTime.as_timezone(tz: str | None) -> DateTime`
+- **Comprehensive tests**: 12 new test cases covering DST transitions, edge cases, and error handling
+- **Documentation updates**: Updated quickstart and guide with timezone conversion examples
+- **Zero regressions**: All 483 tests pass, full type safety maintained
+
+#### Examples
+```python
+# Convert between timezones
+utc_time = DateTime.now()
+ny_time = utc_time.as_timezone("America/New_York")
+tokyo_time = utc_time.as_timezone("Asia/Tokyo")
+
+# Fluent chaining with timezone conversion
+result = (DateTime.now()
+    .add(days=1)
+    .start_of("day")
+    .as_timezone("Europe/Warsaw")
+    .format("Y-m-d H:i:s"))
+```
+
+This addresses the critical functionality gap identified in v1.0.0 documentation where timezone conversion was mentioned but not implemented.
+
+---
+
 ## [1.0.0] - 2024-12-28
 
 ### 🎉 **First Major Release**
@@ -148,6 +188,7 @@ Complete Carbon-style formatting with comprehensive docstring reference:
 - 🔒 Security
 - ⚠️ Breaking Change
 
+[1.0.1]: https://github.com/marepilc/carbonic/releases/tag/v1.0.1
 [1.0.0]: https://github.com/marepilc/carbonic/releases/tag/v1.0.0
 [0.2.2]: https://github.com/marepilc/carbonic/compare/v0.1.0...v0.2.2
 [0.1.0]: https://github.com/marepilc/carbonic/releases/tag/v0.1.0

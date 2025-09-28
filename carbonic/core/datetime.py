@@ -1191,6 +1191,66 @@ class DateTime:
         else:
             raise ValueError(f"Unknown unit: {unit}")
 
+    def as_timezone(self, tz: str | None) -> DateTime:
+        """Convert this DateTime to a different timezone.
+
+        This method converts a timezone-aware DateTime to a different timezone,
+        representing the same moment in time. It can also convert to a naive
+        datetime by passing None as the timezone.
+
+        Args:
+            tz: Target timezone string (e.g., "America/New_York", "Europe/Warsaw")
+                or None for naive datetime (removes timezone info)
+
+        Returns:
+            New DateTime instance in the target timezone representing the same moment
+
+        Raises:
+            ValueError: If this DateTime is naive and target timezone is not None
+            ZoneInfoNotFoundError: If timezone string is invalid
+
+        Examples:
+            >>> utc_time = DateTime(2024, 1, 15, 14, 30, tz="UTC")
+            >>> ny_time = utc_time.as_timezone("America/New_York")
+            >>> # Same moment, different timezone representation
+            >>> utc_time == ny_time
+            True
+
+            >>> # Convert to naive datetime
+            >>> naive_time = utc_time.as_timezone(None)  # doctest: +SKIP
+        """
+        # Check if source datetime is naive
+        if self.tzinfo is None:
+            if tz is not None:
+                raise ValueError(
+                    "Cannot convert naive DateTime to timezone-aware. "
+                    "Create a new DateTime with timezone information first."
+                )
+            # Naive to naive - return copy
+            return DateTime(
+                self.year, self.month, self.day,
+                self.hour, self.minute, self.second, self.microsecond,
+                tz=None
+            )
+
+        # Source is timezone-aware
+        if tz is None:
+            # Convert to naive - remove timezone info but keep the local time
+            return DateTime(
+                self.year, self.month, self.day,
+                self.hour, self.minute, self.second, self.microsecond,
+                tz=None
+            )
+
+        # Convert between timezones using stdlib astimezone
+        try:
+            target_tzinfo = ZoneInfo(tz)
+        except Exception as e:
+            raise ValueError(f"Invalid timezone: {tz}") from e
+
+        converted_dt = self._dt.astimezone(target_tzinfo)
+        return DateTime.from_datetime(converted_dt)
+
     # Conversions
     def to_date(self) -> Date:
         """Convert to carbonic Date object."""

@@ -265,20 +265,26 @@ print(f"Timezone object: {tokyo_tz}")
 
 ```python
 from carbonic import DateTime
-from zoneinfo import ZoneInfo
 
 # Create in one timezone
 paris_time = DateTime(2024, 1, 15, 15, 30, tz="Europe/Paris")
 print(paris_time)  # 2024-01-15T15:30:00+01:00
 
-# Convert to different timezones by creating new instances
-utc_time = DateTime.from_datetime(paris_time.to_datetime().astimezone(ZoneInfo("UTC")))
-tokyo_time = DateTime.from_datetime(paris_time.to_datetime().astimezone(ZoneInfo("Asia/Tokyo")))
-ny_time = DateTime.from_datetime(paris_time.to_datetime().astimezone(ZoneInfo("America/New_York")))
+# Convert to different timezones using as_timezone()
+utc_time = paris_time.as_timezone("UTC")
+tokyo_time = paris_time.as_timezone("Asia/Tokyo")
+ny_time = paris_time.as_timezone("America/New_York")
 
 print(f"UTC:   {utc_time}")    # 2024-01-15T14:30:00+00:00
 print(f"Tokyo: {tokyo_time}")  # 2024-01-15T23:30:00+09:00
 print(f"NY:    {ny_time}")     # 2024-01-15T09:30:00-05:00
+
+# All represent the same moment in time
+assert paris_time == utc_time == tokyo_time == ny_time
+
+# Convert to naive datetime (removes timezone info)
+naive_time = paris_time.as_timezone(None)
+print(f"Naive: {naive_time}")  # 2024-01-15T15:30:00 (no timezone)
 ```
 
 ### Working with Naive Datetimes
@@ -433,8 +439,7 @@ print(dt.to_time_string())     # "14:30:45"
 print(dt.to_datetime_string()) # "2024-01-15 14:30:45"
 
 # With timezone conversion
-from zoneinfo import ZoneInfo
-ny_dt = DateTime.from_datetime(dt.to_datetime().astimezone(ZoneInfo("America/New_York")))
+ny_dt = dt.as_timezone("America/New_York")
 print(ny_dt.to_iso_string())   # "2024-01-15T09:30:45.123456-05:00"
 ```
 
@@ -601,16 +606,18 @@ result = (DateTime.now()
     .format("Y-m-d H:i:s")
 )
 
-# For timezone conversion, create a new instance
-ny_dt = DateTime.from_datetime(
-    DateTime.now().add(days=1).start_of("day").to_datetime().astimezone(ZoneInfo("America/New_York"))
+# For timezone conversion, use as_timezone() method
+result = (DateTime.now()
+    .add(days=1)
+    .start_of("day")
+    .as_timezone("America/New_York")
+    .format("Y-m-d H:i:s")
 )
-result = ny_dt.format("Y-m-d H:i:s")
 
 # Also good - intermediate variables for clarity
 tomorrow = DateTime.now().add(days=1)
 start_of_tomorrow = tomorrow.start_of("day")
-ny_time = DateTime.from_datetime(start_of_tomorrow.to_datetime().astimezone(ZoneInfo("America/New_York")))
+ny_time = start_of_tomorrow.as_timezone("America/New_York")
 formatted = ny_time.format("Y-m-d H:i:s")
 ```
 
@@ -628,7 +635,7 @@ except ValueError as e:
 
 # Handle timezone conversions carefully
 dt = DateTime(2024, 3, 31, 2, 30, tz="America/New_York")  # During DST transition
-utc_time = DateTime.from_datetime(dt.to_datetime().astimezone(ZoneInfo("UTC")))  # This works correctly
+utc_time = dt.as_timezone("UTC")  # This works correctly
 ```
 
 ## Performance Tips
