@@ -1,7 +1,7 @@
 site_name: Carbonic
-site_description: A modern Python datetime library with fluent API and immutable design
+site_description: Modern Python datetime library with fluent API, timezone conversion, and comprehensive localization. Alternative to Arrow, Pendulum, and datetime.
 site_author: Marek Pilczuk
-site_url: https://carbonic.readthedocs.io/
+site_url: https://marepilc.github.io/carbonic/
 
 repo_name: marepilc/carbonic
 repo_url: https://github.com/marepilc/carbonic
@@ -16,6 +16,7 @@ theme:
   font:
     text: Exo 2
     code: JetBrains Mono
+  custom_dir: docs/overrides
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
@@ -66,9 +67,16 @@ extra:
       link: https://pypi.org/project/carbonic/
   version:
     provider: mike
+  generator: false  # Remove "Made with Material for MkDocs" for cleaner footer
+  analytics:
+    provider: google
+    property: G-59GM9F65HZ
 
 extra_css:
   - assets/extra.css
+
+extra_javascript:
+  - assets/extra.js
 
 markdown_extensions:
   - admonition
@@ -98,7 +106,8 @@ markdown_extensions:
       permalink: true
 
 plugins:
-  - search
+  - search:
+      lang: en
   - mkdocstrings:
       handlers:
         python:
@@ -138,13 +147,9 @@ nav:
     - Timezone Handling: guide/timezones.md
     - Localization: guide/localization.md
     - Business Days: guide/business-days.md
-    - Comparisons: guide/comparisons.md
+    - Pydantic Integration: guide/pydantic.md
   - Examples:
     - Common Tasks: examples/common-tasks.md
-    - Working with APIs: examples/api-integration.md
-    - Data Processing: examples/data-processing.md
-    - Scheduling: examples/scheduling.md
-    - Testing: examples/testing.md
   - API Reference:
     - Overview: api/index.md
     - carbonic: api/carbonic.md
@@ -157,7 +162,3 @@ nav:
     - Locale: api/locale.md
   - Development:
     - Contributing: development/contributing.md
-    - Development Setup: development/setup.md
-    - Testing: development/testing.md
-    - Release Process: development/releases.md
-    - Architecture: development/architecture.md

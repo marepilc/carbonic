@@ -15,9 +15,10 @@ performance = ["ciso8601>=2.3.0"]
 pydantic = ["pydantic>=2.0.0"]
 
 [project.urls]
-
+Documentation = "https://marepilc.github.io/carbonic/"
 Repository = "https://github.com/marepilc/carbonic"
 Issues = "https://github.com/marepilc/carbonic/issues"
+Changelog = "https://github.com/marepilc/carbonic/blob/master/CHANGELOG.md"
 
 [dependency-groups]
 dev = [

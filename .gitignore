@@ -66,3 +66,6 @@ dmypy.json
 
 *.ipynb
 .ruff_cache/
+
+# MkDocs build output
+site/
