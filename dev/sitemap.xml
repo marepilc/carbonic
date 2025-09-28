@@ -2,82 +2,82 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://carbonic.readthedocs.io/dev/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/api/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/api/carbonic/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/api/date/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/api/datetime/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/api/duration/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/api/exceptions/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/api/interval/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/api/locale/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/api/period/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/development/contributing/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/examples/common-tasks/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/getting-started/concepts/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/getting-started/installation/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/getting-started/migration/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/getting-started/quickstart/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/guide/date/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/guide/datetime/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/guide/duration/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://carbonic.readthedocs.io/dev/guide/pydantic/</loc>
-         <lastmod>2025-09-27</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
 </urlset>
