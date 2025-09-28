@@ -193,11 +193,11 @@ class TestDateTimeLocalization:
         dt = DateTime(2023, 12, 25, 14, 30, 15, tz="UTC")
 
         # English
-        result = dt.format("l, F j, Y \\a\\t G:i:s", locale="en")
+        result = dt.format("l, F j, Y {a}{t} G:i:s", locale="en")
         assert result == "Monday, December 25, 2023 at 14:30:15"
 
         # Polish
-        result = dt.format("l, F j, Y \\o G:i:s", locale="pl")
+        result = dt.format("l, F j, Y {o} G:i:s", locale="pl")
         assert result == "poniedziałek, grudzień 25, 2023 o 14:30:15"
 
 
@@ -319,7 +319,7 @@ class TestSpanishLocalization:
         """Test localized DateTime formatting in Spanish."""
         dt = DateTime(2023, 12, 25, 14, 30, 15, tz="UTC")
 
-        result = dt.format("l, F j, Y \\a \\l\\a\\s G:i:s", locale="es")
+        result = dt.format("l, F j, Y {a} {l}{a}{s} G:i:s", locale="es")
         assert result == "lunes, diciembre 25, 2023 a las 14:30:15"
 
     def test_spanish_number_formatting(self):
@@ -433,7 +433,7 @@ class TestFrenchLocalization:
         """Test localized DateTime formatting in French."""
         dt = DateTime(2023, 12, 25, 14, 30, 15, tz="UTC")
 
-        result = dt.format("l, F j, Y \\à G:i:s", locale="fr")
+        result = dt.format("l, F j, Y {à} G:i:s", locale="fr")
         assert result == "lundi, décembre 25, 2023 à 14:30:15"
 
     def test_french_number_formatting(self):
@@ -547,7 +547,7 @@ class TestGermanLocalization:
         """Test localized DateTime formatting in German."""
         dt = DateTime(2023, 12, 25, 14, 30, 15, tz="UTC")
 
-        result = dt.format("l, F j, Y \\u\\m G:i:s", locale="de")
+        result = dt.format("l, F j, Y {u}{m} G:i:s", locale="de")
         assert result == "Montag, Dezember 25, 2023 um 14:30:15"
 
     def test_german_number_formatting(self):
@@ -661,7 +661,7 @@ class TestPortugueseLocalization:
         """Test localized DateTime formatting in Portuguese."""
         dt = DateTime(2023, 12, 25, 14, 30, 15, tz="UTC")
 
-        result = dt.format("l, F j, Y \\à\\s G:i:s", locale="pt")
+        result = dt.format("l, F j, Y {à}{s} G:i:s", locale="pt")
         assert result == "segunda-feira, dezembro 25, 2023 às 14:30:15"
 
     def test_portuguese_number_formatting(self):

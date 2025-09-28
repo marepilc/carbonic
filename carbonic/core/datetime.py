@@ -417,8 +417,9 @@ class DateTime:
     def format(self, fmt: str, *, locale: str | None = None) -> str:
         """Format datetime using Carbon-style format string.
 
-        Uses Carbon-style tokens for flexible datetime formatting. Escape characters
-        with backslash (\\) to include them literally.
+        Uses Carbon-style tokens for flexible datetime formatting. Escape Carbon tokens
+        with curly braces like {Y} to include them literally. Use Python string literals
+        for special characters like \\n, \\t, \\r.
 
         ## Format Tokens
 
@@ -474,6 +475,18 @@ class DateTime:
             'lunes, enero 15, 2024'
             >>> dt.format("H:i A (T)")
             '14:30 PM (UTC)'
+
+            # Escaping Carbon tokens with curly braces
+            >>> dt.format("{Y} = Y")
+            'Y = 2024'
+
+            # Mix of escaped tokens and literal text
+            >>> dt.format("{Y}-{m}-{d} = Y-m-d")
+            'Y-m-d = 2024-01-15'
+
+            # Use Python string literals for special characters
+            >>> dt.format("Y-m-d\\nH:i:s")  # \\n in Python string
+            '2024-01-15\\n14:30:45'
         """
         return self._carbon_format(fmt, locale=locale)
 
@@ -547,11 +560,16 @@ class DateTime:
         while i < len(fmt):
             char = fmt[i]
 
-            # Handle escaped characters
-            if char == "\\" and i + 1 < len(fmt):
-                result += fmt[i + 1]
-                i += 2
-                continue
+            # Handle bracket escapes for Carbon tokens {Y}, {m}, etc.
+            if char == "{" and i + 1 < len(fmt):
+                # Find the closing bracket
+                close_bracket = fmt.find("}", i + 1)
+                if close_bracket != -1:
+                    escape_content = fmt[i + 1:close_bracket]
+                    # Include the content literally (escape Carbon tokens)
+                    result += escape_content
+                    i = close_bracket + 1
+                    continue
 
             # Handle jS (day with ordinal suffix)
             if char == "j" and i + 1 < len(fmt) and fmt[i + 1] == "S":

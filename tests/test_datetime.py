@@ -892,7 +892,9 @@ class TestDateTimeTimezoneConversion:
         back_to_utc = converted.as_timezone("UTC")
 
         assert original == back_to_utc
-        assert original._dt == back_to_utc._dt  # Should be identical
+        assert (
+            original.to_datetime() == back_to_utc.to_datetime()
+        )  # Should be identical
 
     def test_as_timezone_multiple_conversions(self):
         """Test converting through multiple timezones."""
@@ -930,7 +932,9 @@ class TestDateTimeTimezoneConversion:
         """Test that converting naive to timezone-aware raises ValueError."""
         naive_dt = DateTime(2024, 1, 15, 14, 30, 0, tz=None)
 
-        with pytest.raises(ValueError, match="Cannot convert naive DateTime to timezone-aware"):
+        with pytest.raises(
+            ValueError, match="Cannot convert naive DateTime to timezone-aware"
+        ):
             naive_dt.as_timezone("UTC")
 
     def test_as_timezone_invalid_timezone(self):
@@ -966,15 +970,68 @@ class TestDateTimeTimezoneConversion:
         utc_dt = DateTime(2024, 1, 15, 12, 0, 0, tz="UTC")
 
         test_cases = [
-            ("Europe/London", 12),      # UTC+0 in winter
-            ("Europe/Warsaw", 13),      # UTC+1 in winter
-            ("Asia/Tokyo", 21),         # UTC+9
-            ("America/New_York", 7),    # UTC-5 in winter
-            ("America/Los_Angeles", 4), # UTC-8 in winter
-            ("Australia/Sydney", 23),   # UTC+11 in summer
+            ("Europe/London", 12),  # UTC+0 in winter
+            ("Europe/Warsaw", 13),  # UTC+1 in winter
+            ("Asia/Tokyo", 21),  # UTC+9
+            ("America/New_York", 7),  # UTC-5 in winter
+            ("America/Los_Angeles", 4),  # UTC-8 in winter
+            ("Australia/Sydney", 23),  # UTC+11 in summer
         ]
 
         for tz_name, expected_hour in test_cases:
             converted = utc_dt.as_timezone(tz_name)
             assert converted.hour == expected_hour, f"Failed for {tz_name}"
             assert converted == utc_dt  # Should represent same moment
+
+
+class TestDateTimeFormatEscaping:
+    """Test escape sequences in format strings."""
+
+    def test_escape_carbon_tokens(self):
+        """Test escaping Carbon format tokens."""
+        dt = DateTime(2024, 1, 15, 14, 30, 45, tz="UTC")
+
+        # Escape Y token
+        result = dt.format("{Y} = Y")
+        assert result == "Y = 2024"
+
+        # Escape multiple tokens
+        result = dt.format("{Y}-{m}-{d} = Y-m-d")
+        assert result == "Y-m-d = 2024-01-15"
+
+        # n and j tokens
+        result = dt.format("{n}/{j} = n/j")
+        assert result == "n/j = 1/15"
+
+    def test_python_string_literals(self):
+        """Test using Python string literals for special characters."""
+        dt = DateTime(2024, 1, 15, 14, 30, 45)
+
+        # Test newline using Python string literal
+        result = dt.format("Y-m-d\nH:i:s")
+        assert result == "2024-01-15\n14:30:45"
+
+        # Test tab using Python string literal
+        result = dt.format("Y-m-d\tH:i:s")
+        assert result == "2024-01-15\t14:30:45"
+
+        # Test carriage return using Python string literal
+        result = dt.format("Y-m-d\rH:i:s")
+        assert result == "2024-01-15\r14:30:45"
+
+    def test_escape_backslash(self):
+        """Test escaping backslash itself."""
+        dt = DateTime(2024, 1, 15, 14, 30, 45, tz="UTC")
+
+        # Escape backslash
+        result = dt.format("Y\\m\\d")
+        assert result == "2024\\01\\15"
+
+    def test_mixed_escaping(self):
+        """Test mixed Carbon token escaping with Python string literals."""
+        dt = DateTime(2024, 1, 15, 14, 30, 45, tz="UTC")
+
+        # Mix of escaped tokens and Python string literals
+        result = dt.format("{Y}-{m}-{d}\nH:i:s\n{Y} BEK")
+        expected = "Y-m-d\n14:30:45\nY BEK"
+        assert result == expected

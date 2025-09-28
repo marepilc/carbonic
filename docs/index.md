@@ -44,8 +44,8 @@ from carbonic import DateTime
 utc_time = DateTime.now()  # UTC by default
 ny_time = DateTime.now("America/New_York")
 
-# Convert between timezones would require timezone conversion methods
-# (Note: timezone conversion methods may need to be implemented)
+# Convert between timezones
+tokyo_time = utc_time.as_timezone("Asia/Tokyo")
 ```
 
 ### 📅 **Rich Date Operations**
@@ -87,7 +87,7 @@ formatted_pl = dt.format("l, j F Y", locale="pl")  # "poniedziałek, 15 stycznia
 duration_pl = duration.humanize(locale="pl")       # "2 godziny 30 minut"
 
 # Spanish localization
-formatted_es = dt.format("l, j \\de F \\de Y", locale="es")  # "lunes, 15 de enero de 2024"
+formatted_es = dt.format("l, j {d}e F {d}e Y", locale="es")  # "lunes, 15 de enero de 2024"
 duration_es = duration.humanize(locale="es")       # "2 horas 30 minutos"
 
 # French localization
@@ -99,7 +99,7 @@ formatted_de = dt.format("l, j. F Y", locale="de") # "Montag, 15. Januar 2024"
 duration_de = duration.humanize(locale="de")       # "2 Stunden 30 Minuten"
 
 # Portuguese localization
-formatted_pt = dt.format("l, j \\de F \\de Y", locale="pt")  # "segunda-feira, 15 de janeiro de 2024"
+formatted_pt = dt.format("l, j {d}e F {d}e Y", locale="pt")  # "segunda-feira, 15 de janeiro de 2024"
 duration_pt = duration.humanize(locale="pt")       # "2 horas 30 minutos"
 ```
 

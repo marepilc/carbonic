@@ -194,7 +194,7 @@ class TestCiso8601Integration:
             "Y-m-d H:i:s",
             "F j, Y g:i A",
             "l, F j, Y",
-            "Y-m-d\\TH:i:s\\Z",
+            "Y-m-d{T}H:i:s{Z}",
         ]
 
         # Benchmark 1: ISO Parsing Performance (ciso8601 optimization)
@@ -335,8 +335,8 @@ class TestLazyEvaluationPreparation:
             "Y-m-d H:i:s",
             "F j, Y g:i A",  # Full month name
             "l, F j, Y",  # Full day and month names
-            "Y-m-d\\TH:i:s\\Z",  # ISO format with escapes
-            "jS \\o\\f F Y",  # Ordinal day
+            "Y-m-d{T}H:i:s{Z}",  # ISO format with escapes
+            "jS {o}{f} F Y",  # Ordinal day
         ]
 
         for fmt in formats:

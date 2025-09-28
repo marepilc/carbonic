@@ -22,7 +22,8 @@ dt = DateTime(2024, 1, 15, 14, 30, tz="UTC")
 
 # Fluent operations
 result = dt.add(days=7).end_of("month")
-# Note: timezone conversion methods may need implementation
+# Convert between timezones
+result = dt.as_timezone("America/New_York")
 ```
 
 ### [Date](date.md)
@@ -260,7 +261,7 @@ naive = DateTime(2024, 1, 15, 14, 30, tz=None)
 
 ## Version Compatibility
 
-Current version: **0.2.0**
+Current version: **1.0.1**
 
 - **Python**: 3.12+
 - **Dependencies**: None (stdlib only)

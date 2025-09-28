@@ -514,7 +514,7 @@ def test_date_carbon_format_edge_cases():
     # Test different combinations
     date2 = Date(2023, 6, 15)
     assert date2.format("D, M j, Y") == "Thu, Jun 15, 2023"
-    assert date2.format("l \\t\\h\\e jS \\o\\f F") == "Thursday the 15th of June"
+    assert date2.format("l the jS of F") == "Thursday the 15th of June"
 
 
 def test_date_carbon_format_ordinals():
