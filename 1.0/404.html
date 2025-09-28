@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="A modern Python datetime library with fluent API and immutable design">
+        <meta name="description" content="Modern Python datetime library with fluent API, timezone conversion, and comprehensive localization. Alternative to Arrow, Pendulum, and datetime.">
       
       
         <meta name="author" content="Marek Pilczuk">
@@ -15,7 +15,7 @@
       
       
       
-      <link rel="icon" href="/1.0/assets/images/favicon.ico">
+      <link rel="icon" href="/carbonic/1.0/assets/images/favicon.ico">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
     
     
@@ -24,10 +24,10 @@
       
     
     
-      <link rel="stylesheet" href="/1.0/assets/stylesheets/main.e53b48f4.min.css">
+      <link rel="stylesheet" href="/carbonic/1.0/assets/stylesheets/main.e53b48f4.min.css">
       
         
-        <link rel="stylesheet" href="/1.0/assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="/carbonic/1.0/assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,17 +46,53 @@
       
     
     
-      <link rel="stylesheet" href="/1.0/assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="/carbonic/1.0/assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="/1.0/assets/extra.css">
+      <link rel="stylesheet" href="/carbonic/1.0/assets/extra.css">
     
-    <script>__md_scope=new URL("/1.0",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("/carbonic/1.0",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-59GM9F65HZ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-59GM9F65HZ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-59GM9F65HZ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
 
     
     
     
+  <!-- SEO Meta Tags -->
+  <meta name="keywords" content="python datetime library, timezone conversion, fluent api, immutable datetime, carbon alternative, arrow alternative, pendulum alternative, python date time, business days, localization">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content=" - Carbonic">
+  <meta property="og:description" content="Modern Python datetime library with fluent API, timezone conversion, and comprehensive localization. Alternative to Arrow, Pendulum, and datetime.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="">
+  <meta property="og:site_name" content="Carbonic">
+  <meta property="og:image" content="https://marepilc.github.io/carbonic/1.0assets/images/carbonic_logo.svg">
+
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content=" - Carbonic">
+  <meta name="twitter:description" content="Modern Python datetime library with fluent API, timezone conversion, and comprehensive localization. Alternative to Arrow, Pendulum, and datetime.">
+  <meta name="twitter:image" content="https://marepilc.github.io/carbonic/1.0assets/images/carbonic_logo.svg">
+
+  <!-- Additional SEO -->
+  <meta name="author" content="Marek Pilczuk">
+  <link rel="canonical" href="">
+
+  <!-- Verify ownership (add when ready) -->
+  <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE"> -->
+
   </head>
   
   
@@ -91,9 +127,9 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/1.0/." title="Carbonic" class="md-header__button md-logo" aria-label="Carbonic" data-md-component="logo">
+    <a href="/carbonic/1.0/." title="Carbonic" class="md-header__button md-logo" aria-label="Carbonic" data-md-component="logo">
       
-  <img src="/1.0/assets/images/logo_mono.svg" alt="logo">
+  <img src="/carbonic/1.0/assets/images/logo_mono.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -232,7 +268,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/1.0/." class="md-tabs__link">
+      <a href="/carbonic/1.0/." class="md-tabs__link">
         
   
   
@@ -253,7 +289,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/1.0/getting-started/installation/" class="md-tabs__link">
+        <a href="/carbonic/1.0/getting-started/installation/" class="md-tabs__link">
           
   
   
@@ -273,7 +309,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/1.0/guide/datetime/" class="md-tabs__link">
+        <a href="/carbonic/1.0/guide/datetime/" class="md-tabs__link">
           
   
   
@@ -293,7 +329,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/1.0/examples/common-tasks/" class="md-tabs__link">
+        <a href="/carbonic/1.0/examples/common-tasks/" class="md-tabs__link">
           
   
   
@@ -313,7 +349,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/1.0/api/" class="md-tabs__link">
+        <a href="/carbonic/1.0/api/" class="md-tabs__link">
           
   
   
@@ -333,7 +369,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/1.0/development/contributing/" class="md-tabs__link">
+        <a href="/carbonic/1.0/development/contributing/" class="md-tabs__link">
           
   
   
@@ -375,9 +411,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/1.0/." title="Carbonic" class="md-nav__button md-logo" aria-label="Carbonic" data-md-component="logo">
+    <a href="/carbonic/1.0/." title="Carbonic" class="md-nav__button md-logo" aria-label="Carbonic" data-md-component="logo">
       
-  <img src="/1.0/assets/images/logo_mono.svg" alt="logo">
+  <img src="/carbonic/1.0/assets/images/logo_mono.svg" alt="logo">
 
     </a>
     Carbonic
@@ -404,7 +440,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/." class="md-nav__link">
+      <a href="/carbonic/1.0/." class="md-nav__link">
         
   
   
@@ -471,7 +507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/getting-started/installation/" class="md-nav__link">
+      <a href="/carbonic/1.0/getting-started/installation/" class="md-nav__link">
         
   
   
@@ -494,7 +530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/getting-started/quickstart/" class="md-nav__link">
+      <a href="/carbonic/1.0/getting-started/quickstart/" class="md-nav__link">
         
   
   
@@ -517,7 +553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/getting-started/concepts/" class="md-nav__link">
+      <a href="/carbonic/1.0/getting-started/concepts/" class="md-nav__link">
         
   
   
@@ -540,7 +576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/getting-started/migration/" class="md-nav__link">
+      <a href="/carbonic/1.0/getting-started/migration/" class="md-nav__link">
         
   
   
@@ -615,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/guide/datetime/" class="md-nav__link">
+      <a href="/carbonic/1.0/guide/datetime/" class="md-nav__link">
         
   
   
@@ -638,7 +674,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/guide/date/" class="md-nav__link">
+      <a href="/carbonic/1.0/guide/date/" class="md-nav__link">
         
   
   
@@ -661,7 +697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/guide/duration/" class="md-nav__link">
+      <a href="/carbonic/1.0/guide/duration/" class="md-nav__link">
         
   
   
@@ -684,7 +720,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/guide/period.md" class="md-nav__link">
+      <a href="/carbonic/1.0/guide/period/" class="md-nav__link">
         
   
   
@@ -707,7 +743,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/guide/interval.md" class="md-nav__link">
+      <a href="/carbonic/1.0/guide/interval/" class="md-nav__link">
         
   
   
@@ -730,7 +766,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/guide/parsing-formatting.md" class="md-nav__link">
+      <a href="/carbonic/1.0/guide/parsing-formatting/" class="md-nav__link">
         
   
   
@@ -753,7 +789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/guide/timezones.md" class="md-nav__link">
+      <a href="/carbonic/1.0/guide/timezones/" class="md-nav__link">
         
   
   
@@ -776,7 +812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/guide/localization.md" class="md-nav__link">
+      <a href="/carbonic/1.0/guide/localization/" class="md-nav__link">
         
   
   
@@ -799,7 +835,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/guide/business-days.md" class="md-nav__link">
+      <a href="/carbonic/1.0/guide/business-days/" class="md-nav__link">
         
   
   
@@ -822,12 +858,12 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/guide/comparisons.md" class="md-nav__link">
+      <a href="/carbonic/1.0/guide/pydantic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Comparisons
+    Pydantic Integration
     
   </span>
   
@@ -897,104 +933,12 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/examples/common-tasks/" class="md-nav__link">
+      <a href="/carbonic/1.0/examples/common-tasks/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     Common Tasks
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="/1.0/examples/api-integration.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Working with APIs
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="/1.0/examples/data-processing.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Data Processing
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="/1.0/examples/scheduling.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Scheduling
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="/1.0/examples/testing.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Testing
     
   </span>
   
@@ -1064,7 +1008,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/api/" class="md-nav__link">
+      <a href="/carbonic/1.0/api/" class="md-nav__link">
         
   
   
@@ -1087,7 +1031,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/api/carbonic/" class="md-nav__link">
+      <a href="/carbonic/1.0/api/carbonic/" class="md-nav__link">
         
   
   
@@ -1110,7 +1054,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/api/datetime/" class="md-nav__link">
+      <a href="/carbonic/1.0/api/datetime/" class="md-nav__link">
         
   
   
@@ -1133,7 +1077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/api/date/" class="md-nav__link">
+      <a href="/carbonic/1.0/api/date/" class="md-nav__link">
         
   
   
@@ -1156,7 +1100,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/api/duration/" class="md-nav__link">
+      <a href="/carbonic/1.0/api/duration/" class="md-nav__link">
         
   
   
@@ -1179,7 +1123,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/api/period/" class="md-nav__link">
+      <a href="/carbonic/1.0/api/period/" class="md-nav__link">
         
   
   
@@ -1202,7 +1146,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/api/interval/" class="md-nav__link">
+      <a href="/carbonic/1.0/api/interval/" class="md-nav__link">
         
   
   
@@ -1225,7 +1169,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/api/exceptions/" class="md-nav__link">
+      <a href="/carbonic/1.0/api/exceptions/" class="md-nav__link">
         
   
   
@@ -1248,7 +1192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/api/locale/" class="md-nav__link">
+      <a href="/carbonic/1.0/api/locale/" class="md-nav__link">
         
   
   
@@ -1323,104 +1267,12 @@
   
   
     <li class="md-nav__item">
-      <a href="/1.0/development/contributing/" class="md-nav__link">
+      <a href="/carbonic/1.0/development/contributing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     Contributing
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="/1.0/development/setup.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Development Setup
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="/1.0/development/testing.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Testing
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="/1.0/development/releases.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Release Process
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="/1.0/development/architecture.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Architecture
     
   </span>
   
@@ -1480,11 +1332,6 @@
     </div>
   
   
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
-    </a>
-  
 </div>
       
         
@@ -1526,10 +1373,12 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "/1.0", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow", "toc.integrate"], "search": "/1.0/assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "/carbonic/1.0", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow", "toc.integrate"], "search": "/carbonic/1.0/assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="/1.0/assets/javascripts/bundle.f55a23d4.min.js"></script>
+      <script src="/carbonic/1.0/assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="/carbonic/1.0/assets/extra.js"></script>
       
     
   </body>

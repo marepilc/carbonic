@@ -6,13 +6,13 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="A modern Python datetime library with fluent API and immutable design">
+        <meta name="description" content="Modern Python datetime library with fluent API, timezone conversion, and comprehensive localization. Alternative to Arrow, Pendulum, and datetime.">
       
       
         <meta name="author" content="Marek Pilczuk">
       
       
-        <link rel="canonical" href="https://carbonic.readthedocs.io/1.0/api/carbonic/">
+        <link rel="canonical" href="https://marepilc.github.io/carbonic/1.0/api/carbonic/">
       
       
         <link rel="prev" href="../">
@@ -59,10 +59,46 @@
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-59GM9F65HZ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-59GM9F65HZ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-59GM9F65HZ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
 
     
     
     
+  <!-- SEO Meta Tags -->
+  <meta name="keywords" content="python datetime library, timezone conversion, fluent api, immutable datetime, carbon alternative, arrow alternative, pendulum alternative, python date time, business days, localization">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="carbonic - Carbonic">
+  <meta property="og:description" content="Modern Python datetime library with fluent API, timezone conversion, and comprehensive localization. Alternative to Arrow, Pendulum, and datetime.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://marepilc.github.io/carbonic/1.0/api/carbonic/">
+  <meta property="og:site_name" content="Carbonic">
+  <meta property="og:image" content="https://marepilc.github.io/carbonic/1.0assets/images/carbonic_logo.svg">
+
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="carbonic - Carbonic">
+  <meta name="twitter:description" content="Modern Python datetime library with fluent API, timezone conversion, and comprehensive localization. Alternative to Arrow, Pendulum, and datetime.">
+  <meta name="twitter:image" content="https://marepilc.github.io/carbonic/1.0assets/images/carbonic_logo.svg">
+
+  <!-- Additional SEO -->
+  <meta name="author" content="Marek Pilczuk">
+  <link rel="canonical" href="https://marepilc.github.io/carbonic/1.0/api/carbonic/">
+
+  <!-- Verify ownership (add when ready) -->
+  <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE"> -->
+
   </head>
   
   
@@ -697,7 +733,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/period.md" class="md-nav__link">
+      <a href="../../guide/period/" class="md-nav__link">
         
   
   
@@ -720,7 +756,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/interval.md" class="md-nav__link">
+      <a href="../../guide/interval/" class="md-nav__link">
         
   
   
@@ -743,7 +779,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/parsing-formatting.md" class="md-nav__link">
+      <a href="../../guide/parsing-formatting/" class="md-nav__link">
         
   
   
@@ -766,7 +802,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/timezones.md" class="md-nav__link">
+      <a href="../../guide/timezones/" class="md-nav__link">
         
   
   
@@ -789,7 +825,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/localization.md" class="md-nav__link">
+      <a href="../../guide/localization/" class="md-nav__link">
         
   
   
@@ -812,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/business-days.md" class="md-nav__link">
+      <a href="../../guide/business-days/" class="md-nav__link">
         
   
   
@@ -835,12 +871,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/comparisons.md" class="md-nav__link">
+      <a href="../../guide/pydantic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Comparisons
+    Pydantic Integration
     
   </span>
   
@@ -916,98 +952,6 @@
   
   <span class="md-ellipsis">
     Common Tasks
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/api-integration.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Working with APIs
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/data-processing.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Data Processing
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/scheduling.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Scheduling
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/testing.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Testing
     
   </span>
   
@@ -1364,6 +1308,33 @@
   <a href="#carbonic.DateTime.format--format-tokens" class="md-nav__link">
     <span class="md-ellipsis">
       Format Tokens
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.DateTime.format--escaping-carbon-tokens-with-curly-braces" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escaping Carbon tokens with curly braces
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.DateTime.format--mix-of-escaped-tokens-and-literal-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mix of escaped tokens and literal text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#carbonic.DateTime.format--use-python-string-literals-for-special-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use Python string literals for special characters
     </span>
   </a>
   
@@ -2473,98 +2444,6 @@
   
   <span class="md-ellipsis">
     Contributing
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../development/setup.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Development Setup
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../development/testing.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Testing
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../development/releases.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Release Process
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../development/architecture.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Architecture
     
   </span>
   
@@ -3862,8 +3741,9 @@ Supports both strftime (%Y-%m-%d %H:%M:%S) and Carbon (Y-m-d H:i:s) formats.</p>
     <div class="doc doc-contents ">
 
         <p>Format datetime using Carbon-style format string.</p>
-<p>Uses Carbon-style tokens for flexible datetime formatting. Escape characters
-with backslash () to include them literally.</p>
+<p>Uses Carbon-style tokens for flexible datetime formatting. Escape Carbon tokens
+with curly braces like {Y} to include them literally. Use Python string literals
+for special characters like \n, \t, \r.</p>
 <h6 id="carbonic.DateTime.format--format-tokens">Format Tokens<a class="headerlink" href="#carbonic.DateTime.format--format-tokens" title="Permanent link">&para;</a></h6>
 <table>
 <thead>
@@ -4114,6 +3994,18 @@ with backslash () to include them literally.</p>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="go">&#39;lunes, enero 15, 2024&#39;</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;H:i A (T)&quot;</span><span class="p">)</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="go">&#39;14:30 PM (UTC)&#39;</span>
+</span></code></pre></div>
+    <h6 id="carbonic.DateTime.format--escaping-carbon-tokens-with-curly-braces">Escaping Carbon tokens with curly braces<a class="headerlink" href="#carbonic.DateTime.format--escaping-carbon-tokens-with-curly-braces" title="Permanent link">&para;</a></h6>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{Y}</span><span class="s2"> = Y&quot;</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="go">&#39;Y = 2024&#39;</span>
+</span></code></pre></div>
+    <h6 id="carbonic.DateTime.format--mix-of-escaped-tokens-and-literal-text">Mix of escaped tokens and literal text<a class="headerlink" href="#carbonic.DateTime.format--mix-of-escaped-tokens-and-literal-text" title="Permanent link">&para;</a></h6>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{Y}</span><span class="s2">-</span><span class="si">{m}</span><span class="s2">-</span><span class="si">{d}</span><span class="s2"> = Y-m-d&quot;</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="go">&#39;Y-m-d = 2024-01-15&#39;</span>
+</span></code></pre></div>
+    <h6 id="carbonic.DateTime.format--use-python-string-literals-for-special-characters">Use Python string literals for special characters<a class="headerlink" href="#carbonic.DateTime.format--use-python-string-literals-for-special-characters" title="Permanent link">&para;</a></h6>
+    <div class="language-pycon highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;Y-m-d</span><span class="se">\n</span><span class="s2">H:i:s&quot;</span><span class="p">)</span>  <span class="c1"># \n in Python string</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="go">&#39;2024-01-15\n14:30:45&#39;</span>
 </span></code></pre></div>
 
 
@@ -8655,6 +8547,8 @@ meeting.duration()                              # Duration object</p>
 
 
 
+  
+
 
 
 
@@ -8686,11 +8580,6 @@ meeting.duration()                              # Duration object</p>
       Copyright &copy; 2025 Marek Pilczuk
     </div>
   
-  
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
-    </a>
   
 </div>
       
@@ -8737,6 +8626,8 @@ meeting.duration()                              # Duration object</p>
     
     
       <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../../assets/extra.js"></script>
       
     
   </body>
