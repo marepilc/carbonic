@@ -6,13 +6,13 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="A modern Python datetime library with fluent API and immutable design">
+        <meta name="description" content="Modern Python datetime library with fluent API, timezone conversion, and comprehensive localization. Alternative to Arrow, Pendulum, and datetime.">
       
       
         <meta name="author" content="Marek Pilczuk">
       
       
-        <link rel="canonical" href="https://carbonic.readthedocs.io/dev/guide/date/">
+        <link rel="canonical" href="https://marepilc.github.io/carbonic/dev/guide/date/">
       
       
         <link rel="prev" href="../datetime/">
@@ -59,10 +59,46 @@
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-59GM9F65HZ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-59GM9F65HZ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-59GM9F65HZ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
 
     
     
     
+  <!-- SEO Meta Tags -->
+  <meta name="keywords" content="python datetime library, timezone conversion, fluent api, immutable datetime, carbon alternative, arrow alternative, pendulum alternative, python date time, business days, localization">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="Date - Carbonic">
+  <meta property="og:description" content="Modern Python datetime library with fluent API, timezone conversion, and comprehensive localization. Alternative to Arrow, Pendulum, and datetime.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://marepilc.github.io/carbonic/dev/guide/date/">
+  <meta property="og:site_name" content="Carbonic">
+  <meta property="og:image" content="https://marepilc.github.io/carbonic/devassets/images/carbonic_logo.svg">
+
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Date - Carbonic">
+  <meta name="twitter:description" content="Modern Python datetime library with fluent API, timezone conversion, and comprehensive localization. Alternative to Arrow, Pendulum, and datetime.">
+  <meta name="twitter:image" content="https://marepilc.github.io/carbonic/devassets/images/carbonic_logo.svg">
+
+  <!-- Additional SEO -->
+  <meta name="author" content="Marek Pilczuk">
+  <link rel="canonical" href="https://marepilc.github.io/carbonic/dev/guide/date/">
+
+  <!-- Verify ownership (add when ready) -->
+  <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE"> -->
+
   </head>
   
   
@@ -1153,7 +1189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../period.md" class="md-nav__link">
+      <a href="../period/" class="md-nav__link">
         
   
   
@@ -1176,7 +1212,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../interval.md" class="md-nav__link">
+      <a href="../interval/" class="md-nav__link">
         
   
   
@@ -1199,7 +1235,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../parsing-formatting.md" class="md-nav__link">
+      <a href="../parsing-formatting/" class="md-nav__link">
         
   
   
@@ -1222,7 +1258,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../timezones.md" class="md-nav__link">
+      <a href="../timezones/" class="md-nav__link">
         
   
   
@@ -1245,7 +1281,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../localization.md" class="md-nav__link">
+      <a href="../localization/" class="md-nav__link">
         
   
   
@@ -1268,7 +1304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../business-days.md" class="md-nav__link">
+      <a href="../business-days/" class="md-nav__link">
         
   
   
@@ -1291,12 +1327,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../comparisons.md" class="md-nav__link">
+      <a href="../pydantic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Comparisons
+    Pydantic Integration
     
   </span>
   
@@ -1372,98 +1408,6 @@
   
   <span class="md-ellipsis">
     Common Tasks
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/api-integration.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Working with APIs
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/data-processing.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Data Processing
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/scheduling.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Scheduling
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/testing.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Testing
     
   </span>
   
@@ -1798,98 +1742,6 @@
   
   <span class="md-ellipsis">
     Contributing
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../development/setup.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Development Setup
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../development/testing.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Testing
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../development/releases.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Release Process
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../development/architecture.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Architecture
     
   </span>
   
@@ -2585,6 +2437,8 @@
 
 
 
+  
+
 
 
 
@@ -2616,11 +2470,6 @@
       Copyright &copy; 2025 Marek Pilczuk
     </div>
   
-  
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
-    </a>
   
 </div>
       
@@ -2667,6 +2516,8 @@
     
     
       <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../../assets/extra.js"></script>
       
     
   </body>
