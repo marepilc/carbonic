@@ -106,15 +106,17 @@ Carbonic has achieved feature completeness for its first major release. All core
 
 **These features are not needed for the first release but could enhance future versions:**
 
-### 📊 **v1.1.0 - Enhanced Parsing**
+### 🌍 **v1.1.0 - Global Localization & Holiday Support**
+- **Global Locale Setting**: `carbonic.set_locale("pl")` for application-wide locale defaults
+- **Holiday Calendar Integration**: Holiday definitions for major regions (US, EU, etc.)
+- **Holiday-aware Business Days**: Business day calculations that exclude holidays
+- **Regional Holiday Definitions**: Configurable holiday calendars by country/region
+- **Context Manager Support**: `with carbonic.locale("pl"):` for scoped locale changes
+
+### 📊 **v1.2.0 - Enhanced Parsing**
 - RFC 2822 format support
 - Custom business format parsing
 - Enhanced format auto-detection
-
-### 🎄 **v1.2.0 - Holiday Support**
-- Holiday calendar integration
-- Regional holiday definitions (US, EU, etc.)
-- Holiday-aware business day calculations
 
 ### 🌍 **v1.3.0 - Extended Localization**
 - Additional languages (Italian, Japanese, Chinese, etc.)
