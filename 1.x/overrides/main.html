@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  <!-- SEO Meta Tags -->
+  <meta name="keywords" content="python datetime library, timezone conversion, fluent api, immutable datetime, carbon alternative, arrow alternative, pendulum alternative, python date time, business days, localization">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="{{ page.title }} - {{ config.site_name }}">
+  <meta property="og:description" content="{{ config.site_description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ page.canonical_url }}">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:image" content="{{ config.site_url }}assets/images/carbonic_logo.svg">
+
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ page.title }} - {{ config.site_name }}">
+  <meta name="twitter:description" content="{{ config.site_description }}">
+  <meta name="twitter:image" content="{{ config.site_url }}assets/images/carbonic_logo.svg">
+
+  <!-- Additional SEO -->
+  <meta name="author" content="{{ config.site_author }}">
+  <link rel="canonical" href="{{ page.canonical_url }}">
+
+  <!-- Verify ownership (add when ready) -->
+  <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE"> -->
+{% endblock %}
