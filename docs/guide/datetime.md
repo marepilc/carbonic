@@ -15,6 +15,7 @@ print(dt)  # 2024-01-15T14:30:00+00:00
 ```
 
 # Get current time
+```puthon
 current = now()  # UTC by default
 local = now("America/New_York")
 ```
