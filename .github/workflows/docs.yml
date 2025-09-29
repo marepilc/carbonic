@@ -50,9 +50,9 @@ jobs:
           # Tagged release - extract version from tag (remove 'v' prefix)
           FULL_VERSION=${GITHUB_REF#refs/tags/v}
 
-          # For 1.0.x releases, display as "1.0" (strip patch version)
+          # For 1.0.x releases, display as "1.x" (strip patch version)
           if [[ "$FULL_VERSION" =~ ^1\.0\.[0-9]+$ ]]; then
-            VERSION="1.0"
+            VERSION="1.x"
           else
             # For other versions, use the full version
             VERSION="$FULL_VERSION"
