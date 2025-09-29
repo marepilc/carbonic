@@ -24,7 +24,7 @@ local = now("America/New_York")
 
 ### Constructor
 
-```python
+```python 
 from carbonic import DateTime
 
 # Full specification
