@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import datetime
 from dataclasses import dataclass
-from typing import Callable, Literal, overload
+from typing import Callable, Literal, cast, overload
 from zoneinfo import ZoneInfo
 
 from carbonic.core.date import Date
@@ -237,12 +237,13 @@ class DateTime:
         from carbonic.core.exceptions import ParseError
 
         # Try fast ciso8601 parsing for ISO formats first
+        parsed_dt: datetime.datetime | None = None
         try:
-            import ciso8601
+            import ciso8601  # type: ignore[import-not-found]
 
             # Try parsing with ciso8601 (handles ISO 8601 formats efficiently)
             try:
-                parsed_dt = ciso8601.parse_datetime(s)
+                parsed_dt = cast(datetime.datetime, ciso8601.parse_datetime(s))  # type: ignore[attr-defined]
             except ValueError:
                 # ciso8601 failed to parse, fall back to manual parsing
                 parsed_dt = None
@@ -291,15 +292,23 @@ class DateTime:
             pass
 
         # Fallback to manual regex parsing for non-ISO formats or when ciso8601 fails
-        # Try ISO datetime with timezone first (2025-09-23T14:30:45+00:00)
+        # Try ISO datetime with timezone first (2025-09-23T14:30:45.123456+00:00 or Z)
         iso_tz_pattern = re.compile(
-            r"^(\d{4})-(\d{1,2})-(\d{1,2})T(\d{1,2}):(\d{1,2}):(\d{1,2})([+-]\d{2}:\d{2}|Z)$"
+            r"^(\d{4})-(\d{1,2})-(\d{1,2})T(\d{1,2}):(\d{1,2}):(\d{1,2})(?:\.(\d+))?([+-]\d{2}:\d{2}|Z)$"
         )
         match = iso_tz_pattern.match(s)
         if match:
             try:
                 year, month, day, hour, minute, second = map(int, match.groups()[:6])
-                tz_str = match.groups()[6]
+                microsecond_str = match.groups()[6]
+                tz_str = match.groups()[7]
+
+                # Parse microseconds if present
+                microsecond = 0
+                if microsecond_str:
+                    # Pad or truncate to 6 digits
+                    microsecond_str = microsecond_str.ljust(6, "0")[:6]
+                    microsecond = int(microsecond_str)
 
                 # Handle timezone
                 if tz_str == "Z" or tz_str == "+00:00":
@@ -313,20 +322,57 @@ class DateTime:
 
                 # tz parameter overrides parsed timezone for naive datetimes
                 final_tz = tz if tz is not None else parsed_tz
-                return cls(year, month, day, hour, minute, second, tz=final_tz)
+                return cls(
+                    year, month, day, hour, minute, second, microsecond, tz=final_tz
+                )
             except ValueError as e:
                 raise ParseError(f"Invalid datetime: {s}") from e
 
-        # Try ISO datetime without timezone (2025-09-23T14:30:45)
+        # Try ISO datetime without timezone (2025-09-23T14:30:45.123456)
         iso_naive_pattern = re.compile(
-            r"^(\d{4})-(\d{1,2})-(\d{1,2})T(\d{1,2}):(\d{1,2}):(\d{1,2})$"
+            r"^(\d{4})-(\d{1,2})-(\d{1,2})T(\d{1,2}):(\d{1,2}):(\d{1,2})(?:\.(\d+))?$"
         )
         match = iso_naive_pattern.match(s)
         if match:
             try:
-                year, month, day, hour, minute, second = map(int, match.groups())
+                year, month, day, hour, minute, second = map(int, match.groups()[:6])
+                microsecond_str = match.groups()[6]
+
+                # Parse microseconds if present
+                microsecond = 0
+                if microsecond_str:
+                    # Pad or truncate to 6 digits
+                    microsecond_str = microsecond_str.ljust(6, "0")[:6]
+                    microsecond = int(microsecond_str)
+
                 final_tz = tz if tz is not None else "UTC"
-                return cls(year, month, day, hour, minute, second, tz=final_tz)
+                return cls(
+                    year, month, day, hour, minute, second, microsecond, tz=final_tz
+                )
+            except ValueError as e:
+                raise ParseError(f"Invalid datetime: {s}") from e
+
+        # Try space-separated datetime (2024-01-15 14:30:45.123456)
+        space_pattern = re.compile(
+            r"^(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{1,2}):(\d{1,2})(?:\.(\d+))?$"
+        )
+        match = space_pattern.match(s)
+        if match:
+            try:
+                year, month, day, hour, minute, second = map(int, match.groups()[:6])
+                microsecond_str = match.groups()[6]
+
+                # Parse microseconds if present
+                microsecond = 0
+                if microsecond_str:
+                    # Pad or truncate to 6 digits
+                    microsecond_str = microsecond_str.ljust(6, "0")[:6]
+                    microsecond = int(microsecond_str)
+
+                final_tz = tz if tz is not None else "UTC"
+                return cls(
+                    year, month, day, hour, minute, second, microsecond, tz=final_tz
+                )
             except ValueError as e:
                 raise ParseError(f"Invalid datetime: {s}") from e
 
@@ -565,7 +611,7 @@ class DateTime:
                 # Find the closing bracket
                 close_bracket = fmt.find("}", i + 1)
                 if close_bracket != -1:
-                    escape_content = fmt[i + 1:close_bracket]
+                    escape_content = fmt[i + 1 : close_bracket]
                     # Include the content literally (escape Carbon tokens)
                     result += escape_content
                     i = close_bracket + 1
@@ -813,6 +859,11 @@ class DateTime:
         """The timezone info, or None for naive datetime."""
         return self._dt.tzinfo
 
+    @property
+    def fold(self) -> int:
+        """Fold attribute for disambiguation during DST transitions (datetime.datetime compatibility)."""
+        return self._dt.fold
+
     def __str__(self) -> str:
         return self._dt.isoformat()
 
@@ -824,34 +875,44 @@ class DateTime:
 
     # Comparison methods
     def __eq__(self, other: object) -> bool:
-        """Check equality with another DateTime."""
-        if not isinstance(other, DateTime):
-            return False
-        return self._dt == other._dt
+        """Check equality with another DateTime or datetime.datetime."""
+        if isinstance(other, DateTime):
+            return self._dt == other._dt
+        if isinstance(other, datetime.datetime):
+            return self._dt == other
+        return False
 
     def __lt__(self, other: object) -> bool:
         """Check if this datetime is less than another."""
-        if not isinstance(other, DateTime):
-            return NotImplemented
-        return self._dt < other._dt
+        if isinstance(other, DateTime):
+            return self._dt < other._dt
+        if isinstance(other, datetime.datetime):
+            return self._dt < other
+        return NotImplemented
 
     def __le__(self, other: object) -> bool:
         """Check if this datetime is less than or equal to another."""
-        if not isinstance(other, DateTime):
-            return NotImplemented
-        return self._dt <= other._dt
+        if isinstance(other, DateTime):
+            return self._dt <= other._dt
+        if isinstance(other, datetime.datetime):
+            return self._dt <= other
+        return NotImplemented
 
     def __gt__(self, other: object) -> bool:
         """Check if this datetime is greater than another."""
-        if not isinstance(other, DateTime):
-            return NotImplemented
-        return self._dt > other._dt
+        if isinstance(other, DateTime):
+            return self._dt > other._dt
+        if isinstance(other, datetime.datetime):
+            return self._dt > other
+        return NotImplemented
 
     def __ge__(self, other: object) -> bool:
         """Check if this datetime is greater than or equal to another."""
-        if not isinstance(other, DateTime):
-            return NotImplemented
-        return self._dt >= other._dt
+        if isinstance(other, DateTime):
+            return self._dt >= other._dt
+        if isinstance(other, datetime.datetime):
+            return self._dt >= other
+        return NotImplemented
 
     def __hash__(self) -> int:
         """Return hash of the datetime for use in sets and dicts."""
@@ -1246,18 +1307,28 @@ class DateTime:
                 )
             # Naive to naive - return copy
             return DateTime(
-                self.year, self.month, self.day,
-                self.hour, self.minute, self.second, self.microsecond,
-                tz=None
+                self.year,
+                self.month,
+                self.day,
+                self.hour,
+                self.minute,
+                self.second,
+                self.microsecond,
+                tz=None,
             )
 
         # Source is timezone-aware
         if tz is None:
             # Convert to naive - remove timezone info but keep the local time
             return DateTime(
-                self.year, self.month, self.day,
-                self.hour, self.minute, self.second, self.microsecond,
-                tz=None
+                self.year,
+                self.month,
+                self.day,
+                self.hour,
+                self.minute,
+                self.second,
+                self.microsecond,
+                tz=None,
             )
 
         # Convert between timezones using stdlib astimezone
@@ -1288,3 +1359,115 @@ class DateTime:
             self.microsecond,
             self.tzinfo,
         )
+
+    # datetime.datetime API compatibility methods
+    def weekday(self) -> int:
+        """Return day of week where Monday=0, Sunday=6 (datetime.datetime compatibility)."""
+        return self._dt.weekday()
+
+    def isoweekday(self) -> int:
+        """Return ISO day of week where Monday=1, Sunday=7 (datetime.datetime compatibility)."""
+        return self._dt.isoweekday()
+
+    def isoformat(self, sep: str = "T", timespec: str = "auto") -> str:
+        """Return ISO 8601 format string (datetime.datetime compatibility)."""
+        return self._dt.isoformat(sep=sep, timespec=timespec)
+
+    def isocalendar(self) -> tuple[int, int, int]:
+        """Return (year, week, weekday) tuple (datetime.datetime compatibility)."""
+        return self._dt.isocalendar()
+
+    def date(self) -> datetime.date:
+        """Return date object with same date (datetime.datetime compatibility)."""
+        return self._dt.date()
+
+    def time(self) -> datetime.time:
+        """Return time object with same time (datetime.datetime compatibility)."""
+        return self._dt.time()
+
+    def timetz(self) -> datetime.time:
+        """Return time object with same time and tzinfo (datetime.datetime compatibility)."""
+        return self._dt.timetz()
+
+    def replace(
+        self,
+        year: int | None = None,
+        month: int | None = None,
+        day: int | None = None,
+        hour: int | None = None,
+        minute: int | None = None,
+        second: int | None = None,
+        microsecond: int | None = None,
+        tzinfo: datetime.tzinfo | None | object = ...,
+    ) -> DateTime:
+        """Return a DateTime with one or more components replaced (datetime.datetime compatibility)."""
+        # Use ellipsis to distinguish between None (set to None) and not provided (keep current)
+        tzinfo_to_use: datetime.tzinfo | None
+        if tzinfo is ...:
+            tzinfo_to_use = self.tzinfo
+        else:
+            tzinfo_to_use = cast(datetime.tzinfo | None, tzinfo)
+
+        # Convert tzinfo to tz string if needed
+        tz_str: str | None
+        if tzinfo_to_use is None:
+            tz_str = None
+        elif isinstance(tzinfo_to_use, ZoneInfo):
+            tz_str = tzinfo_to_use.key
+        elif hasattr(tzinfo_to_use, "zone"):
+            tz_str = cast(str, getattr(tzinfo_to_use, "zone"))
+        else:
+            tz_str = "UTC"  # Fallback
+
+        return DateTime(
+            year if year is not None else self.year,
+            month if month is not None else self.month,
+            day if day is not None else self.day,
+            hour if hour is not None else self.hour,
+            minute if minute is not None else self.minute,
+            second if second is not None else self.second,
+            microsecond if microsecond is not None else self.microsecond,
+            tz=tz_str,
+        )
+
+    def timetuple(self):
+        """Return time.struct_time (datetime.datetime compatibility)."""
+        return self._dt.timetuple()
+
+    def utctimetuple(self):
+        """Return UTC time.struct_time (datetime.datetime compatibility)."""
+        return self._dt.utctimetuple()
+
+    def toordinal(self) -> int:
+        """Return proleptic Gregorian ordinal (datetime.datetime compatibility)."""
+        return self._dt.toordinal()
+
+    def timestamp(self) -> float:
+        """Return POSIX timestamp (datetime.datetime compatibility)."""
+        return self._dt.timestamp()
+
+    def utcoffset(self) -> datetime.timedelta | None:
+        """Return UTC offset (datetime.datetime compatibility)."""
+        return self._dt.utcoffset()
+
+    def dst(self) -> datetime.timedelta | None:
+        """Return DST offset (datetime.datetime compatibility)."""
+        return self._dt.dst()
+
+    def tzname(self) -> str | None:
+        """Return timezone name (datetime.datetime compatibility)."""
+        return self._dt.tzname()
+
+    def astimezone(self, tz: datetime.tzinfo | None = None) -> DateTime:
+        """Convert to another timezone (datetime.datetime compatibility)."""
+        if tz is None:
+            # Convert to local timezone
+            new_dt = self._dt.astimezone()
+        else:
+            new_dt = self._dt.astimezone(tz)
+
+        return DateTime.from_datetime(new_dt)
+
+    def ctime(self) -> str:
+        """Return ctime() style string (datetime.datetime compatibility)."""
+        return self._dt.ctime()

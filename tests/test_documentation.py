@@ -164,6 +164,12 @@ class TestDocumentationExamples:
         if not guide_files:
             pytest.skip("No markdown files found in docs/guide/")
 
+        # Skip pydantic.md if pydantic is not installed
+        try:
+            import pydantic
+        except ImportError:
+            guide_files = [f for f in guide_files if f.name != "pydantic.md"]
+
         failed_files: List[Tuple[Path, str, int]] = []
         total_tests = 0
 

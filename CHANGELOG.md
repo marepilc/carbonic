@@ -5,6 +5,120 @@ All notable changes to Carbonic will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2025-09-30
+
+### 🔄 **Compatibility & Windows Support Release**
+
+This release adds full Python standard library compatibility and Windows platform support.
+
+#### Added
+
+**Standard Library Compatibility**
+- **`Date` ↔ `datetime.date` compatibility**: All properties and methods from `datetime.date` now available
+  - Properties: `year`, `month`, `day`
+  - Methods: `weekday()`, `isoweekday()`, `isoformat()`, `isocalendar()`, `timetuple()`, `toordinal()`, `replace()`
+  - Direct comparisons with `datetime.date` objects now work
+- **`DateTime` ↔ `datetime.datetime` compatibility**: Complete API parity with stdlib
+  - Properties: `year`, `month`, `day`, `hour`, `minute`, `second`, `microsecond`, `tzinfo`, `fold`
+  - Methods: `weekday()`, `isoweekday()`, `isoformat()`, `isocalendar()`, `date()`, `time()`, `timetz()`, `replace()`, `timetuple()`, `utctimetuple()`, `toordinal()`, `timestamp()`, `utcoffset()`, `dst()`, `tzname()`, `astimezone()`, `ctime()`
+  - Direct comparisons with `datetime.datetime` objects now work
+- **`Duration` ↔ `datetime.timedelta` compatibility**: Interoperability with stdlib timedelta
+  - Property: `seconds` (matching timedelta API, in addition to existing `days` and `microseconds`)
+  - Direct comparisons with `datetime.timedelta` objects now work (when no calendar components)
+
+**Windows Platform Support**
+- **Windows timezone support**: Added `tzdata` package as conditional dependency for Windows
+  - Automatically installed on Windows via `platform_system == 'Windows'` marker
+  - Resolves `ZoneInfoNotFoundError` on Windows systems
+  - No impact on Unix/Linux systems which use OS-provided timezone data
+
+**Parser Enhancements**
+- **Microsecond support in ISO parsing**: Parser now handles `2024-01-15T14:30:45.123456Z` format
+- **Space-separated datetime format**: Parser now supports `2024-01-15 14:30:45` format
+
+#### Fixed
+- **Windows timezone errors**: Fixed `ZoneInfoNotFoundError: 'No time zone found with key UTC'` on Windows
+- **ISO datetime parsing**: Fixed parsing of ISO datetimes with microseconds
+- **Documentation tests**: Fixed pydantic integration tests when pydantic not installed
+- **Date.weekday property**: Changed from property to method to match `datetime.date` API
+
+#### Changed
+- **Breaking change**: `Date.weekday` is now a method `Date.weekday()` instead of a property (matches stdlib)
+  - Update: `date.weekday` → `date.weekday()`
+  - This aligns with Python's `datetime.date.weekday()` API
+- **Comparison behavior**: `Date`, `DateTime`, and `Duration` can now be compared directly with stdlib equivalents
+  - Previously: `Date(2024, 1, 15) != datetime.date(2024, 1, 15)` (different types)
+  - Now: `Date(2024, 1, 15) == datetime.date(2024, 1, 15)` (True - compatible types)
+
+#### Documentation
+- **New compatibility guide**: Added comprehensive stdlib compatibility section to migration guide
+- **Updated main docs**: Added "Standard Library Compatible" feature section to index
+- **Updated examples**: All documentation examples updated to reflect new compatibility features
+
+#### Examples
+
+**Standard Library Compatibility**
+```python
+import datetime
+from carbonic import Date, DateTime, Duration
+
+# Date compatibility
+carbonic_date = Date(2024, 1, 15)
+native_date = datetime.date(2024, 1, 15)
+assert carbonic_date == native_date  # True!
+print(carbonic_date.weekday())       # 0 (Monday)
+
+# DateTime compatibility
+carbonic_dt = DateTime(2024, 1, 15, 14, 30, 45, tz="UTC")
+native_dt = datetime.datetime(2024, 1, 15, 14, 30, 45, tzinfo=datetime.timezone.utc)
+assert carbonic_dt == native_dt      # True!
+print(carbonic_dt.timestamp())       # Works!
+
+# Duration compatibility
+carbonic_dur = Duration(days=1, hours=2)
+native_td = datetime.timedelta(days=1, hours=2)
+assert carbonic_dur == native_td     # True!
+
+# Pass Carbonic objects to functions expecting stdlib types
+def takes_date(d: datetime.date) -> str:
+    return f"{d.year}-{d.month:02d}-{d.day:02d}"
+
+result = takes_date(carbonic_date)   # Works seamlessly!
+```
+
+**Windows Support**
+```python
+# Now works on Windows without errors
+from carbonic import now
+
+current_time = now("UTC")  # Previously: ZoneInfoNotFoundError on Windows
+print(current_time)        # Now works: 2024-01-15T14:30:45+00:00
+```
+
+#### Technical Details
+- **Dependencies**: Added `tzdata>=2024.1` for Windows (`platform_system == 'Windows'`)
+- **Test coverage**: All 432 tests pass on both Unix and Windows platforms
+- **Type safety**: Full mypy compatibility maintained
+- **Performance**: No performance impact; compatibility layer uses delegation
+- **Backward compatibility**: All existing code continues to work (except `date.weekday` property → method)
+
+#### Migration Notes
+
+If you were using `Date.weekday` as a property:
+```python
+# Before (1.0.0-1.0.1)
+if date.weekday == 0:  # Property access
+    print("It's Monday!")
+
+# After (1.0.2+)
+if date.weekday() == 0:  # Method call (matches stdlib)
+    print("It's Monday!")
+```
+
+This change brings Carbonic in line with Python's standard library `datetime.date.weekday()` method.
+
+---
+
 ## [1.0.1] - 2025-09-28
 
 ### 🐛 **Bug Fix Release**

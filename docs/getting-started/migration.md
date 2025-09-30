@@ -6,6 +6,59 @@ This guide helps you migrate from other datetime libraries to Carbonic.
 
 Carbonic builds on Python's standard library while providing a more fluent API.
 
+### Standard Library Compatibility
+
+**New in 1.0.2**: Carbonic classes are now fully compatible with Python's standard library datetime types. You can use Carbonic objects anywhere stdlib datetime objects are expected.
+
+```python
+import datetime
+from carbonic import Date, DateTime, Duration
+
+# Date is compatible with datetime.date
+carbonic_date = Date(2024, 1, 15)
+native_date = datetime.date(2024, 1, 15)
+
+# All properties work
+print(f"Properties: {carbonic_date.year}, {carbonic_date.month}, {carbonic_date.day}")
+
+# All methods work
+print(f"Weekday: {carbonic_date.weekday()}")         # 0 (Monday)
+print(f"ISO format: {carbonic_date.isoformat()}")    # "2024-01-15"
+
+# Direct comparison works
+print(f"Equal to native: {carbonic_date == native_date}")                      # True
+print(f"Less than 2024-01-16: {carbonic_date < datetime.date(2024, 1, 16)}")  # True
+
+# DateTime is compatible with datetime.datetime
+carbonic_dt = DateTime(2024, 1, 15, 14, 30, 45, tz="UTC")
+native_dt = datetime.datetime(2024, 1, 15, 14, 30, 45, tzinfo=datetime.timezone.utc)
+
+# All properties and methods work
+print(f"Time components: {carbonic_dt.hour}:{carbonic_dt.minute}:{carbonic_dt.second}")
+print(f"Timestamp: {carbonic_dt.timestamp()}")
+
+# Direct comparison works
+print(f"DateTime equal: {carbonic_dt == native_dt}")  # True
+
+# Duration is compatible with datetime.timedelta (when no calendar components)
+carbonic_dur = Duration(days=1, hours=2, minutes=30)
+native_td = datetime.timedelta(days=1, hours=2, minutes=30)
+
+# Properties match
+print(f"Duration parts: days={carbonic_dur.days}, seconds={carbonic_dur.seconds}")
+print(f"Total seconds: {carbonic_dur.total_seconds()}")
+
+# Direct comparison works
+print(f"Duration equal: {carbonic_dur == native_td}")  # True
+```
+
+This means you can:
+
+- Pass Carbonic objects to functions expecting stdlib types
+- Compare Carbonic objects directly with stdlib objects
+- Access all stdlib properties and methods on Carbonic objects
+- Maintain full type compatibility at runtime
+
 ### Basic Object Creation
 
 === "Before (datetime)"

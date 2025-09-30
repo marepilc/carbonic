@@ -296,11 +296,14 @@ def test_date_equality_with_other_types():
     """Test Date equality with other types."""
     date = Date(2023, 12, 25)
 
-    # Should not be equal to other types
+    # Should not be equal to incompatible types
     assert date != "2023-12-25"
-    assert date != datetime.date(2023, 12, 25)
     assert date != 20231225
     assert date is not None
+
+    # Should be equal to datetime.date with same date (for compatibility)
+    assert date == datetime.date(2023, 12, 25)
+    assert date != datetime.date(2023, 12, 26)
 
     # Should return NotImplemented for unknown types
     assert (date == "string") is False
@@ -359,13 +362,16 @@ def test_date_ordering_with_other_types():
         date < "2023-12-25"  # type: ignore
 
     with pytest.raises(TypeError):
-        date > datetime.date(2023, 12, 25)  # type: ignore
-
-    with pytest.raises(TypeError):
         date <= 20231225  # type: ignore
 
     with pytest.raises(TypeError):
         date >= None  # type: ignore
+
+    # Should work with datetime.date (for compatibility)
+    assert date > datetime.date(2023, 12, 24)
+    assert date < datetime.date(2023, 12, 26)
+    assert date >= datetime.date(2023, 12, 25)
+    assert date <= datetime.date(2023, 12, 25)
 
 
 def test_date_sorting():
@@ -623,7 +629,7 @@ def test_date_start_of_week():
     assert result.year == 2023
     assert result.month == 12
     assert result.day == 25
-    assert result.weekday == 0  # Monday
+    assert result.weekday() == 0  # Monday
 
     # Sunday (end of week)
     sunday = Date(2023, 12, 31)  # Sunday
@@ -704,7 +710,7 @@ def test_date_end_of_week():
     assert result.year == 2023
     assert result.month == 12
     assert result.day == 31
-    assert result.weekday == 6  # Sunday
+    assert result.weekday() == 6  # Sunday
 
     # Wednesday (mid-week)
     wednesday = Date(2023, 12, 27)  # Wednesday

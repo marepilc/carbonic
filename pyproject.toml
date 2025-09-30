@@ -1,6 +1,6 @@
 [project]
 name = "carbonic"
-version = "1.0.1"
+version = "1.0.2"
 description = "A modern Python datetime library with fluent API and immutable design"
 readme = "README.md"
 license = "MIT"
@@ -8,7 +8,9 @@ authors = [{ name = "Marek Pilczuk", email = "marek@mp76.pl" }]
 maintainers = [{ name = "Marek Pilczuk", email = "marek@mp76.pl" }]
 keywords = ["datetime", "date", "time", "fluent", "timezone", "immutable"]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "tzdata>=2024.1; platform_system == 'Windows'"
+]
 
 [project.optional-dependencies]
 performance = ["ciso8601>=2.3.0"]
@@ -56,6 +58,7 @@ addopts = [
     "--strict-markers",
     "--strict-config",
     "--verbose",
+    "--ignore=carbonic/integrations/pydantic.py",
 ]
 testpaths = ["tests", "carbonic"]
 # Note: Documentation examples are tested via tests/test_documentation.py

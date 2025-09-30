@@ -34,6 +34,33 @@ duration: Duration = Duration(hours=2, minutes=30)
 future: DateTime = dt + duration  # Type checked!
 ```
 
+### 🔄 **Standard Library Compatible**
+**New in 1.0.2**: Seamlessly work with Python's standard library datetime types:
+
+```python
+import datetime
+from carbonic import Date, DateTime, Duration
+
+# Direct compatibility with stdlib types
+carbonic_date = Date(2024, 1, 15)
+native_date = datetime.date(2024, 1, 15)
+
+# All stdlib properties and methods work
+print(carbonic_date.year, carbonic_date.month, carbonic_date.day)
+print(carbonic_date.weekday())    # 0 (Monday)
+print(carbonic_date.isoformat())  # "2024-01-15"
+
+# Direct comparison with stdlib objects
+assert carbonic_date == native_date
+assert carbonic_date < datetime.date(2024, 1, 16)
+
+# Pass Carbonic objects to functions expecting stdlib types
+def takes_date(d: datetime.date) -> str:
+    return f"{d.year}-{d.month:02d}-{d.day:02d}"
+
+result = takes_date(carbonic_date)  # Works seamlessly!
+```
+
 ### 🌍 **Timezone Aware**
 Built-in timezone support using Python's standard `zoneinfo`:
 
@@ -157,8 +184,13 @@ future = dt + duration
 # Formatting
 iso_string = dt.to_iso_string()         # "2024-01-15T14:30:00+00:00"
 readable = dt.format("Y-m-d H:i:s")    # "2024-01-15 14:30:00"
+```
 
-# Pydantic integration (requires: pip install carbonic[pydantic])
+### Pydantic Integration
+
+Carbonic integrates with Pydantic for data validation (requires: `pip install carbonic[pydantic]`). See the [Pydantic integration guide](guide/pydantic.md) for full details.
+
+```text
 from pydantic import BaseModel
 from carbonic.integrations.pydantic import DateTimeField
 
@@ -167,7 +199,7 @@ class Event(BaseModel):
     start_time: DateTimeField
 
 event = Event(name="Meeting", start_time="2024-01-15T14:30:00Z")
-print(event.start_time)  # DateTime(2024, 1, 15, 14, 30, 0, tz='UTC')
+# Result: DateTime(2024, 1, 15, 14, 30, 0, tz='UTC')
 ```
 
 ## Core Classes

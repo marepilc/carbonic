@@ -123,6 +123,15 @@ class Duration:
         return self._days
 
     @property
+    def seconds(self) -> int:
+        """The seconds component of this duration (0-86399, datetime.timedelta compatibility).
+
+        Returns:
+            Seconds within the current day, matching datetime.timedelta API
+        """
+        return self._seconds
+
+    @property
     def storage_seconds(self) -> int:
         """Get seconds component of storage (0-86399, representing seconds within a day).
 
@@ -562,34 +571,89 @@ class Duration:
         return (self.total_seconds(), total_months, 0)
 
     def __eq__(self, other: object) -> bool:
-        """Check equality with another Duration."""
-        if not isinstance(other, Duration):
-            return False
-        return self._normalize_for_comparison() == other._normalize_for_comparison()
+        """Check equality with another Duration or datetime.timedelta."""
+        if isinstance(other, Duration):
+            return self._normalize_for_comparison() == other._normalize_for_comparison()
+        # Support comparison with datetime.timedelta
+        import datetime
+        if isinstance(other, datetime.timedelta):
+            # Can only compare if we don't have calendar components
+            if self._calendar_months != 0 or self._calendar_years != 0:
+                return False
+            return (self._days, self._seconds, self._microseconds) == (
+                other.days,
+                other.seconds,
+                other.microseconds,
+            )
+        return False
 
     def __lt__(self, other: object) -> bool:
         """Check if this duration is less than another."""
-        if not isinstance(other, Duration):
-            return NotImplemented
-        return self._normalize_for_comparison() < other._normalize_for_comparison()
+        if isinstance(other, Duration):
+            return self._normalize_for_comparison() < other._normalize_for_comparison()
+        # Support comparison with datetime.timedelta
+        import datetime
+        if isinstance(other, datetime.timedelta):
+            # Can only compare if we don't have calendar components
+            if self._calendar_months != 0 or self._calendar_years != 0:
+                return NotImplemented
+            return (self._days, self._seconds, self._microseconds) < (
+                other.days,
+                other.seconds,
+                other.microseconds,
+            )
+        return NotImplemented
 
     def __le__(self, other: object) -> bool:
         """Check if this duration is less than or equal to another."""
-        if not isinstance(other, Duration):
-            return NotImplemented
-        return self._normalize_for_comparison() <= other._normalize_for_comparison()
+        if isinstance(other, Duration):
+            return self._normalize_for_comparison() <= other._normalize_for_comparison()
+        # Support comparison with datetime.timedelta
+        import datetime
+        if isinstance(other, datetime.timedelta):
+            # Can only compare if we don't have calendar components
+            if self._calendar_months != 0 or self._calendar_years != 0:
+                return NotImplemented
+            return (self._days, self._seconds, self._microseconds) <= (
+                other.days,
+                other.seconds,
+                other.microseconds,
+            )
+        return NotImplemented
 
     def __gt__(self, other: object) -> bool:
         """Check if this duration is greater than another."""
-        if not isinstance(other, Duration):
-            return NotImplemented
-        return self._normalize_for_comparison() > other._normalize_for_comparison()
+        if isinstance(other, Duration):
+            return self._normalize_for_comparison() > other._normalize_for_comparison()
+        # Support comparison with datetime.timedelta
+        import datetime
+        if isinstance(other, datetime.timedelta):
+            # Can only compare if we don't have calendar components
+            if self._calendar_months != 0 or self._calendar_years != 0:
+                return NotImplemented
+            return (self._days, self._seconds, self._microseconds) > (
+                other.days,
+                other.seconds,
+                other.microseconds,
+            )
+        return NotImplemented
 
     def __ge__(self, other: object) -> bool:
         """Check if this duration is greater than or equal to another."""
-        if not isinstance(other, Duration):
-            return NotImplemented
-        return self._normalize_for_comparison() >= other._normalize_for_comparison()
+        if isinstance(other, Duration):
+            return self._normalize_for_comparison() >= other._normalize_for_comparison()
+        # Support comparison with datetime.timedelta
+        import datetime
+        if isinstance(other, datetime.timedelta):
+            # Can only compare if we don't have calendar components
+            if self._calendar_months != 0 or self._calendar_years != 0:
+                return NotImplemented
+            return (self._days, self._seconds, self._microseconds) >= (
+                other.days,
+                other.seconds,
+                other.microseconds,
+            )
+        return NotImplemented
 
     def __hash__(self) -> int:
         """Return hash for use in sets and dicts."""

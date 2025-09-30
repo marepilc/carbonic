@@ -213,7 +213,7 @@ from carbonic import Date
 date = Date(2024, 1, 15)  # Monday
 
 # Calculate next Friday (weekday 4)
-current_weekday = date.weekday  # Monday = 0
+current_weekday = date.weekday()  # Monday = 0
 days_until_friday = (4 - current_weekday) % 7
 if days_until_friday == 0:  # If today is Friday
     days_until_friday = 7
@@ -229,7 +229,7 @@ print(f"Next Friday: {next_friday}")      # 2024-01-19
 print(f"Next Monday: {next_monday}")      # 2024-01-22
 
 # Weekday checks
-print(f"Is Monday: {date.weekday == 0}")     # True
+print(f"Is Monday: {date.weekday() == 0}")     # True
 print(f"Is weekend: {date.is_weekend()}")   # False
 print(f"Is weekday: {date.is_weekday()}")   # True
 ```
@@ -557,7 +557,7 @@ print(f"Project End: {project_end}")
 # Check if project ends on a weekend
 if project_end.is_weekend():
     # Move to next Monday
-    days_to_add = 7 - project_end.weekday if project_end.weekday != 6 else 1
+    days_to_add = 7 - project_end.weekday() if project_end.weekday() != 6 else 1
     project_end = project_end.add(days=days_to_add)
     print(f"Adjusted End (Monday): {project_end}")
 ```
@@ -614,7 +614,7 @@ monthly_meetings = []
 for month in range(1, 7):  # Next 6 months
     first_of_month = Date(2024, month, 1)
     # Find first Friday (weekday 4)
-    days_until_friday = (4 - first_of_month.weekday) % 7
+    days_until_friday = (4 - first_of_month.weekday()) % 7
     first_friday = first_of_month.add(days=days_until_friday)
     monthly_meetings.append(first_friday)
 

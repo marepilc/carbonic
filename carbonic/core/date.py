@@ -282,10 +282,37 @@ class Date:
     def day(self) -> int:
         return self._date.day
 
-    @property
     def weekday(self) -> int:
-        """Monday=0, Sunday=6"""
+        """Return day of week where Monday=0, Sunday=6 (datetime.date compatibility)."""
         return self._date.weekday()
+
+    def isoweekday(self) -> int:
+        """ISO weekday where Monday=1, Sunday=7 (datetime.date compatibility)."""
+        return self._date.isoweekday()
+
+    def isoformat(self) -> str:
+        """Return ISO 8601 format string (YYYY-MM-DD) for datetime.date compatibility."""
+        return self._date.isoformat()
+
+    def isocalendar(self) -> tuple[int, int, int]:
+        """Return (year, week, weekday) tuple for datetime.date compatibility."""
+        return self._date.isocalendar()
+
+    def timetuple(self):
+        """Return time.struct_time for datetime.date compatibility."""
+        return self._date.timetuple()
+
+    def toordinal(self) -> int:
+        """Return proleptic Gregorian ordinal for datetime.date compatibility."""
+        return self._date.toordinal()
+
+    def replace(self, year: int | None = None, month: int | None = None, day: int | None = None) -> Date:
+        """Return a Date with one or more components replaced (datetime.date compatibility)."""
+        return Date(
+            year if year is not None else self.year,
+            month if month is not None else self.month,
+            day if day is not None else self.day,
+        )
 
     @property
     def iso_week(self) -> tuple[int, int]:
@@ -294,34 +321,44 @@ class Date:
 
     # Comparison methods
     def __eq__(self, other: object) -> bool:
-        """Check equality with another Date."""
-        if not isinstance(other, Date):
-            return False
-        return self._date == other._date
+        """Check equality with another Date or datetime.date."""
+        if isinstance(other, Date):
+            return self._date == other._date
+        if isinstance(other, datetime.date):
+            return self._date == other
+        return False
 
     def __lt__(self, other: object) -> bool:
         """Check if this date is less than another."""
-        if not isinstance(other, Date):
-            return NotImplemented
-        return self._date < other._date
+        if isinstance(other, Date):
+            return self._date < other._date
+        if isinstance(other, datetime.date):
+            return self._date < other
+        return NotImplemented
 
     def __le__(self, other: object) -> bool:
         """Check if this date is less than or equal to another."""
-        if not isinstance(other, Date):
-            return NotImplemented
-        return self._date <= other._date
+        if isinstance(other, Date):
+            return self._date <= other._date
+        if isinstance(other, datetime.date):
+            return self._date <= other
+        return NotImplemented
 
     def __gt__(self, other: object) -> bool:
         """Check if this date is greater than another."""
-        if not isinstance(other, Date):
-            return NotImplemented
-        return self._date > other._date
+        if isinstance(other, Date):
+            return self._date > other._date
+        if isinstance(other, datetime.date):
+            return self._date > other
+        return NotImplemented
 
     def __ge__(self, other: object) -> bool:
         """Check if this date is greater than or equal to another."""
-        if not isinstance(other, Date):
-            return NotImplemented
-        return self._date >= other._date
+        if isinstance(other, Date):
+            return self._date >= other._date
+        if isinstance(other, datetime.date):
+            return self._date >= other
+        return NotImplemented
 
     def __hash__(self) -> int:
         """Return hash of the date for use in sets and dicts."""
@@ -471,7 +508,7 @@ class Date:
             return self
         elif unit == "week":
             # Monday = 0, so subtract weekday to get to Monday
-            days_to_subtract = self.weekday
+            days_to_subtract = self.weekday()
             return self.subtract(days=days_to_subtract)
         elif unit == "month":
             return Date(self.year, self.month, 1)
@@ -490,7 +527,7 @@ class Date:
             return self
         elif unit == "week":
             # Sunday = 6, so add days to get to Sunday
-            days_to_add = 6 - self.weekday
+            days_to_add = 6 - self.weekday()
             return self.add(days=days_to_add)
         elif unit == "month":
             # Get last day of current month
@@ -510,11 +547,11 @@ class Date:
     # Business day operations
     def is_weekday(self) -> bool:
         """Return True if this date is a weekday (Monday-Friday)."""
-        return self.weekday < 5  # Monday=0, Tuesday=1, ..., Friday=4
+        return self.weekday() < 5  # Monday=0, Tuesday=1, ..., Friday=4
 
     def is_weekend(self) -> bool:
         """Return True if this date is a weekend (Saturday-Sunday)."""
-        return self.weekday >= 5  # Saturday=5, Sunday=6
+        return self.weekday() >= 5  # Saturday=5, Sunday=6
 
     def add_business_days(self, days: int) -> Date:
         """Add business days to this date, skipping weekends.
@@ -537,7 +574,7 @@ class Date:
             # If we're on a weekend, move to next business day
             if self.is_weekend():
                 # Move to Monday
-                days_to_monday = 1 if self.weekday == 6 else 2  # Sunday->1, Saturday->2
+                days_to_monday = 1 if self.weekday() == 6 else 2  # Sunday->1, Saturday->2
                 return self.add(days=days_to_monday)
             else:
                 return self
@@ -548,7 +585,7 @@ class Date:
         # If starting on weekend, first move to Monday (this counts as adding business days)
         if current_date.is_weekend():
             days_to_monday = (
-                1 if current_date.weekday == 6 else 2
+                1 if current_date.weekday() == 6 else 2
             )  # Sunday->1, Saturday->2
             current_date = current_date.add(days=days_to_monday)
             remaining_days -= 1  # Moving to Monday counts as 1 business day
@@ -563,7 +600,7 @@ class Date:
         for _ in range(remaining_days):
             current_date = current_date.add(days=1)
             # If we land on Saturday, skip to Monday
-            if current_date.weekday == 5:  # Saturday
+            if current_date.weekday() == 5:  # Saturday
                 current_date = current_date.add(days=2)
 
         return current_date
@@ -589,7 +626,7 @@ class Date:
             # If we're on a weekend, move to previous business day
             if self.is_weekend():
                 # Move to Friday
-                days_to_friday = 1 if self.weekday == 5 else 2  # Saturday->1, Sunday->2
+                days_to_friday = 1 if self.weekday() == 5 else 2  # Saturday->1, Sunday->2
                 return self.subtract(days=days_to_friday)
             else:
                 return self
@@ -600,7 +637,7 @@ class Date:
         # If starting on weekend, first move to Friday (this counts as subtracting business days)
         if current_date.is_weekend():
             days_to_friday = (
-                1 if current_date.weekday == 5 else 2
+                1 if current_date.weekday() == 5 else 2
             )  # Saturday->1, Sunday->2
             current_date = current_date.subtract(days=days_to_friday)
             remaining_days -= 1  # Moving to Friday counts as 1 business day
@@ -615,7 +652,7 @@ class Date:
         for _ in range(remaining_days):
             current_date = current_date.subtract(days=1)
             # If we land on Sunday, skip to Friday
-            if current_date.weekday == 6:  # Sunday
+            if current_date.weekday() == 6:  # Sunday
                 current_date = current_date.subtract(days=2)
 
         return current_date
@@ -713,12 +750,12 @@ class Date:
                 locale_obj.get_month_name(self.month, short=True),
             ),  # Short month name (cached)
             "l": lambda: _cache.setdefault(
-                f"l_{locale or 'en'}_{self.weekday}",
-                locale_obj.get_day_name(self.weekday, short=False),
+                f"l_{locale or 'en'}_{self.weekday()}",
+                locale_obj.get_day_name(self.weekday(), short=False),
             ),  # Full day name (cached)
             "D": lambda: _cache.setdefault(
-                f"D_{locale or 'en'}_{self.weekday}",
-                locale_obj.get_day_name(self.weekday, short=True),
+                f"D_{locale or 'en'}_{self.weekday()}",
+                locale_obj.get_day_name(self.weekday(), short=True),
             ),  # Short day name (cached)
         }
 
