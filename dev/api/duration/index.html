@@ -1195,6 +1195,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#carbonic.core.duration.Duration.seconds" class="md-nav__link">
+    <span class="md-ellipsis">
+      seconds
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#carbonic.core.duration.Duration.storage_seconds" class="md-nav__link">
     <span class="md-ellipsis">
       storage_seconds
@@ -1750,6 +1759,53 @@ All operations return new instances, maintaining immutability.</p>
             <td>
               <div class="doc-md-description">
                 <p>Number of days as integer</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="carbonic.core.duration.Duration.seconds" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">seconds</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#carbonic.core.duration.Duration.seconds" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">seconds</span><span class="p">:</span> <span class="nb">int</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The seconds component of this duration (0-86399, datetime.timedelta compatibility).</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Seconds within the current day, matching datetime.timedelta API</p>
               </div>
             </td>
           </tr>

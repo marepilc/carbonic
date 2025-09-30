@@ -2,106 +2,106 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/api/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/api/carbonic/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/api/date/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/api/datetime/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/api/duration/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/api/exceptions/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/api/interval/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/api/locale/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/api/period/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/development/contributing/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/examples/common-tasks/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/getting-started/concepts/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/getting-started/installation/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/getting-started/migration/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/getting-started/quickstart/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/guide/business-days/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/guide/date/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/guide/datetime/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/guide/duration/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/guide/interval/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/guide/localization/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/guide/parsing-formatting/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/guide/period/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/guide/pydantic/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
     <url>
          <loc>https://marepilc.github.io/carbonic/dev/guide/timezones/</loc>
-         <lastmod>2025-09-29</lastmod>
+         <lastmod>2025-09-30</lastmod>
     </url>
 </urlset>
