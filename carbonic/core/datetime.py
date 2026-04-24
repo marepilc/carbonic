@@ -197,14 +197,16 @@ class DateTime:
             raise ValueError(f"Unsupported time unit: {unit}")
 
     @classmethod
-    def parse(cls, s: str, fmt: str | None = None, tz: str | None = None) -> DateTime:
+    def parse(
+        cls, s: str, format: str | None = None, tz: str | None = None
+    ) -> DateTime:
         """Parse a datetime string into a DateTime object.
 
         Args:
             s: The datetime string to parse. Supports:
                 - ISO 8601 formats (2024-01-15T14:30:00Z)
-                - Custom formats when fmt is provided
-            fmt: Optional format string. If None, auto-detect format.
+                - Custom formats when format is provided
+            format: Optional format string. If None, auto-detect format.
                 Supports both strftime (%Y-%m-%d %H:%M:%S) and Carbon (Y-m-d H:i:s) formats.
             tz: Optional timezone. If provided, applies to naive parsed datetimes.
 
@@ -224,10 +226,10 @@ class DateTime:
 
         s = s.strip()
 
-        if fmt is None:
+        if format is None:
             return cls._auto_parse(s, tz)
         else:
-            return cls._parse_with_format(s, fmt, tz)
+            return cls._parse_with_format(s, format, tz)
 
     @classmethod
     def _auto_parse(cls, s: str, tz: str | None) -> DateTime:
@@ -390,16 +392,16 @@ class DateTime:
         raise ParseError(f"Unable to parse datetime: {s}")
 
     @classmethod
-    def _parse_with_format(cls, s: str, fmt: str, tz: str | None) -> DateTime:
+    def _parse_with_format(cls, s: str, format: str, tz: str | None) -> DateTime:
         """Parse datetime string with explicit format."""
         from carbonic.core.exceptions import ParseError
 
         try:
             # Convert Carbon-style tokens to strftime if needed
-            strftime_fmt = cls._carbon_to_strftime(fmt)
+            strftime_format = cls._carbon_to_strftime(format)
 
             # Parse using strftime
-            parsed = datetime.datetime.strptime(s, strftime_fmt)
+            parsed = datetime.datetime.strptime(s, strftime_format)
 
             # Apply timezone
             final_tz = tz if tz is not None else "UTC"
@@ -415,14 +417,14 @@ class DateTime:
             )
 
         except ValueError as e:
-            raise ParseError(f"Failed to parse '{s}' with format '{fmt}': {e}") from e
+            raise ParseError(f"Failed to parse '{s}' with format '{format}': {e}") from e
 
     @staticmethod
-    def _carbon_to_strftime(fmt: str) -> str:
+    def _carbon_to_strftime(format: str) -> str:
         """Convert Carbon-style format tokens to strftime format."""
         # If format contains strftime tokens (%), return as-is
-        if "%" in fmt:
-            return fmt
+        if "%" in format:
+            return format
 
         # Use a placeholder approach to avoid conflicts
         # Common Carbon to strftime mappings for datetime
@@ -441,7 +443,7 @@ class DateTime:
             ("s", "%S"),  # Seconds with leading zero
         ]
 
-        result: str = fmt
+        result: str = format
         placeholders: dict[str, str] = {}
 
         for i, (carbon_token, strftime_token) in enumerate(mappings):
@@ -456,11 +458,11 @@ class DateTime:
         return result
 
     # Formatting methods
-    def strftime(self, fmt: str) -> str:
+    def strftime(self, format: str) -> str:
         """Format datetime using strftime format string."""
-        return self._dt.strftime(fmt)
+        return self._dt.strftime(format)
 
-    def format(self, fmt: str, *, locale: str | None = None) -> str:
+    def format(self, format: str, *, locale: str | None = None) -> str:
         """Format datetime using Carbon-style format string.
 
         Uses Carbon-style tokens for flexible datetime formatting. Escape Carbon tokens
@@ -504,7 +506,7 @@ class DateTime:
         | `r` | RFC 2822 datetime | `Mon, 15 Jan 2024 14:30:45 +0000` |
 
         Args:
-            fmt: Carbon-style format string with tokens above
+            format: Carbon-style format string with tokens above
             locale: Locale code for localized month/day names (default: English)
                   Supported: en, pl, es, fr, de, pt
 
@@ -534,9 +536,9 @@ class DateTime:
             >>> dt.format("Y-m-d\\nH:i:s")  # \\n in Python string
             '2024-01-15\\n14:30:45'
         """
-        return self._carbon_format(fmt, locale=locale)
+        return self._carbon_format(format, locale=locale)
 
-    def _carbon_format(self, fmt: str, *, locale: str | None = None) -> str:
+    def _carbon_format(self, format: str, *, locale: str | None = None) -> str:
         """Format datetime using Carbon-style tokens."""
         # Get locale instance
         from carbonic.locale import get_locale
@@ -603,22 +605,22 @@ class DateTime:
 
         result = ""
         i = 0
-        while i < len(fmt):
-            char = fmt[i]
+        while i < len(format):
+            char = format[i]
 
             # Handle bracket escapes for Carbon tokens {Y}, {m}, etc.
-            if char == "{" and i + 1 < len(fmt):
+            if char == "{" and i + 1 < len(format):
                 # Find the closing bracket
-                close_bracket = fmt.find("}", i + 1)
+                close_bracket = format.find("}", i + 1)
                 if close_bracket != -1:
-                    escape_content = fmt[i + 1 : close_bracket]
+                    escape_content = format[i + 1 : close_bracket]
                     # Include the content literally (escape Carbon tokens)
                     result += escape_content
                     i = close_bracket + 1
                     continue
 
             # Handle jS (day with ordinal suffix)
-            if char == "j" and i + 1 < len(fmt) and fmt[i + 1] == "S":
+            if char == "j" and i + 1 < len(format) and format[i + 1] == "S":
                 result += f"{self.day}{self._ordinal_suffix(self.day)}"
                 i += 2
                 continue

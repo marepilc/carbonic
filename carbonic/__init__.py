@@ -9,6 +9,7 @@ from carbonic.core.datetime import DateTime
 from carbonic.core.duration import Duration
 from carbonic.core.interval import Interval
 from carbonic.core.period import Period
+from carbonic.enums.weekday import Weekday
 
 __version__ = "1.0.0"
 
@@ -22,6 +23,7 @@ __all__ = [
     "today",
     "tomorrow",
     "yesterday",
+    "Weekday",
 ]
 
 

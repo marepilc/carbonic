@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="29cc73ef-2603-4244-897d-ca2ed42444d0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/carbonic/enums/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/carbonic/enums/weekday.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/carbonic/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/carbonic/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/carbonic/core/date.py" beforeDir="false" afterPath="$PROJECT_DIR$/carbonic/core/date.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/carbonic/core/datetime.py" beforeDir="false" afterPath="$PROJECT_DIR$/carbonic/core/datetime.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_date.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_date.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_performance.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_performance.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="81" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "marepilc"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "git@github.com:/marepilc/carbonic.git",
+    "accountId": "6d4ab287-1726-47c5-9ad5-ee52886d9d8f"
+  }
+}]]></component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3Cob8z16CCQESSA8mBcAxDNM9uG" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python tests.pytest for tests.test_date.test_date_add_combined.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_add_days.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_add_days_cross_month.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_add_months.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_add_months_cross_year.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_add_years.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_create_basic.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_from_datetime_date.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_next_same_weekday_skips_current_date.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_next_weekday_from_instance.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_parse_auto_detect.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_parse_iso_format.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_parse_iso_format_variations.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_previous_month_if_fewer_days.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_previous_weekday_from_instance.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_subtract_days.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_subtract_days_cross_month.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_subtract_months.executor": "Run",
+    "Python tests.pytest for tests.test_date.test_date_today.executor": "Run",
+    "Python tests.pytest in test_date.py.executor": "Run",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "development-2x",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/Users/marek/coding/Websites",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Python tests.pytest in test_date.py">
+    <configuration name="pytest for tests.test_date.test_date_next_same_weekday_skips_current_date" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="carbonic" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_date.test_date_next_same_weekday_skips_current_date&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for tests.test_date.test_date_parse_iso_format" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="carbonic" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_date.test_date_parse_iso_format&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for tests.test_date.test_date_previous_month_if_fewer_days" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="carbonic" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_date.test_date_previous_month_if_fewer_days&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for tests.test_date.test_date_previous_weekday_from_instance" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="carbonic" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_date.test_date_previous_weekday_from_instance&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest in test_date.py" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="carbonic" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_date.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python tests.pytest in test_date.py" />
+        <item itemvalue="Python tests.pytest for tests.test_date.test_date_previous_month_if_fewer_days" />
+        <item itemvalue="Python tests.pytest for tests.test_date.test_date_parse_iso_format" />
+        <item itemvalue="Python tests.pytest for tests.test_date.test_date_previous_weekday_from_instance" />
+        <item itemvalue="Python tests.pytest for tests.test_date.test_date_next_same_weekday_skips_current_date" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-3bd3a6803838-JavaScript-PY-261.22158.340" />
+        <option value="bundled-python-sdk-b63d5a1f7c97-b61e75351b1f-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-261.22158.340" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="29cc73ef-2603-4244-897d-ca2ed42444d0" name="Changes" comment="" />
+      <created>1777054714308</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1777054714308</updated>
+      <workItem from="1777054715400" duration="6045000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_from_datetime_date.coverage" NAME="pytest for tests.test_date.test_date_from_datetime_date Coverage Results" MODIFIED="1777058299623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_parse_iso_format.coverage" NAME="pytest for tests.test_date.test_date_parse_iso_format Coverage Results" MODIFIED="1777058496809" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_parse_iso_format_variations.coverage" NAME="pytest for tests.test_date.test_date_parse_iso_format_variations Coverage Results" MODIFIED="1777056821922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_subtract_days.coverage" NAME="pytest for tests.test_date.test_date_subtract_days Coverage Results" MODIFIED="1777058362213" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_add_combined.coverage" NAME="pytest for tests.test_date.test_date_add_combined Coverage Results" MODIFIED="1777058350324" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_subtract_months.coverage" NAME="pytest for tests.test_date.test_date_subtract_months Coverage Results" MODIFIED="1777058119980" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_next_weekday_from_instance.coverage" NAME="pytest for tests.test_date.test_date_next_weekday_from_instance Coverage Results" MODIFIED="1777058392129" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_next_same_weekday_skips_current_date.coverage" NAME="pytest for tests.test_date.test_date_next_same_weekday_skips_current_date Coverage Results" MODIFIED="1777058403162" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_add_months.coverage" NAME="pytest for tests.test_date.test_date_add_months Coverage Results" MODIFIED="1777058337353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_previous_month_if_fewer_days.coverage" NAME="pytest for tests.test_date.test_date_previous_month_if_fewer_days Coverage Results" MODIFIED="1777058683884" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_add_months_cross_year.coverage" NAME="pytest for tests.test_date.test_date_add_months_cross_year Coverage Results" MODIFIED="1777056742510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_parse_auto_detect.coverage" NAME="pytest for tests.test_date.test_date_parse_auto_detect Coverage Results" MODIFIED="1777058000853" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_previous_weekday_from_instance.coverage" NAME="pytest for tests.test_date.test_date_previous_weekday_from_instance Coverage Results" MODIFIED="1777058440854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_add_years.coverage" NAME="pytest for tests.test_date.test_date_add_years Coverage Results" MODIFIED="1777056751023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_add_days.coverage" NAME="pytest for tests.test_date.test_date_add_days Coverage Results" MODIFIED="1777058314788" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_subtract_days_cross_month.coverage" NAME="pytest for tests.test_date.test_date_subtract_days_cross_month Coverage Results" MODIFIED="1777058367003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_create_basic.coverage" NAME="pytest for tests.test_date.test_date_create_basic Coverage Results" MODIFIED="1777058296805" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_add_days_cross_month.coverage" NAME="pytest for tests.test_date.test_date_add_days_cross_month Coverage Results" MODIFIED="1777058318536" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_for_tests_test_date_test_date_today.coverage" NAME="pytest for tests.test_date.test_date_today Coverage Results" MODIFIED="1777058301850" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carbonic$pytest_in_test_date_py.coverage" NAME="pytest in test_date.py Coverage Results" MODIFIED="1777062645464" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>

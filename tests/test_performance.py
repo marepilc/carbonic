@@ -172,8 +172,8 @@ class TestCiso8601Integration:
             "2025-09-23T14:30:45.123456Z",
         ]
 
-        for fmt in common_formats:
-            dt = DateTime.parse(fmt)
+        for format_string in common_formats:
+            dt = DateTime.parse(format_string)
             assert dt.year == 2025
             assert dt.month == 9
             assert dt.day == 23
@@ -219,8 +219,8 @@ class TestCiso8601Integration:
         # Test repeated formatting (should benefit from caching)
         start_time = time.perf_counter()
         for _ in range(iterations):
-            for fmt in formats:
-                dt.format(fmt)
+            for format_string in formats:
+                dt.format(format_string)
         formatting_time = time.perf_counter() - start_time
         print(
             f"Formatted {iterations * len(formats)} strings in {formatting_time:.4f}s"
@@ -257,8 +257,8 @@ class TestCiso8601Integration:
         start_time = time.perf_counter()
         for _ in range(iterations // 10):  # Fewer iterations for locale testing
             for locale in ["en", "pl"]:
-                for fmt in locale_formats:
-                    date_obj.format(fmt, locale=locale)
+                for format_string in locale_formats:
+                    date_obj.format(format_string, locale=locale)
         locale_time = time.perf_counter() - start_time
         print(f"Locale formatting completed in {locale_time:.4f}s")
 
@@ -339,8 +339,8 @@ class TestLazyEvaluationPreparation:
             "jS {o}{f} F Y",  # Ordinal day
         ]
 
-        for fmt in formats:
-            result = dt.format(fmt)
+        for format_string in formats:
+            result = dt.format(format_string)
             assert isinstance(result, str)
             assert len(result) > 0
 

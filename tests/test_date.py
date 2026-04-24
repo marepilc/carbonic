@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from carbonic import Date, Duration
+from carbonic import Date, Duration, Weekday
 from carbonic.core.exceptions import ParseError
 
 
@@ -141,6 +141,39 @@ def test_date_subtract_combined():
     assert new_date.day == 1
 
 
+def test_date_next_weekday_from_instance():
+    """Test getting the next weekday from a specific date instance."""
+    date = Date(2026, 4, 1)  # Wednesday, April 1, 2026
+
+    next_sunday = date.next(Weekday.SUNDAY)
+
+    assert next_sunday == Date(2026, 4, 5)
+
+
+def test_date_next_same_weekday_skips_current_date():
+    """Test that next weekday skips the current date if it already matches."""
+    sunday = Date(2026, 4, 5)  # Sunday
+
+    next_sunday = sunday.next(Weekday.SUNDAY)
+
+    assert next_sunday == Date(2026, 4, 12)
+
+
+def test_date_previous_weekday_from_instance():
+    """Test getting the previous weekday from a specific date instance."""
+    date = Date(2026, 4, 1)  # Wednesday
+
+    previous_monday = date.previous(Weekday.MONDAY)
+
+    assert previous_monday == Date(2026, 3, 30)
+
+def test_date_previous_month_if_fewer_days():
+    """Test getting the previous month, adjusting for fewer days in the previous month."""
+    date = Date(2026, 3, 31)
+    date_previous_month = date.previous("month")
+    assert date_previous_month == Date(2026, 2, 28)
+
+
 def test_date_parse_iso_format():
     """Test parsing ISO date format (YYYY-MM-DD)."""
     date = Date.parse("2023-12-25")
@@ -149,94 +182,55 @@ def test_date_parse_iso_format():
     assert date.day == 25
 
 
-def test_date_parse_iso_format_variations():
-    """Test parsing various ISO date formats."""
-    # Basic ISO format
-    date1 = Date.parse("2023-01-01")
-    assert date1.year == 2023
-    assert date1.month == 1
-    assert date1.day == 1
+def test_date_parse_requires_explicit_format_for_non_iso_input():
+    """Test that non-ISO input is rejected without an explicit format."""
+    with pytest.raises(ParseError):
+        Date.parse("12/25/2023")
 
-    # Single digit month/day
-    date2 = Date.parse("2023-1-1")
-    assert date2.year == 2023
-    assert date2.month == 1
-    assert date2.day == 1
+    with pytest.raises(ParseError):
+        Date.parse("25.12.2023")
 
-    # Mixed padding
-    date3 = Date.parse("2023-01-1")
-    assert date3.year == 2023
-    assert date3.month == 1
-    assert date3.day == 1
-
-
-def test_date_parse_auto_detect():
-    """Test auto-detection of common date formats."""
-    # Slash format (US style)
-    date1 = Date.parse("12/25/2023")
-    assert date1.year == 2023
-    assert date1.month == 12
-    assert date1.day == 25
-
-    # Dot format (European style)
-    date2 = Date.parse("25.12.2023")
-    assert date2.year == 2023
-    assert date2.month == 12
-    assert date2.day == 25
-
-    # Different slash format (YYYY/MM/DD)
-    date3 = Date.parse("2023/12/25")
-    assert date3.year == 2023
-    assert date3.month == 12
-    assert date3.day == 25
+    with pytest.raises(ParseError):
+        Date.parse("2023/12/25")
 
 
 def test_date_parse_with_format():
     """Test parsing with explicit format specification."""
     # Custom format with strftime-style tokens
-    date1 = Date.parse("25-12-2023", fmt="%d-%m-%Y")
+    date1 = Date.parse("25-12-2023", format="%d-%m-%Y")
     assert date1.year == 2023
     assert date1.month == 12
     assert date1.day == 25
 
     # Different separator
-    date2 = Date.parse("2023|12|25", fmt="%Y|%m|%d")
+    date2 = Date.parse("2023|12|25", format="%Y|%m|%d")
     assert date2.year == 2023
     assert date2.month == 12
     assert date2.day == 25
 
     # Month names
-    date3 = Date.parse("25 Dec 2023", fmt="%d %b %Y")
+    date3 = Date.parse("25 Dec 2023", format="%d %b %Y")
     assert date3.year == 2023
     assert date3.month == 12
     assert date3.day == 25
 
     # Full month name
-    date4 = Date.parse("December 25, 2023", fmt="%B %d, %Y")
+    date4 = Date.parse("December 25, 2023", format="%B %d, %Y")
     assert date4.year == 2023
     assert date4.month == 12
     assert date4.day == 25
 
 
-def test_date_parse_carbon_style_tokens():
-    """Test parsing with Carbon-style format tokens."""
-    # Y-m-d format
-    date1 = Date.parse("2023-12-25", fmt="Y-m-d")
-    assert date1.year == 2023
-    assert date1.month == 12
-    assert date1.day == 25
+def test_date_parse_rejects_carbon_style_tokens():
+    """Test parsing rejects Carbon-style format tokens."""
+    with pytest.raises(ParseError):
+        Date.parse("2023-12-25", format="Y-m-d")
 
-    # d/m/Y format
-    date2 = Date.parse("25/12/2023", fmt="d/m/Y")
-    assert date2.year == 2023
-    assert date2.month == 12
-    assert date2.day == 25
+    with pytest.raises(ParseError):
+        Date.parse("25/12/2023", format="d/m/Y")
 
-    # j M Y format (day without leading zero, short month)
-    date3 = Date.parse("25 Dec 2023", fmt="j M Y")
-    assert date3.year == 2023
-    assert date3.month == 12
-    assert date3.day == 25
+    with pytest.raises(ParseError):
+        Date.parse("25 Dec 2023", format="j M Y")
 
 
 def test_date_parse_invalid_date():
@@ -259,18 +253,18 @@ def test_date_parse_invalid_date():
 
     # Wrong format specified
     with pytest.raises(ParseError):
-        Date.parse("2023-12-25", fmt="%d/%m/%Y")  # Format doesn't match
+        Date.parse("2023-12-25", format="%d/%m/%Y")  # Format doesn't match
 
 
 def test_date_parse_invalid_format_string():
-    """Test parsing with invalid format strings."""
+    """Test parsing with invalid or incomplete format strings."""
     # Unknown format token
     with pytest.raises(ParseError):
-        Date.parse("2023-12-25", fmt="%Z-%Q-%X")  # Invalid tokens
+        Date.parse("2023-12-25", format="%Z-%Q-%X")  # Invalid tokens
 
     # Incomplete date
     with pytest.raises(ParseError):
-        Date.parse("2023-12", fmt="%Y-%m")  # Missing day
+        Date.parse("2023-12", format="%Y-%m")  # Missing day
 
 
 def test_date_equality():
@@ -482,67 +476,36 @@ def test_date_strftime_edge_cases():
     assert date3.strftime("%A") == "Sunday"
 
 
-def test_date_carbon_format():
-    """Test Carbon-style formatting."""
+def test_date_format_pythonic_alias():
+    """Test the temporary Python-style format alias."""
     date = Date(2023, 12, 25)
 
-    # Basic Carbon formats
-    assert date.format("Y-m-d") == "2023-12-25"
-    assert date.format("d/m/Y") == "25/12/2023"
-    assert date.format("F j, Y") == "December 25, 2023"
-    assert date.format("M j, Y") == "Dec 25, 2023"
-    assert date.format("l, F j, Y") == "Monday, December 25, 2023"
-
-    # Year formats
-    assert date.format("Y") == "2023"
-    assert date.format("y") == "23"
-
-    # Month formats
-    assert date.format("m") == "12"
-    assert date.format("n") == "12"  # Month without leading zero
-    assert date.format("F") == "December"  # Full month name
-    assert date.format("M") == "Dec"  # Short month name
-
-    # Day formats
-    assert date.format("d") == "25"
-    assert date.format("j") == "25"  # Day without leading zero
-    assert date.format("l") == "Monday"  # Full day name
-    assert date.format("D") == "Mon"  # Short day name
+    assert date.format("%Y-%m-%d") == "2023-12-25"
+    assert date.format("%d/%m/%Y") == "25/12/2023"
+    assert date.format("%B %d, %Y") == "December 25, 2023"
+    assert date.format("%a, %b %-d, %Y") == "Mon, Dec 25, 2023"
 
 
-def test_date_carbon_format_edge_cases():
-    """Test Carbon formatting with edge cases."""
+def test_date_format_pythonic_edge_cases():
+    """Test Python-style formatting edge cases."""
     # Single digit month/day
     date1 = Date(2023, 1, 5)
-    assert date1.format("Y-m-d") == "2023-01-05"
-    assert date1.format("Y-n-j") == "2023-1-5"  # No leading zeros
+    assert date1.format("%Y-%m-%d") == "2023-01-05"
+    assert date1.format("%Y-%-m-%-d") == "2023-1-5"
 
     # Test different combinations
     date2 = Date(2023, 6, 15)
-    assert date2.format("D, M j, Y") == "Thu, Jun 15, 2023"
-    assert date2.format("l the jS of F") == "Thursday the 15th of June"
+    assert date2.format("%a, %b %-d, %Y") == "Thu, Jun 15, 2023"
+    assert date2.format("%A, %B %d") == "Thursday, June 15"
 
 
-def test_date_carbon_format_ordinals():
-    """Test Carbon formatting with ordinal suffixes."""
-    # Test ordinal suffixes (1st, 2nd, 3rd, 4th, etc.)
-    date1 = Date(2023, 12, 1)
-    assert date1.format("jS") == "1st"
+def test_date_format_rejects_carbon_tokens():
+    """Test Carbon-style formatting tokens are no longer accepted."""
+    date = Date(2023, 12, 1)
 
-    date2 = Date(2023, 12, 2)
-    assert date2.format("jS") == "2nd"
-
-    date3 = Date(2023, 12, 3)
-    assert date3.format("jS") == "3rd"
-
-    date4 = Date(2023, 12, 4)
-    assert date4.format("jS") == "4th"
-
-    date21 = Date(2023, 12, 21)
-    assert date21.format("jS") == "21st"
-
-    date22 = Date(2023, 12, 22)
-    assert date22.format("jS") == "22nd"
+    for format_string in ("Y-m-d", "jS", "D, M j, Y"):
+        with pytest.raises(ValueError):
+            date.format(format_string)
 
 
 def test_date_python_format():
@@ -563,12 +526,12 @@ def test_date_python_format():
     assert format(date, "%A, %B %d, %Y") == "Monday, December 25, 2023"
 
 
-def test_date_common_formats():
-    """Test common date format methods."""
+def test_date_native_formats():
+    """Test native formatting methods that replace 1.x shortcuts."""
     date = Date(2023, 12, 25)
 
-    assert date.to_iso_string() == "2023-12-25"
-    assert date.to_datetime_string() == "2023-12-25 00:00:00"  # With default time
+    assert date.isoformat() == "2023-12-25"
+    assert date.to_datetime(tz=None).strftime("%Y-%m-%d %H:%M:%S") == "2023-12-25 00:00:00"
 
 
 def test_date_start_of_day():
@@ -1078,40 +1041,38 @@ def test_date_diff_cross_year():
     assert diff.days == 11  # 6 days in Dec + 5 days in Jan
 
 
-def test_date_add_duration_basic():
-    """Test adding Duration to Date."""
+def test_date_add_timedelta_basic():
+    """Test adding native timedelta to Date."""
 
     date = Date(2023, 12, 25)
-    duration = Duration(days=5)
+    delta = datetime.timedelta(days=5)
 
-    result = date + duration
+    result = date + delta
     assert isinstance(result, Date)
     assert result.year == 2023
     assert result.month == 12
     assert result.day == 30
 
 
-def test_date_add_duration_with_time_components():
-    """Test that adding Duration with time components only affects days."""
+def test_date_add_timedelta_with_time_components():
+    """Test native timedelta arithmetic keeps date semantics."""
 
     date = Date(2023, 12, 25)
-    # Duration with hours should convert to days (24h = 1 day)
-    duration = Duration(days=2, hours=24, minutes=30)
+    delta = datetime.timedelta(days=2, hours=24, minutes=30)
 
-    result = date + duration
+    result = date + delta
     assert isinstance(result, Date)
     assert result.year == 2023
     assert result.month == 12
-    assert result.day == 28  # 2 days + 1 day from 24 hours = 3 days total
+    assert result.day == 28  # 2 days + 24 hours = 3 whole days, leftover minutes ignored
 
 
-def test_date_add_duration_with_calendar_components():
-    """Test adding Duration with calendar components (months/years)."""
+def test_date_add_method_with_calendar_components():
+    """Test calendar-aware arithmetic uses the named add() method."""
 
     date = Date(2023, 12, 25)
-    duration = Duration(years=1, months=2, days=5)
 
-    result = date + duration
+    result = date.add(years=1, months=2, days=5)
     assert isinstance(result, Date)
     assert result.year == 2025  # 2023 + 1 year + 2 months = 2025
     assert result.month == 2
@@ -1120,112 +1081,91 @@ def test_date_add_duration_with_calendar_components():
     )  # 25 + 5 days = 30, but Feb has only 28 days in 2025 (not leap year)
 
 
-def test_date_subtract_duration():
-    """Test subtracting Duration from Date."""
+def test_date_subtract_timedelta():
+    """Test subtracting native timedelta from Date."""
 
     date = Date(2023, 12, 25)
-    duration = Duration(days=5)
+    delta = datetime.timedelta(days=5)
 
-    result = date - duration
+    result = date - delta
     assert isinstance(result, Date)
     assert result.year == 2023
     assert result.month == 12
     assert result.day == 20
 
 
-def test_date_subtract_duration_cross_month():
-    """Test subtracting Duration that crosses month boundary."""
+def test_date_subtract_timedelta_cross_month():
+    """Test subtracting native timedelta across month boundary."""
 
     date = Date(2024, 1, 5)
-    duration = Duration(days=10)
+    delta = datetime.timedelta(days=10)
 
-    result = date - duration
+    result = date - delta
     assert isinstance(result, Date)
     assert result.year == 2023
     assert result.month == 12
     assert result.day == 26  # Jan 5 - 10 days = Dec 26
 
 
-def test_date_add_duration_method():
-    """Test explicit add_duration method."""
+def test_date_subtract_method_with_calendar_components():
+    """Test calendar-aware subtraction uses the named subtract() method."""
 
     date = Date(2023, 12, 25)
-    duration = Duration(days=3, hours=12)
 
-    result = date.add_duration(duration)
+    result = date.subtract(months=1, days=5)
     assert isinstance(result, Date)
     assert result.year == 2023
-    assert result.month == 12
-    assert result.day == 28  # 3 days + 0.5 days from 12 hours
+    assert result.month == 11
+    assert result.day == 20
 
 
-def test_date_subtract_duration_method():
-    """Test explicit subtract_duration method."""
-
-    date = Date(2023, 12, 25)
-    duration = Duration(days=3)
-
-    result = date.subtract_duration(duration)
-    assert isinstance(result, Date)
-    assert result.year == 2023
-    assert result.month == 12
-    assert result.day == 22
-
-
-def test_date_subtract_date():
-    """Test Date - Date subtraction using - operator."""
+def test_date_subtract_date_returns_timedelta():
+    """Test Date - Date subtraction follows native timedelta semantics."""
 
     date1 = Date(2023, 12, 25)
     date2 = Date(2023, 12, 20)
 
     # date1 - date2 should give positive difference
     diff = date1 - date2
-    assert isinstance(diff, Duration)
-    assert diff.days == 5
-    assert diff.storage_seconds == 0
-    assert diff.microseconds == 0
+    assert isinstance(diff, datetime.timedelta)
+    assert diff == datetime.timedelta(days=5)
 
     # date2 - date1 should give negative difference
     diff_reverse = date2 - date1
-    assert isinstance(diff_reverse, Duration)
-    assert diff_reverse.days == -5
-    assert diff_reverse.storage_seconds == 0
+    assert isinstance(diff_reverse, datetime.timedelta)
+    assert diff_reverse == datetime.timedelta(days=-5)
 
 
-def test_date_subtract_date_same():
-    """Test subtracting same date should return zero duration."""
+def test_date_subtract_date_same_returns_zero_timedelta():
+    """Test subtracting the same date returns zero timedelta."""
 
     date = Date(2023, 12, 25)
     diff = date - date
 
-    assert isinstance(diff, Duration)
-    assert diff.days == 0
-    assert diff.storage_seconds == 0
-    assert diff.microseconds == 0
+    assert isinstance(diff, datetime.timedelta)
+    assert diff == datetime.timedelta(0)
 
 
-def test_date_subtract_date_across_months():
-    """Test Date - Date subtraction across months."""
+def test_date_subtract_date_across_months_returns_timedelta():
+    """Test Date - Date subtraction across months returns timedelta."""
 
     date1 = Date(2023, 12, 5)
     date2 = Date(2023, 11, 28)
 
     diff = date1 - date2
-    assert isinstance(diff, Duration)
-    assert diff.days == 7  # Nov 28 to Dec 5
-    assert diff.storage_seconds == 0
+    assert isinstance(diff, datetime.timedelta)
+    assert diff == datetime.timedelta(days=7)
 
 
-def test_date_subtract_date_across_years():
-    """Test Date - Date subtraction across years."""
+def test_date_subtract_date_across_years_returns_timedelta():
+    """Test Date - Date subtraction across years returns timedelta."""
 
     date1 = Date(2024, 1, 5)
     date2 = Date(2023, 12, 28)
 
     diff = date1 - date2
-    assert isinstance(diff, Duration)
-    assert diff.days == 8  # Dec 28 to Jan 5
-    assert diff.storage_seconds == 0
+    assert isinstance(diff, datetime.timedelta)
+    assert diff == datetime.timedelta(days=8)
 
 
 def test_date_duration_arithmetic_type_error():
