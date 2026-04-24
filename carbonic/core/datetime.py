@@ -198,15 +198,15 @@ class DateTime:
 
     @classmethod
     def parse(
-        cls, s: str, format: str | None = None, tz: str | None = None
+        cls, s: str, format_string: str | None = None, tz: str | None = None
     ) -> DateTime:
         """Parse a datetime string into a DateTime object.
 
         Args:
             s: The datetime string to parse. Supports:
                 - ISO 8601 formats (2024-01-15T14:30:00Z)
-                - Custom formats when format is provided
-            format: Optional format string. If None, auto-detect format.
+                - Custom formats when format_string is provided
+            format_string: Optional format string. If None, auto-detect format.
                 Supports both strftime (%Y-%m-%d %H:%M:%S) and Carbon (Y-m-d H:i:s) formats.
             tz: Optional timezone. If provided, applies to naive parsed datetimes.
 
@@ -226,10 +226,10 @@ class DateTime:
 
         s = s.strip()
 
-        if format is None:
+        if format_string is None:
             return cls._auto_parse(s, tz)
         else:
-            return cls._parse_with_format(s, format, tz)
+            return cls._parse_with_format(s, format_string, tz)
 
     @classmethod
     def _auto_parse(cls, s: str, tz: str | None) -> DateTime:
@@ -392,13 +392,18 @@ class DateTime:
         raise ParseError(f"Unable to parse datetime: {s}")
 
     @classmethod
-    def _parse_with_format(cls, s: str, format: str, tz: str | None) -> DateTime:
+    def _parse_with_format(
+        cls,
+        s: str,
+        format_string: str,
+        tz: str | None,
+    ) -> DateTime:
         """Parse datetime string with explicit format."""
         from carbonic.core.exceptions import ParseError
 
         try:
             # Convert Carbon-style tokens to strftime if needed
-            strftime_format = cls._carbon_to_strftime(format)
+            strftime_format = cls._carbon_to_strftime(format_string)
 
             # Parse using strftime
             parsed = datetime.datetime.strptime(s, strftime_format)
@@ -417,14 +422,16 @@ class DateTime:
             )
 
         except ValueError as e:
-            raise ParseError(f"Failed to parse '{s}' with format '{format}': {e}") from e
+            raise ParseError(
+                f"Failed to parse '{s}' with format '{format_string}': {e}"
+            ) from e
 
     @staticmethod
-    def _carbon_to_strftime(format: str) -> str:
+    def _carbon_to_strftime(format_string: str) -> str:
         """Convert Carbon-style format tokens to strftime format."""
         # If format contains strftime tokens (%), return as-is
-        if "%" in format:
-            return format
+        if "%" in format_string:
+            return format_string
 
         # Use a placeholder approach to avoid conflicts
         # Common Carbon to strftime mappings for datetime
@@ -443,7 +450,7 @@ class DateTime:
             ("s", "%S"),  # Seconds with leading zero
         ]
 
-        result: str = format
+        result: str = format_string
         placeholders: dict[str, str] = {}
 
         for i, (carbon_token, strftime_token) in enumerate(mappings):
@@ -458,11 +465,11 @@ class DateTime:
         return result
 
     # Formatting methods
-    def strftime(self, format: str) -> str:
+    def strftime(self, format_string: str) -> str:
         """Format datetime using strftime format string."""
-        return self._dt.strftime(format)
+        return self._dt.strftime(format_string)
 
-    def format(self, format: str, *, locale: str | None = None) -> str:
+    def format(self, format_string: str, *, locale: str | None = None) -> str:
         """Format datetime using Carbon-style format string.
 
         Uses Carbon-style tokens for flexible datetime formatting. Escape Carbon tokens
@@ -474,39 +481,39 @@ class DateTime:
         | Token | Description | Example |
         |-------|-------------|---------|
         | **Date** | | |
-        | `Y` | 4-digit year | `2024` |
-        | `y` | 2-digit year | `24` |
-        | `m` | Month with leading zero | `01`, `12` |
-        | `n` | Month without leading zero | `1`, `12` |
-        | `d` | Day with leading zero | `01`, `31` |
-        | `j` | Day without leading zero | `1`, `31` |
-        | `S` | Ordinal suffix | `st`, `nd`, `rd`, `th` |
-        | `F` | Full month name (localized) | `January`, `enero` |
-        | `M` | Short month name (localized) | `Jan`, `ene` |
-        | `l` | Full day name (localized) | `Monday`, `lunes` |
-        | `D` | Short day name (localized) | `Mon`, `lun` |
+        | Y | 4-digit year | 2024 |
+        | y | 2-digit year | 24 |
+        | m | Month with leading zero | 01, 12 |
+        | n | Month without leading zero | 1, 12 |
+        | d | Day with leading zero | 01, 31 |
+        | j | Day without leading zero | 1, 31 |
+        | S | Ordinal suffix | st, nd, rd, th |
+        | F | Full month name (localized) | January, enero |
+        | M | Short month name (localized) | Jan, ene |
+        | l | Full day name (localized) | Monday, lunes |
+        | D | Short day name (localized) | Mon, lun |
         | **Time** | | |
-        | `H` | Hour 24-format with leading zero | `00`, `23` |
-        | `G` | Hour 24-format without leading zero | `0`, `23` |
-        | `h` | Hour 12-format with leading zero | `01`, `12` |
-        | `g` | Hour 12-format without leading zero | `1`, `12` |
-        | `i` | Minutes with leading zero | `00`, `59` |
-        | `s` | Seconds with leading zero | `00`, `59` |
-        | `A` | AM/PM uppercase | `AM`, `PM` |
-        | `a` | am/pm lowercase | `am`, `pm` |
-        | `u` | Microseconds (6 digits) | `000000`, `123456` |
-        | `v` | Milliseconds (3 digits) | `000`, `123` |
+        | H | Hour 24-format with leading zero | 00, 23 |
+        | G | Hour 24-format without leading zero | 0, 23 |
+        | h | Hour 12-format with leading zero | 01, 12 |
+        | g | Hour 12-format without leading zero | 1, 12 |
+        | i | Minutes with leading zero | 00, 59 |
+        | s | Seconds with leading zero | 00, 59 |
+        | A | AM/PM uppercase | AM, PM |
+        | a | am/pm lowercase | am, pm |
+        | u | Microseconds (6 digits) | 000000, 123456 |
+        | v | Milliseconds (3 digits) | 000, 123 |
         | **Timezone** | | |
-        | `T` | Timezone abbreviation | `UTC`, `EST` |
-        | `O` | Timezone offset | `+0000`, `+0200` |
-        | `P` | Timezone offset with colon | `+00:00`, `+02:00` |
-        | `Z` | Timezone offset in seconds | `0`, `7200` |
+        | T | Timezone abbreviation | UTC, EST |
+        | O | Timezone offset | +0000, +0200 |
+        | P | Timezone offset with colon | +00:00, +02:00 |
+        | Z | Timezone offset in seconds | 0, 7200 |
         | **Combined** | | |
-        | `c` | ISO 8601 datetime | `2024-01-15T14:30:45+00:00` |
-        | `r` | RFC 2822 datetime | `Mon, 15 Jan 2024 14:30:45 +0000` |
+        | c | ISO 8601 datetime | 2024-01-15T14:30:45+00:00 |
+        | r | RFC 2822 datetime | Mon, 15 Jan 2024 14:30:45 +0000 |
 
         Args:
-            format: Carbon-style format string with tokens above
+            format_string: Carbon-style format string with tokens above
             locale: Locale code for localized month/day names (default: English)
                   Supported: en, pl, es, fr, de, pt
 
@@ -536,9 +543,14 @@ class DateTime:
             >>> dt.format("Y-m-d\\nH:i:s")  # \\n in Python string
             '2024-01-15\\n14:30:45'
         """
-        return self._carbon_format(format, locale=locale)
+        return self._carbon_format(format_string, locale=locale)
 
-    def _carbon_format(self, format: str, *, locale: str | None = None) -> str:
+    def _carbon_format(
+        self,
+        format_string: str,
+        *,
+        locale: str | None = None,
+    ) -> str:
         """Format datetime using Carbon-style tokens."""
         # Get locale instance
         from carbonic.locale import get_locale
@@ -605,22 +617,26 @@ class DateTime:
 
         result = ""
         i = 0
-        while i < len(format):
-            char = format[i]
+        while i < len(format_string):
+            char = format_string[i]
 
             # Handle bracket escapes for Carbon tokens {Y}, {m}, etc.
-            if char == "{" and i + 1 < len(format):
+            if char == "{" and i + 1 < len(format_string):
                 # Find the closing bracket
-                close_bracket = format.find("}", i + 1)
+                close_bracket = format_string.find("}", i + 1)
                 if close_bracket != -1:
-                    escape_content = format[i + 1 : close_bracket]
+                    escape_content = format_string[i + 1 : close_bracket]
                     # Include the content literally (escape Carbon tokens)
                     result += escape_content
                     i = close_bracket + 1
                     continue
 
             # Handle jS (day with ordinal suffix)
-            if char == "j" and i + 1 < len(format) and format[i + 1] == "S":
+            if (
+                char == "j"
+                and i + 1 < len(format_string)
+                and format_string[i + 1] == "S"
+            ):
                 result += f"{self.day}{self._ordinal_suffix(self.day)}"
                 i += 2
                 continue

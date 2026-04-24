@@ -52,6 +52,18 @@ dt: datetime.datetime = DateTime(2026, 4, 24, 12, 0, tz="UTC")
 - Simple semantics over broad but inconsistent convenience APIs
 - Clear migration breaks over partial backward compatibility
 
+### Pendulum comparison policy
+
+- Pendulum is the closest practical benchmark for Carbonic 2.0
+- Pendulum is not a compatibility target by itself
+- 2.0 should match or exceed Pendulum first on correctness-critical behavior:
+  - exact instant preservation
+  - timezone normalization
+  - DST transition handling
+  - native `datetime` interoperability
+- Feature breadth only matters after semantics are defensible
+- If Pendulum behavior conflicts with native stdlib semantics and no correctness bug is involved, native stdlib semantics win
+
 ## 2. Non-Goals for the First 2.0 Pass
 
 - Reworking current MkDocs pages
@@ -211,6 +223,12 @@ These are the next implementation tasks in order.
 
 - [x] Define the exact public API for `Date(datetime.date)`
 - [x] Define the exact public API for `DateTime(datetime.datetime)`
+- [ ] Finish the `DateTime(datetime.datetime)` subtype rewrite
+- [ ] Fix offset-aware parsing so parsed instants are preserved exactly
+- [ ] Define DST-safe arithmetic and normalization rules with explicit transition tests
+- [x] Remove `Date.format()` compatibility alias and keep `strftime()` / native `__format__` only
+- [ ] Make `Interval.duration()` return one consistent documented type
+- [ ] Remove old guide docs from the critical validation path until the 2.0 API is frozen
 - [ ] Decide the minimum viable 2.0 module list
 - [ ] Decide which 1.x behaviors are intentionally breaking changes
 - [x] Start implementation with `Date`
@@ -249,9 +267,9 @@ Date(2026, 4, 24)
 - `next(unit: Literal["day", "week", "month", "quarter", "year"], count: int = 1, tz: str | datetime.tzinfo | None = None) -> Date`
 - `previous(unit: Literal["day", "week", "month", "quarter", "year"], count: int = 1, tz: str | datetime.tzinfo | None = None) -> Date`
 - `from_date(value: datetime.date) -> Date`
-- `parse(text: str, format: str | None = None) -> Date`
-  - if `format is None`, parse ISO only
-  - if `format` is provided, it must be Python `strptime` format only
+- `parse(text: str, format_string: str | None = None) -> Date`
+  - if `format_string is None`, parse ISO only
+  - if `format_string` is provided, it must be Python `strptime` format only
   - Carbon tokens are not supported
 
 ### Instance methods to keep
@@ -277,9 +295,7 @@ Date(2026, 4, 24)
 - `strftime()` is the primary formatting API
 - built-in `__format__` behavior from `datetime.date` is preferred
 - `.format(...)` as a Carbon-style formatter does not survive 2.0
-- possible compatibility alias:
-  - `format(format: str) -> str` may remain temporarily as a thin alias to `strftime(format)`
-  - if it remains, it must support Python directives only
+- there is no `.format(...)` compatibility alias on `Date`
 
 ### Explicit removals
 
@@ -334,9 +350,9 @@ These must not keep misleading 1.x semantics.
 ### Carbonic class methods to keep
 
 - `from_datetime(value: datetime.datetime) -> DateTime`
-- `parse(text: str, format: str | None = None, tz: str | datetime.tzinfo | None = None) -> DateTime`
-  - if `format is None`, parse ISO only
-  - if `format` is provided, it must be Python `strptime` format only
+- `parse(text: str, format_string: str | None = None, tz: str | datetime.tzinfo | None = None) -> DateTime`
+  - if `format_string is None`, parse ISO only
+  - if `format_string` is provided, it must be Python `strptime` format only
   - if parsed value is naive and `tz` is provided, attach that timezone
   - if parsed value is aware and `tz` is provided, convert to that timezone
   - Carbon tokens are not supported
@@ -363,9 +379,7 @@ These must not keep misleading 1.x semantics.
 - `strftime()` is the primary formatting API
 - built-in `datetime.__format__` behavior is preferred
 - `.format(...)` as a Carbon-style formatter does not survive 2.0
-- possible compatibility alias:
-  - `format(format: str) -> str` may remain temporarily as a thin alias to `strftime(format)`
-  - if it remains, it must support Python directives only
+- no `.format(...)` compatibility alias is planned for 2.0
 
 ### Explicit removals
 
@@ -387,6 +401,60 @@ These rules apply across the rewrite.
 - A helper that only duplicates native behavior without improving correctness should be removed
 - Compatibility shims are acceptable only if they do not reintroduce 1.x ambiguity
 
+## 6D. Pendulum Parity Checklist
+
+Pendulum is the best external comparison point for Carbonic 2.0 because it already covers most of the hard datetime problems users expect a serious library to solve.
+
+The parity goal is not "copy Pendulum".
+
+The parity goal is:
+- match Pendulum on correctness
+- keep Carbonic features that are already better justified
+- defer feature breadth that weakens native semantics
+
+### Current strengths worth preserving
+
+- [x] Keep business-day helpers if they remain small and correct
+- [x] Keep interval set operations such as `contains()`, `overlaps()`, `intersection()`, and `union()` if `Interval` survives
+- [x] Keep `Duration` semantics that separate calendar units from exact elapsed seconds instead of approximating everything into `timedelta`-style totals
+- [x] Keep stdlib `zoneinfo` as the default timezone foundation
+- [x] Keep first-party Pydantic integration if it does not distort the core API
+
+### Release-gate parity with Pendulum
+
+- [ ] `DateTime` must be a real subtype of `datetime.datetime`, not a wrapper
+- [ ] Parsing offset-aware inputs must preserve the represented instant
+  - `2025-09-23T14:30:45+02:00` must not silently become `2025-09-23T14:30:45+00:00`
+- [ ] Fixed-offset inputs must have a documented internal representation
+- [ ] `from_datetime()` must preserve meaningful `tzinfo` information for:
+  - `zoneinfo.ZoneInfo`
+  - fixed offsets
+  - local system zones where possible
+- [ ] DST transition arithmetic must be explicitly defined and tested for:
+  - non-existing local times during spring-forward
+  - ambiguous local times during fall-back
+  - conversions that must preserve exact instants
+- [ ] Formatting and parsing policy must be internally consistent across `Date` and `DateTime`
+  - if Carbon tokens are removed, docs and tests must stop expecting them
+  - do not reintroduce a `.format(...)` compatibility alias
+- [ ] `Interval.duration()` must return one documented type consistently, including `Date` intervals
+- [ ] Core tests must no longer depend on old guide documentation matching 1.x behavior
+
+### Near-term parity after core stability
+
+- [ ] Support a strict ISO/RFC3339 parsing surface comparable to Pendulum's common inputs
+- [ ] Reassess whether `Interval` should gain iteration/range behavior if it remains in core
+- [ ] Reassess `next()`/`previous()` semantics on `DateTime` so they are explicit and native-friendly
+- [ ] Reassess whether localized human-diff APIs beyond `Duration.humanize()` belong in core
+- [ ] Decide whether test-time travel helpers belong in core, an optional extra, or nowhere in 2.0
+
+### Deliberate non-parity
+
+- [ ] No Carbon token compatibility in 2.0
+- [ ] No lenient fallback parser comparable to Pendulum `strict=False` during the first pass
+- [ ] No global mutable locale defaults until temporal semantics are stable
+- [ ] No broad convenience surface that reuses stdlib names with changed meaning
+
 ## 7. Breaking Changes Expected in 2.0
 
 - [ ] `Date` changes from wrapper object to native date subtype
@@ -407,8 +475,28 @@ These rules apply across the rewrite.
 - [x] `Date` now type-checks when assigned to `datetime.date`
 - [x] basic native-subtype runtime checks passed
 - [x] targeted relative-date tests still pass after the first `Date` rewrite
-- [x] explicit `Date.parse(..., format=...)` now rejects incomplete formats such as `%Y-%m`
+- [x] explicit `Date.parse(..., format_string=...)` now rejects incomplete formats such as `%Y-%m`
 - [x] `Date(2026, 4, 1).next(Weekday.SUNDAY)` now resolves to `2026-04-05`
 - [x] class-level `Date.next("week")` and `Date.previous("month")` still work
 - [x] `tests/test_date.py` now passes against the 2.0 `Date` contract
 - [ ] full 1.x test suite is intentionally not a compatibility target during the rewrite
+
+## 9A. Current Snapshot Against Pendulum (2026-04-24)
+
+- `.venv\Scripts\python.exe -m pytest` currently reports:
+  - `415 passed`
+  - `17 failed`
+  - `6 skipped`
+- The current failures are concentrated in:
+  - old formatting expectations that still assume removed aliases or Carbon-style behavior
+  - `Interval.duration()` returning the wrong type for `Date` intervals
+  - guide documentation that still reflects 1.x behavior
+- Additional runtime gaps confirmed manually against current code:
+  - offset-aware parsing currently collapses non-UTC offsets to `UTC` wall time
+  - DST arithmetic is not yet normalized correctly around spring-forward transitions
+  - current `DateTime` implementation is still a wrapper, not a native subtype
+- Current areas where Carbonic is already stronger than Pendulum conceptually:
+  - business-day helpers on `Date`
+  - set-style interval operations
+  - cleaner separation between calendar units and exact elapsed duration
+  - first-party Pydantic integration

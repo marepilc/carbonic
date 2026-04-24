@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import datetime as _dt
-from typing import Callable, Literal, Protocol, overload
+from typing import Callable, Literal, Protocol, cast, overload
 from zoneinfo import ZoneInfo
 
 from carbonic.core.duration import Duration
@@ -19,35 +19,58 @@ _DAY_DIRECTIVES = ("%d", "%e")
 _DAY_OF_YEAR_DIRECTIVES = ("%j",)
 
 
-class _dualmethod:
-    """Descriptor that dispatches to class or instance implementation."""
+class _DateInstanceNavigation(Protocol):
+    def __call__(self, target: DateNavigationTarget, count: int = 1) -> Date: ...
 
-    def __init__(self, instance_func: Callable[..., Date], class_func: Callable[..., Date]):
-        self.instance_func = instance_func
-        self.class_func = class_func
 
+class _DateClassNavigation(Protocol):
     def __call__(
         self,
         unit: DateUnit,
         count: int = 1,
         tz: str | _dt.tzinfo | None = None,
-    ) -> Date:
-        return self.class_func(unit, count, tz)
+    ) -> Date: ...
+
+
+_DateInstanceMethod = Callable[["Date", DateNavigationTarget, int], "Date"]
+_DateClassMethod = Callable[
+    [type["Date"], DateUnit, int, str | _dt.tzinfo | None],
+    "Date",
+]
+
+
+class _DualMethod:
+    """Descriptor that dispatches to class or instance implementation."""
+
+    def __init__(
+        self,
+        instance_func: _DateInstanceMethod,
+        class_func: _DateClassMethod,
+    ):
+        self.instance_func: _DateInstanceMethod = instance_func
+        self.class_func: _DateClassMethod = class_func
 
     @overload
-    def __get__(self, obj: None, owner: type[Date]) -> _dualmethod: ...
+    def __get__(self, obj: None, owner: type[Date]) -> _DateClassNavigation: ...
 
     @overload
     def __get__(self, obj: Date, owner: type[Date]) -> _DateInstanceNavigation: ...
 
     def __get__(self, obj, owner):
         if obj is None:
-            return self
-        return self.instance_func.__get__(obj, owner)
+            def class_bound(
+                unit: DateUnit,
+                count: int = 1,
+                tz: str | _dt.tzinfo | None = None,
+            ) -> Date:
+                return self.class_func(owner, unit, count, tz)
 
+            return class_bound
 
-class _DateInstanceNavigation(Protocol):
-    def __call__(self, target: DateNavigationTarget, count: int = 1) -> Date: ...
+        def bound(target: DateNavigationTarget, count: int = 1) -> Date:
+            return self.instance_func(obj, target, count)
+
+        return bound
 
 
 def _coerce_tzinfo(tz: str | _dt.tzinfo | None) -> _dt.tzinfo | None:
@@ -68,9 +91,9 @@ def _last_day_of_month(year: int, month: int) -> int:
     return (next_month - _dt.timedelta(days=1)).day
 
 
-def _validate_explicit_date_format(format: str) -> None:
+def _validate_explicit_date_format(format_string: str) -> None:
     """Reject explicit formats that do not describe a full calendar date."""
-    normalized = format.replace("%%", "")
+    normalized = format_string.replace("%%", "")
 
     has_year = any(token in normalized for token in _YEAR_DIRECTIVES)
     if not has_year:
@@ -89,18 +112,15 @@ def _validate_explicit_date_format(format: str) -> None:
 
 
 class Date(_dt.date):
-    """Carbonic date implemented as a native ``datetime.date`` subtype."""
+    """Carbonic date implemented as a native datetime.date subtype."""
 
     __slots__ = ()
-    next: _dualmethod
-    previous: _dualmethod
-
-    def __new__(cls, year: int, month: int, day: int) -> Date:
-        return super().__new__(cls, year, month, day)
+    next: _DualMethod
+    previous: _DualMethod
 
     @classmethod
     def from_date(cls, value: _dt.date) -> Date:
-        """Create a Carbonic ``Date`` from a native date."""
+        """Create a Carbonic Date from a native date."""
         if isinstance(value, cls):
             return value
         return cls(value.year, value.month, value.day)
@@ -124,7 +144,11 @@ class Date(_dt.date):
         """Return yesterday's date."""
         return cls.today(tz).subtract(days=1)
 
-    def _next_from_self(self, target: DateNavigationTarget, count: int = 1) -> Date:
+    def _next_from_self(
+        self: Date,
+        target: DateNavigationTarget,
+        count: int = 1,
+    ) -> Date:
         """Return the next weekday or relative unit from this date."""
         if isinstance(target, Weekday):
             return self._shift_to_weekday(target, count, direction=1)
@@ -137,10 +161,14 @@ class Date(_dt.date):
         count: int = 1,
         tz: str | _dt.tzinfo | None = None,
     ) -> Date:
-        """Return a future date relative to ``today()``."""
+        """Return a future date relative to today()."""
         return cls._add_relative_unit(cls.today(tz), unit, count)
 
-    def _previous_from_self(self, target: DateNavigationTarget, count: int = 1) -> Date:
+    def _previous_from_self(
+        self: Date,
+        target: DateNavigationTarget,
+        count: int = 1,
+    ) -> Date:
         """Return the previous weekday or relative unit from this date."""
         if isinstance(target, Weekday):
             return self._shift_to_weekday(target, count, direction=-1)
@@ -153,7 +181,7 @@ class Date(_dt.date):
         count: int = 1,
         tz: str | _dt.tzinfo | None = None,
     ) -> Date:
-        """Return a past date relative to ``today()``."""
+        """Return a past date relative to today()."""
         return cls._add_relative_unit(cls.today(tz), unit, -count)
 
     @classmethod
@@ -198,11 +226,11 @@ class Date(_dt.date):
         return self.subtract(days=delta)
 
     @classmethod
-    def parse(cls, text: str, format: str | None = None) -> Date:
+    def parse(cls, text: str, format_string: str | None = None) -> Date:
         """Parse a date string.
 
-        If ``format`` is omitted, only ISO 8601 ``YYYY-MM-DD`` parsing is supported.
-        If ``format`` is provided, it must use Python ``strptime`` directives.
+        If the format string is omitted, only ISO 8601 YYYY-MM-DD parsing is supported.
+        If a format string is provided, it must use Python strptime directives.
         """
         if not text or not text.strip():
             raise ParseError("Empty date string")
@@ -210,42 +238,36 @@ class Date(_dt.date):
         text = text.strip()
 
         try:
-            if format is None:
+            if format_string is None:
                 return cls.fromisoformat(text)
 
-            if "%" not in format:
+            if "%" not in format_string:
                 raise ParseError(
                     "Explicit date formats must use Python strptime directives"
                 )
 
-            _validate_explicit_date_format(format)
-            parsed = _dt.datetime.strptime(text, format).date()
+            _validate_explicit_date_format(format_string)
+            parsed = _dt.datetime.strptime(text, format_string).date()
             return cls.from_date(parsed)
         except ValueError as exc:
             raise ParseError(f"Failed to parse '{text}'") from exc
 
     def __format__(self, format_spec: str) -> str:
-        """Support ``format()`` and f-strings using ``strftime`` semantics."""
+        """Support format() and f-strings using strftime semantics."""
         if not format_spec:
             return str(self)
         return self.strftime(format_spec)
 
-    def strftime(self, format: str) -> str:
-        """Format the date using Python ``strftime`` directives.
+    def strftime(self, format_string: str) -> str:
+        """Format the date using Python strftime directives.
 
         A small portability layer is included for common Unix directives that
-        fail on Windows, such as ``%-m`` and ``%-d``.
+        fail on Windows, such as %-m and %-d.
         """
         try:
-            return super().strftime(format)
+            return super().strftime(format_string)
         except ValueError as exc:
-            return self._portable_strftime(format, exc)
-
-    def format(self, format: str) -> str:
-        """Compatibility alias for ``strftime`` using Python format directives only."""
-        if "%" not in format:
-            raise ValueError("Date.format() accepts Python strftime directives only")
-        return self.strftime(format)
+            return self._portable_strftime(format_string, exc)
 
     @staticmethod
     def _portable_tokens(date: Date) -> dict[str, str]:
@@ -254,13 +276,17 @@ class Date(_dt.date):
             "%-m": str(date.month),
         }
 
-    def _portable_strftime(self, format: str, original_error: ValueError) -> str:
+    def _portable_strftime(
+        self,
+        format_string: str,
+        original_error: ValueError,
+    ) -> str:
         """Handle a limited set of non-portable directives on Windows."""
         tokens = self._portable_tokens(self)
-        if not any(token in format for token in tokens):
+        if not any(token in format_string for token in tokens):
             raise original_error
 
-        placeholder_format = format
+        placeholder_format = format_string
         replacements: dict[str, str] = {}
 
         for index, (token, value) in enumerate(tokens.items()):
@@ -306,7 +332,7 @@ class Date(_dt.date):
         return self.add(years=-years, months=-months, weeks=-weeks, days=-days)
 
     def diff(self, other: _dt.date, *, absolute: bool = False) -> Duration:
-        """Return a ``Duration`` representing the day difference."""
+        """Return a Duration representing the day difference."""
         if isinstance(other, _dt.datetime):
             raise TypeError("Date.diff() expects a date, not a datetime")
         if not isinstance(other, _dt.date):
@@ -352,11 +378,11 @@ class Date(_dt.date):
         raise ValueError(f"Unknown unit: {unit}")
 
     def is_weekday(self) -> bool:
-        """Return ``True`` when the date is Monday through Friday."""
+        """Return True when the date is Monday through Friday."""
         return self.weekday() < 5
 
     def is_weekend(self) -> bool:
-        """Return ``True`` when the date is Saturday or Sunday."""
+        """Return True when the date is Saturday or Sunday."""
         return self.weekday() >= 5
 
     def add_business_days(self, days: int) -> Date:
@@ -368,7 +394,7 @@ class Date(_dt.date):
         if days == 0:
             return self.add(days=(1 if self.weekday() == 6 else 2)) if self.is_weekend() else self
 
-        current = self
+        current: Date = self
         remaining = days
 
         if current.is_weekend():
@@ -399,7 +425,7 @@ class Date(_dt.date):
                 else self
             )
 
-        current = self
+        current: Date = self
         remaining = days
 
         if current.is_weekend():
@@ -418,14 +444,16 @@ class Date(_dt.date):
         return current
 
     def to_datetime(self, tz: str | _dt.tzinfo | None = "UTC") -> _dt.datetime:
-        """Return this date as a native ``datetime.datetime`` at midnight."""
+        """Return this date as a native datetime.datetime at midnight."""
         tzinfo = _coerce_tzinfo(tz)
         return _dt.datetime(self.year, self.month, self.day, tzinfo=tzinfo)
 
     def to_date(self) -> _dt.date:
-        """Return a plain native ``datetime.date`` copy."""
+        """Return a plain native datetime.date copy."""
         return _dt.date(self.year, self.month, self.day)
 
-
-Date.next = _dualmethod(Date._next_from_self, Date._next_from_today)
-Date.previous = _dualmethod(Date._previous_from_self, Date._previous_from_today)
+    next = _DualMethod(_next_from_self, cast(classmethod, _next_from_today).__func__)
+    previous = _DualMethod(
+        _previous_from_self,
+        cast(classmethod, _previous_from_today).__func__,
+    )

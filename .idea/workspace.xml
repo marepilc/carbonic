@@ -37,94 +37,74 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "marepilc"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;marepilc&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:/marepilc/carbonic.git",
-    "accountId": "6d4ab287-1726-47c5-9ad5-ee52886d9d8f"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:/marepilc/carbonic.git&quot;,
+    &quot;accountId&quot;: &quot;6d4ab287-1726-47c5-9ad5-ee52886d9d8f&quot;
   }
-}]]></component>
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5,
-  "fromUser": false
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3Cob8z16CCQESSA8mBcAxDNM9uG" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.pytest for tests.test_date.test_date_add_combined.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_add_days.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_add_days_cross_month.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_add_months.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_add_months_cross_year.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_add_years.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_create_basic.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_from_datetime_date.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_next_same_weekday_skips_current_date.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_next_weekday_from_instance.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_parse_auto_detect.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_parse_iso_format.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_parse_iso_format_variations.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_previous_month_if_fewer_days.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_previous_weekday_from_instance.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_subtract_days.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_subtract_days_cross_month.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_subtract_months.executor": "Run",
-    "Python tests.pytest for tests.test_date.test_date_today.executor": "Run",
-    "Python tests.pytest in test_date.py.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "development-2x",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "C:/Users/marek/coding/Websites",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.pytest for tests.test_date.test_date_add_combined.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_add_days.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_add_days_cross_month.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_add_months.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_add_months_cross_year.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_add_years.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_create_basic.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_from_datetime_date.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_next_same_weekday_skips_current_date.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_next_weekday_from_instance.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_parse_auto_detect.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_parse_iso_format.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_parse_iso_format_variations.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_previous_month_if_fewer_days.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_previous_weekday_from_instance.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_subtract_days.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_subtract_days_cross_month.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_subtract_months.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for tests.test_date.test_date_today.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest in test_date.py.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;development-2x&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/marek/coding/Websites&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="Python tests.pytest in test_date.py">
-    <configuration name="pytest for tests.test_date.test_date_next_same_weekday_skips_current_date" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="carbonic" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="DEBUG_JUST_MY_CODE" value="false" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="RUN_TOOL" value="" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;tests.test_date.test_date_next_same_weekday_skips_current_date&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
+}</component>
+  <component name="RunManager" selected="Python tests.pytest in test_datetime.py">
     <configuration name="pytest for tests.test_date.test_date_parse_iso_format" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="carbonic" />
       <option name="ENV_FILES" value="" />
@@ -205,13 +185,33 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="pytest in test_datetime.py" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="carbonic" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_datetime.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.pytest in test_datetime.py" />
         <item itemvalue="Python tests.pytest in test_date.py" />
         <item itemvalue="Python tests.pytest for tests.test_date.test_date_previous_month_if_fewer_days" />
         <item itemvalue="Python tests.pytest for tests.test_date.test_date_parse_iso_format" />
         <item itemvalue="Python tests.pytest for tests.test_date.test_date_previous_weekday_from_instance" />
-        <item itemvalue="Python tests.pytest for tests.test_date.test_date_next_same_weekday_skips_current_date" />
       </list>
     </recent_temporary>
   </component>

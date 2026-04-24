@@ -197,25 +197,25 @@ def test_date_parse_requires_explicit_format_for_non_iso_input():
 def test_date_parse_with_format():
     """Test parsing with explicit format specification."""
     # Custom format with strftime-style tokens
-    date1 = Date.parse("25-12-2023", format="%d-%m-%Y")
+    date1 = Date.parse("25-12-2023", format_string="%d-%m-%Y")
     assert date1.year == 2023
     assert date1.month == 12
     assert date1.day == 25
 
     # Different separator
-    date2 = Date.parse("2023|12|25", format="%Y|%m|%d")
+    date2 = Date.parse("2023|12|25", format_string="%Y|%m|%d")
     assert date2.year == 2023
     assert date2.month == 12
     assert date2.day == 25
 
     # Month names
-    date3 = Date.parse("25 Dec 2023", format="%d %b %Y")
+    date3 = Date.parse("25 Dec 2023", format_string="%d %b %Y")
     assert date3.year == 2023
     assert date3.month == 12
     assert date3.day == 25
 
     # Full month name
-    date4 = Date.parse("December 25, 2023", format="%B %d, %Y")
+    date4 = Date.parse("December 25, 2023", format_string="%B %d, %Y")
     assert date4.year == 2023
     assert date4.month == 12
     assert date4.day == 25
@@ -224,13 +224,13 @@ def test_date_parse_with_format():
 def test_date_parse_rejects_carbon_style_tokens():
     """Test parsing rejects Carbon-style format tokens."""
     with pytest.raises(ParseError):
-        Date.parse("2023-12-25", format="Y-m-d")
+        Date.parse("2023-12-25", format_string="Y-m-d")
 
     with pytest.raises(ParseError):
-        Date.parse("25/12/2023", format="d/m/Y")
+        Date.parse("25/12/2023", format_string="d/m/Y")
 
     with pytest.raises(ParseError):
-        Date.parse("25 Dec 2023", format="j M Y")
+        Date.parse("25 Dec 2023", format_string="j M Y")
 
 
 def test_date_parse_invalid_date():
@@ -253,18 +253,18 @@ def test_date_parse_invalid_date():
 
     # Wrong format specified
     with pytest.raises(ParseError):
-        Date.parse("2023-12-25", format="%d/%m/%Y")  # Format doesn't match
+        Date.parse("2023-12-25", format_string="%d/%m/%Y")  # Format doesn't match
 
 
 def test_date_parse_invalid_format_string():
     """Test parsing with invalid or incomplete format strings."""
     # Unknown format token
     with pytest.raises(ParseError):
-        Date.parse("2023-12-25", format="%Z-%Q-%X")  # Invalid tokens
+        Date.parse("2023-12-25", format_string="%Z-%Q-%X")  # Invalid tokens
 
     # Incomplete date
     with pytest.raises(ParseError):
-        Date.parse("2023-12", format="%Y-%m")  # Missing day
+        Date.parse("2023-12", format_string="%Y-%m")  # Missing day
 
 
 def test_date_equality():
@@ -474,38 +474,6 @@ def test_date_strftime_edge_cases():
     # Different weekday
     date3 = Date(2023, 12, 31)  # Sunday
     assert date3.strftime("%A") == "Sunday"
-
-
-def test_date_format_pythonic_alias():
-    """Test the temporary Python-style format alias."""
-    date = Date(2023, 12, 25)
-
-    assert date.format("%Y-%m-%d") == "2023-12-25"
-    assert date.format("%d/%m/%Y") == "25/12/2023"
-    assert date.format("%B %d, %Y") == "December 25, 2023"
-    assert date.format("%a, %b %-d, %Y") == "Mon, Dec 25, 2023"
-
-
-def test_date_format_pythonic_edge_cases():
-    """Test Python-style formatting edge cases."""
-    # Single digit month/day
-    date1 = Date(2023, 1, 5)
-    assert date1.format("%Y-%m-%d") == "2023-01-05"
-    assert date1.format("%Y-%-m-%-d") == "2023-1-5"
-
-    # Test different combinations
-    date2 = Date(2023, 6, 15)
-    assert date2.format("%a, %b %-d, %Y") == "Thu, Jun 15, 2023"
-    assert date2.format("%A, %B %d") == "Thursday, June 15"
-
-
-def test_date_format_rejects_carbon_tokens():
-    """Test Carbon-style formatting tokens are no longer accepted."""
-    date = Date(2023, 12, 1)
-
-    for format_string in ("Y-m-d", "jS", "D, M j, Y"):
-        with pytest.raises(ValueError):
-            date.format(format_string)
 
 
 def test_date_python_format():
