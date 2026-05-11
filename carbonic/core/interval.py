@@ -64,7 +64,7 @@ class Interval:
                     0,
                     0,
                     0,
-                    tz_str,
+                    tz=tz_str,
                 )
             elif isinstance(self.start, DateTime) and isinstance(self.end, Date):
                 # Convert Date end to DateTime (start of day)
@@ -76,7 +76,14 @@ class Interval:
                     else:
                         tz_str = "UTC"  # Default fallback
                 new_end = DateTime(
-                    self.end.year, self.end.month, self.end.day, 0, 0, 0, 0, tz_str
+                    self.end.year,
+                    self.end.month,
+                    self.end.day,
+                    0,
+                    0,
+                    0,
+                    0,
+                    tz=tz_str,
                 )
 
             # Use object.__setattr__ since the dataclass is frozen
@@ -128,7 +135,15 @@ class Interval:
             Duration object representing the time span
         """
         # After __post_init__, both are same type, so subtraction is safe
-        return self.end - self.start  # type: ignore
+        delta = self.end - self.start  # type: ignore
+        if isinstance(delta, Duration):
+            return delta
+
+        return Duration(
+            days=delta.days,
+            seconds=delta.seconds,
+            microseconds=delta.microseconds,
+        )
 
     def is_empty(self) -> bool:
         """Check if this interval is empty (zero duration).
@@ -167,7 +182,14 @@ class Interval:
                         else:
                             tz_str = "UTC"  # fallback
                     point = DateTime(
-                        point.year, point.month, point.day, 0, 0, 0, 0, tz_str
+                        point.year,
+                        point.month,
+                        point.day,
+                        0,
+                        0,
+                        0,
+                        0,
+                        tz=tz_str,
                     )
 
         return self._safe_compare(self.start, "<=", point) and self._safe_compare(

@@ -98,10 +98,10 @@ dt: datetime.datetime = DateTime(2026, 4, 24, 12, 0, tz="UTC")
 
 ### Timezone correctness
 
-- [ ] Preserve exact instants when parsing offset-aware datetimes
-- [ ] Stop silently coercing unknown timezones to UTC
-- [ ] Define how fixed offsets are represented internally
-- [ ] Ensure `from_datetime()` works on Windows and with local system zones
+- [x] Preserve exact instants when parsing offset-aware datetimes
+- [x] Stop silently coercing unknown timezones to UTC
+- [x] Define how fixed offsets are represented internally
+- [x] Ensure `from_datetime()` works on Windows and with local system zones
 
 ### API simplification
 
@@ -153,12 +153,12 @@ Exit criteria:
 
 ## Phase 2: DateTime
 
-Status: not started
+Status: in progress
 
-- [ ] Implement `DateTime(datetime.datetime)`
-- [ ] Define timezone-aware versus naive behavior explicitly
-- [ ] Implement strict ISO parsing
-- [ ] Implement safe conversions from native datetimes
+- [x] Implement `DateTime(datetime.datetime)`
+- [x] Define timezone-aware versus naive behavior explicitly
+- [x] Implement strict ISO parsing
+- [x] Implement safe conversions from native datetimes
 - [ ] Ensure assignment to `datetime.datetime` is clean under static typing
 
 Exit criteria:
@@ -223,11 +223,11 @@ These are the next implementation tasks in order.
 
 - [x] Define the exact public API for `Date(datetime.date)`
 - [x] Define the exact public API for `DateTime(datetime.datetime)`
-- [ ] Finish the `DateTime(datetime.datetime)` subtype rewrite
-- [ ] Fix offset-aware parsing so parsed instants are preserved exactly
+- [x] Finish the `DateTime(datetime.datetime)` subtype rewrite
+- [x] Fix offset-aware parsing so parsed instants are preserved exactly
 - [ ] Define DST-safe arithmetic and normalization rules with explicit transition tests
 - [x] Remove `Date.format()` compatibility alias and keep `strftime()` / native `__format__` only
-- [ ] Make `Interval.duration()` return one consistent documented type
+- [x] Make `Interval.duration()` return one consistent documented type
 - [ ] Remove old guide docs from the critical validation path until the 2.0 API is frozen
 - [ ] Decide the minimum viable 2.0 module list
 - [ ] Decide which 1.x behaviors are intentionally breaking changes
@@ -422,11 +422,11 @@ The parity goal is:
 
 ### Release-gate parity with Pendulum
 
-- [ ] `DateTime` must be a real subtype of `datetime.datetime`, not a wrapper
-- [ ] Parsing offset-aware inputs must preserve the represented instant
+- [x] `DateTime` must be a real subtype of `datetime.datetime`, not a wrapper
+- [x] Parsing offset-aware inputs must preserve the represented instant
   - `2025-09-23T14:30:45+02:00` must not silently become `2025-09-23T14:30:45+00:00`
-- [ ] Fixed-offset inputs must have a documented internal representation
-- [ ] `from_datetime()` must preserve meaningful `tzinfo` information for:
+- [x] Fixed-offset inputs must have a documented internal representation
+- [x] `from_datetime()` must preserve meaningful `tzinfo` information for:
   - `zoneinfo.ZoneInfo`
   - fixed offsets
   - local system zones where possible
@@ -437,7 +437,7 @@ The parity goal is:
 - [ ] Formatting and parsing policy must be internally consistent across `Date` and `DateTime`
   - if Carbon tokens are removed, docs and tests must stop expecting them
   - do not reintroduce a `.format(...)` compatibility alias
-- [ ] `Interval.duration()` must return one documented type consistently, including `Date` intervals
+- [x] `Interval.duration()` must return one documented type consistently, including `Date` intervals
 - [ ] Core tests must no longer depend on old guide documentation matching 1.x behavior
 
 ### Near-term parity after core stability
@@ -458,7 +458,7 @@ The parity goal is:
 ## 7. Breaking Changes Expected in 2.0
 
 - [ ] `Date` changes from wrapper object to native date subtype
-- [ ] `DateTime` changes from wrapper object to native datetime subtype
+- [x] `DateTime` changes from wrapper object to native datetime subtype
 - [ ] Carbon token formatting is removed
 - [ ] Lenient and ambiguous parsing is reduced or removed
 - [ ] Some convenience methods may be dropped if they do not fit the new model
@@ -479,22 +479,25 @@ The parity goal is:
 - [x] `Date(2026, 4, 1).next(Weekday.SUNDAY)` now resolves to `2026-04-05`
 - [x] class-level `Date.next("week")` and `Date.previous("month")` still work
 - [x] `tests/test_date.py` now passes against the 2.0 `Date` contract
+- [x] `DateTime` now type-checks at runtime as a `datetime.datetime` subtype
+- [x] `tests/test_datetime_v2.py` passes against the first 2.0 `DateTime` contract
+- [x] offset-aware `DateTime.parse("2025-09-23T14:30:45+02:00")` preserves the represented instant
+- [x] `Interval.duration()` now consistently returns `Duration`
 - [ ] full 1.x test suite is intentionally not a compatibility target during the rewrite
 
-## 9A. Current Snapshot Against Pendulum (2026-04-24)
+## 9A. Current Snapshot Against Pendulum (2026-05-11)
 
 - `.venv\Scripts\python.exe -m pytest` currently reports:
-  - `415 passed`
-  - `17 failed`
-  - `6 skipped`
+  - `377 passed`
+  - `54 failed`
+  - `2 skipped`
 - The current failures are concentrated in:
-  - old formatting expectations that still assume removed aliases or Carbon-style behavior
-  - `Interval.duration()` returning the wrong type for `Date` intervals
+  - old `DateTime` tests that still expect default UTC, midnight-style `today()`, Carbon `.format()`, and shortcut string helpers
+  - locale and performance tests that still assume Carbon-style `.format(...)`
   - guide documentation that still reflects 1.x behavior
 - Additional runtime gaps confirmed manually against current code:
-  - offset-aware parsing currently collapses non-UTC offsets to `UTC` wall time
   - DST arithmetic is not yet normalized correctly around spring-forward transitions
-  - current `DateTime` implementation is still a wrapper, not a native subtype
+  - old documentation tests are still in the critical validation path
 - Current areas where Carbonic is already stronger than Pendulum conceptually:
   - business-day helpers on `Date`
   - set-style interval operations
